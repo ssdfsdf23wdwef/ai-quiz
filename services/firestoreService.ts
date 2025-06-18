@@ -1,4 +1,3 @@
-
 import {
   collection,
   addDoc,
@@ -10,10 +9,8 @@ import {
   orderBy,
   writeBatch,
   serverTimestamp, 
-  updateDoc,
   getDoc,
   Timestamp,
-  setDoc,
   DocumentReference, // Added for type safety
   DocumentData,    // Added for type safety
 } from 'firebase/firestore';
@@ -50,6 +47,10 @@ const getDocDataWithId = async <T extends { id: string }>(docRef: DocumentRefere
 
 // Quiz Data Functions
 export const addQuizToDB = async (quizData: Omit<SavedQuizData, 'id' | 'savedAt' | 'userId'>, userId: string): Promise<SavedQuizData | null> => {
+  if (quizData.courseId === undefined) {
+    console.error("addQuizToDB called with undefined courseId.", quizData);
+    throw new Error("Course ID is undefined. Cannot save quiz.");
+  }
   const docRef = await addDoc(collection(firestore, QUIZZES_COLLECTION), {
     ...quizData,
     userId,

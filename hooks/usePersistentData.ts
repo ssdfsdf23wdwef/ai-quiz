@@ -180,13 +180,13 @@ export const usePersistentData = (
       userAnswers: answers,
       score,
       totalQuestions: questions.length,
-      pdfName: pdfName || undefined,
       quizType: quizMode === 'personalized' ? "Kişiselleştirilmiş Sınav" : "Hızlı Sınav",
-      courseId: selectedCourse?.id,
-      courseName: selectedCourse?.name,
+      courseId: selectedCourse?.id || 'default-course',
+      courseName: selectedCourse?.name || 'Genel',
       difficulty,
       isTimerEnabled: timerEnabled,
-      personalizedQuizType: quizMode === 'personalized' ? personalizedQuizType : undefined,
+      ...(pdfName && { pdfName }),
+      ...(quizMode === 'personalized' && personalizedQuizType && { personalizedQuizType }),
     };
 
     let quizDataToSave: Omit<SavedQuizData, 'id' | 'savedAt' | 'userId'>;
