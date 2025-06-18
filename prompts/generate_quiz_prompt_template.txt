@@ -1,0 +1,20 @@
+{{basePromptText}}
+{{difficultyInstructionSection}}
+{{personalizationInstruction}}
+{{promptFocusInstruction}}
+{{questionDistributionInstruction}}
+Her sorunun {{numOptions}} seçeneği olmalı ve yalnızca bir doğru cevap olmalıdır.
+{{subtopicGuidance}}
+Cevapları aşağıdaki JSON formatında döndürün:
+```json
+[
+  {
+    "id": "benzersiz_soru_kimliği_1",
+    "question": "Soru metni burada?",
+    "options": ["Seçenek A", "Seçenek B", "Seçenek C", "Seçenek D"],
+    "correctAnswerIndex": 0,
+    "subtopic": "Sorunun Kaynaklandığı Alt Konu (Seçilenlerden biri olmalı)"
+  }
+]
+```
+{{mainTextContent}}

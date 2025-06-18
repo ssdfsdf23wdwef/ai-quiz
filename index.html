@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QuizMaster - AI Learning Platform</title>
+    <script>
+      // Global Error Handler - Must be very early
+      (function() {
+        function appendErrorDetailsToContainer(container, message, source, lineno, colno, error, isDarkMode) {
+            function createDetailParagraph(label, valueStr) {
+                if (valueStr === null || valueStr === undefined || valueStr === '') return null;
+                var p = document.createElement('p');
+                p.innerHTML = '<strong>' + label + ':</strong> ' + valueStr;
+                return p;
+            }
+
+            var pMsg = createDetailParagraph('Mesaj', message || 'Bilinmiyor');
+            if (pMsg) container.appendChild(pMsg);
+
+            var pSrc = createDetailParagraph('Kaynak', source);
+            if (pSrc) container.appendChild(pSrc);
+
+            var pLineInfo = createDetailParagraph('Satır', lineno ? lineno + (colno ? ' Sütun: ' + colno : '') : null);
+            if (pLineInfo) container.appendChild(pLineInfo);
+
+            if (error && error.stack) {
+                var stackP = document.createElement('p');
+                stackP.innerHTML = '<strong>Yığın İzleme:</strong><br><pre class="whitespace-pre-wrap break-all max-h-40 overflow-y-auto p-2 rounded mt-1 '+ (isDarkMode ? 'bg-black/30' : 'bg-red-100/50') +'">'+ error.stack.replace(/\n/g, '<br>') + '</pre>';
+                container.appendChild(stackP);
+            } else if (error) {
+                var pErrObj = createDetailParagraph('Hata Nesnesi', String(error));
+                if (pErrObj) container.appendChild(pErrObj);
+            }
+        }
+
+        function displayGlobalError(message, source, lineno, colno, error) {
+          console.error("Global Error Caught:", message, source, lineno, colno, error);
+          var overlayId = '__global_error_overlay__';
+          
+          var isDarkMode = document.documentElement.classList.contains('dark'); // Check dark mode early
+
+          var existingOverlay = document.getElementById(overlayId);
+          if (existingOverlay) {
+            var detailsContainer = existingOverlay.querySelector('.error-details-container'); // This is the main one
+            var subsequentErrorsSection = existingOverlay.querySelector('.subsequent-errors-section');
+
+            if (!subsequentErrorsSection) {
+                subsequentErrorsSection = document.createElement('div');
+                subsequentErrorsSection.className = 'subsequent-errors-section mt-4 pt-4 border-t';
+                subsequentErrorsSection.className += isDarkMode ? ' border-secondary-700' : ' border-gray-300';
+                // The main container for all error details, including subsequent ones.
+                // Assuming `detailsContainer` is the correct parent to append new sections to,
+                // or the main overlay's content container.
+                // Let's append it to the direct child of overlay `container`
+                var mainContentContainer = existingOverlay.querySelector('.error-dialog-main-content');
+                if (mainContentContainer) {
+                    mainContentContainer.appendChild(subsequentErrorsSection);
+                } else if (detailsContainer && detailsContainer.parentNode) { 
+                    // Fallback to appending after the first errorDetailsContainer
+                    detailsContainer.parentNode.appendChild(subsequentErrorsSection);
+                }
+            }
+            
+            var newErrorEntry = document.createElement('div');
+            newErrorEntry.className = 'mt-3 pt-3 border-t';
+            newErrorEntry.className += isDarkMode ? ' border-secondary-600' : ' border-gray-200';
+
+
+            var ekHataHeader = document.createElement('h3');
+            ekHataHeader.className = 'font-bold mb-2 text-base';
+            ekHataHeader.className += isDarkMode ? ' text-red-300' : ' text-red-600';
+            ekHataHeader.textContent = 'Ek Hata Oluştu:';
+            newErrorEntry.appendChild(ekHataHeader);
+
+            var additionalDetailsWrapper = document.createElement('div');
+            additionalDetailsWrapper.className = 'space-y-1 text-xs p-3 rounded-md'; // Added padding and rounding like original
+            additionalDetailsWrapper.className += isDarkMode ? ' text-secondary-200 bg-secondary-900/50' : ' text-red-700 bg-red-100/30'; // Added bg for consistency
+            
+            appendErrorDetailsToContainer(additionalDetailsWrapper, message, source, lineno, colno, error, isDarkMode);
+            
+            newErrorEntry.appendChild(additionalDetailsWrapper);
+            subsequentErrorsSection.appendChild(newErrorEntry);
+            
+            // Scroll the new error into view if the container is scrollable
+            additionalDetailsWrapper.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+            return; // Stop further execution for this error
+          }
+
+          // ---- Create New Overlay ----
+          var overlay = document.createElement('div');
+          overlay.id = overlayId;
+          overlay.className = 'fixed inset-0 z-[9999999] flex items-center justify-center p-4 text-white font-mono text-sm overflow-auto';
+          overlay.style.backgroundColor = 'rgba(15, 23, 42, 0.95)'; 
+          overlay.className += isDarkMode ? ' bg-secondary-900/95 text-secondary-100' : ' bg-gray-800/95 text-gray-100';
+
+          var container = document.createElement('div');
+          // Added a class for easier targeting of the main content part of the dialog
+          container.className = 'error-dialog-main-content w-full max-w-2xl p-6 rounded-lg shadow-2xl overflow-y-auto max-h-[90vh]';
+          container.className += isDarkMode ? ' bg-secondary-800 border border-secondary-700' : ' bg-white border border-gray-300 text-gray-800';
+
+          var header = document.createElement('h1');
+          header.className = 'text-2xl font-bold mb-3 flex items-center';
+          header.className += isDarkMode ? ' text-red-400' : ' text-red-600';
+          header.innerHTML = '<svg aria-hidden="true" class="w-7 h-7 mr-3 fill-current" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.216 3.031-1.742 3.031H4.42c-1.526 0-2.492-1.697-1.742-3.031l5.58-9.92zM10 13a1 1 0 110-2 1 1 0 010 2zm-1.75-2.5a.75.75 0 000 1.5h3.5a.75.75 0 000-1.5h-3.5z" clip-rule="evenodd"></path></svg>Kritik Bir Hata Oluştu!';
+          
+          var intro = document.createElement('p');
+          intro.className = 'mb-4 text-sm';
+          intro.className += isDarkMode ? ' text-secondary-300' : ' text-gray-600';
+          intro.textContent = 'Uygulama başlatılırken veya çalışırken beklenmedik bir sorunla karşılaşıldı. Lütfen aşağıdaki bilgileri geliştirici ekibine iletin.';
+          
+          var errorDetailsContainer = document.createElement('div');
+          errorDetailsContainer.className = 'error-details-container p-4 rounded-md space-y-1 text-xs'; // This class is for the first error's details box
+          errorDetailsContainer.className += isDarkMode ? ' bg-secondary-900/70 text-secondary-200' : ' bg-red-50 text-red-700';
+          
+          appendErrorDetailsToContainer(errorDetailsContainer, message, source, lineno, colno, error, isDarkMode);
+          
+          container.appendChild(header);
+          container.appendChild(intro);
+          container.appendChild(errorDetailsContainer);
+          // Placeholder for subsequent errors if needed, created when a second error actually occurs.
+          
+          var closeButton = document.createElement('button');
+          closeButton.textContent = 'Kapat (Uygulama çalışmayabilir)';
+          closeButton.className = 'mt-6 px-4 py-2 rounded-md font-medium transition-colors w-full sm:w-auto';
+          closeButton.className += isDarkMode ? ' bg-secondary-600 hover:bg-secondary-500 text-white' : ' bg-gray-600 hover:bg-gray-700 text-white';
+          closeButton.onclick = function() { overlay.style.display = 'none'; };
+          
+          var reloadButton = document.createElement('button');
+          reloadButton.textContent = 'Sayfayı Yenile';
+          reloadButton.className = 'mt-6 sm:ml-3 px-4 py-2 rounded-md font-medium transition-colors w-full sm:w-auto';
+          reloadButton.className += isDarkMode ? ' bg-blue-600 hover:bg-blue-500 text-white' : ' bg-blue-500 hover:bg-blue-600 text-white';
+          reloadButton.onclick = function() { window.location.reload(); };
+
+          var buttonContainer = document.createElement('div');
+          buttonContainer.className = 'flex flex-col sm:flex-row justify-end items-center gap-3 mt-5';
+          buttonContainer.appendChild(closeButton);
+          buttonContainer.appendChild(reloadButton);
+          
+          container.appendChild(buttonContainer);
+          overlay.appendChild(container);
+
+          if (document.body) {
+            document.body.appendChild(overlay);
+          } else {
+            document.addEventListener('DOMContentLoaded', function() {
+              var isDarkModeOnLoad = document.documentElement.classList.contains('dark');
+              // Re-apply classes based on dark mode at the time of appending
+              overlay.className = 'fixed inset-0 z-[9999999] flex items-center justify-center p-4 text-white font-mono text-sm overflow-auto';
+              overlay.className += isDarkModeOnLoad ? ' bg-secondary-900/95 text-secondary-100' : ' bg-gray-800/95 text-gray-100';
+              // container class includes .error-dialog-main-content
+              container.className = 'error-dialog-main-content w-full max-w-2xl p-6 rounded-lg shadow-2xl overflow-y-auto max-h-[90vh]';
+              container.className += isDarkModeOnLoad ? ' bg-secondary-800 border border-secondary-700' : ' bg-white border border-gray-300 text-gray-800';
+              header.className = 'text-2xl font-bold mb-3 flex items-center';
+              header.className += isDarkModeOnLoad ? ' text-red-400' : ' text-red-600';
+              intro.className = 'mb-4 text-sm';
+              intro.className += isDarkModeOnLoad ? ' text-secondary-300' : ' text-gray-600';
+              errorDetailsContainer.className = 'error-details-container p-4 rounded-md space-y-1 text-xs';
+              errorDetailsContainer.className += isDarkModeOnLoad ? ' bg-secondary-900/70 text-secondary-200' : ' bg-red-50 text-red-700';
+               // Re-style stack trace pre if it exists within errorDetailsContainer
+               var stackPElementInInitialError = errorDetailsContainer.querySelector('pre');
+               if (stackPElementInInitialError) stackPElementInInitialError.className = 'whitespace-pre-wrap break-all max-h-40 overflow-y-auto p-2 rounded mt-1 '+ (isDarkModeOnLoad ? 'bg-black/30' : 'bg-red-100/50');
+              
+              closeButton.className = 'mt-6 px-4 py-2 rounded-md font-medium transition-colors w-full sm:w-auto';
+              closeButton.className += isDarkModeOnLoad ? ' bg-secondary-600 hover:bg-secondary-500 text-white' : ' bg-gray-600 hover:bg-gray-700 text-white';
+              reloadButton.className = 'mt-6 sm:ml-3 px-4 py-2 rounded-md font-medium transition-colors w-full sm:w-auto';
+              reloadButton.className += isDarkModeOnLoad ? ' bg-blue-600 hover:bg-blue-500 text-white' : ' bg-blue-500 hover:bg-blue-600 text-white';
+              document.body.appendChild(overlay);
+            });
+          }
+        }
+
+        window.onerror = function(message, source, lineno, colno, error) {
+          displayGlobalError(message, source, lineno, colno, error);
+          return true; 
+        };
+
+        window.onunhandledrejection = function(event) {
+          console.error("Global Unhandled Promise Rejection:", event.reason);
+          var reason = event.reason || {};
+          var message = reason.message || String(event.reason) || 'İşlenmemiş Promise Reddi';
+          var stack = reason.stack || (event.reason instanceof Error ? event.reason.stack : null);
+          var errorObjectForDisplay = { 
+            stack: stack, 
+            toString: function() { return String(event.reason); } 
+          };
+          displayGlobalError(message, 'Promise Reddi', null, null, errorObjectForDisplay);
+        };
+      })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script>
+      tailwind.config = {
+        darkMode: 'class', // Enable class-based dark mode
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                50: '#f0f9ff',
+                100: '#e0f2fe',
+                200: '#bae6fd',
+                300: '#7dd3fc', // Used for sidebar icon active, personalized text
+                400: '#38bdf8', // Used for stat card icon, feature card icon (non-premium)
+                500: '#0ea5e9', // Main primary color, sidebar active bg
+                600: '#0284c7', // Hover states
+                700: '#0369a1', // Text color for headings on light bg
+                800: '#075985',
+                900: '#0c4a6e',
+              },
+              secondary: {
+                50: '#f8fafc',  // Light backgrounds for elements on white
+                100: '#f1f5f9', // Hover for light elements
+                200: '#e2e8f0', // Borders
+                300: '#cbd5e1', // Borders, disabled states
+                400: '#94a3b8', // Muted text (sidebar subtitle, stat label)
+                500: '#64748b', // Secondary text
+                600: '#475569', // Hover for secondary actions
+                700: '#334155', // Sidebar border-t, text color for dark elements
+                800: '#1e293b', // Sidebar bg, card bg (non-premium), stat card bg
+                900: '#0f172a', // Main page bg
+              },
+              teal: { 
+                400: '#2dd4bf', // AI Quiz title
+              },
+              pink: { 
+                300: '#f9a8d4', // Premium tag text
+                400: '#f472b6', // Premium feature icon
+                500: '#ec4899', // Premium button gradient start
+              },
+              fuchsia: { // Added for personalized quiz button
+                600: '#c026d3', // Premium button gradient end
+              },
+              purple: { // For sidebar logo bg, avatar bg, premium card bg
+                500: '#a855f7',
+                600: '#9333ea',
+                900: '#581c87', // Premium card end gradient
+              },
+              cyan: { // For quick quiz button
+                500: '#06b6d4',
+                600: '#0891b2',
+              },
+              blue: { // For quick quiz button, sidebar logo bg
+                500: '#3b82f6',
+                600: '#2563eb',
+              }
+            }
+          }
+        }
+      }
+    </script>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.1.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.5.1",
+    "pdfjs-dist": "https://esm.sh/pdfjs-dist@^5.3.31",
+    "jspdf": "https://esm.sh/jspdf@^3.0.1",
+    "firebase/app": "https://esm.sh/firebase@^10.12.2/app",
+    "firebase/auth": "https://esm.sh/firebase@^10.12.2/auth",
+    "firebase/firestore": "https://esm.sh/firebase@^10.12.2/firestore",
+    "firebase/analytics": "https://esm.sh/firebase@^10.12.2/analytics",
+    "js-yaml": "https://esm.sh/js-yaml@4.1.0",
+    "firebase/": "https://esm.sh/firebase@^10.12.2/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="overflow-hidden font-sans"> {/* Removed theme classes, will be applied to <html> */}
+    <noscript>Bu uygulamayı çalıştırmak için JavaScript'i etkinleştirmeniz gerekir. Eğer JavaScript etkinse ve hala bu mesajı görüyorsanız, bir script hatası oluşmuş olabilir.</noscript>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
