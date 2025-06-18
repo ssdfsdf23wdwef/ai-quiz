@@ -24,22 +24,21 @@ const QuizView: React.FC<QuizViewProps> = ({
   const [remainingTime, setRemainingTime] = useState<number>(totalTimeInSeconds);
   const timerRef = useRef<number | null>(null);
   const fontDataRef = useRef<string | null>(null);
-  const [fontLoadingError, setFontLoadingError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadFont = async () => {
       try {
         const response = await fetch('./fonts/NotoSans-Regular.ttf');
         if (!response.ok) {
-          throw new Error(`Font dosyası yüklenemedi: ${response.statusText} (${response.status})`);
+          // Font file not found, using default font
+          return;
         }
         const fontBuffer = await response.arrayBuffer();
         
-        // Heuristic: A real NotoSans TTF is much larger than a few KBs.
-        // If the file is very small, assume it's a placeholder.
-        if (fontBuffer.byteLength < 1000) { // e.g., less than 1KB
-          console.warn("Yüklenen font dosyası (NotoSans-Regular.ttf) bir yer tutucu gibi görünüyor veya çok küçük. Özel font gömülmeyecek, Helvetica kullanılacak.");
-          throw new Error("Yer tutucu font dosyası algılandı. Helvetica kullanılacak.");
+        // Check if font file is valid
+        if (fontBuffer.byteLength < 1000) {
+          // Font file is too small, probably a placeholder
+          return;
         }
 
         let binary = '';
@@ -49,12 +48,10 @@ const QuizView: React.FC<QuizViewProps> = ({
           binary += String.fromCharCode(bytes[i]);
         }
         fontDataRef.current = btoa(binary);
-        setFontLoadingError(null); // Clear any previous loading error
         console.log("NotoSans fontu başarıyla yüklendi ve base64'e çevrildi.");
       } catch (error) {
-        console.error("Özel font (NotoSans) yüklenirken hata:", error);
-        setFontLoadingError((error as Error).message || "Özel font yüklenemedi.");
-        fontDataRef.current = null; // Ensure no data is used if loading failed
+        // Font loading failed, using default font
+        fontDataRef.current = null;
       }
     };
     loadFont();
@@ -129,8 +126,8 @@ const QuizView: React.FC<QuizViewProps> = ({
       
       let fontNameToUse = "Helvetica"; // Default to Helvetica
 
-      // Attempt to use custom font only if it was loaded successfully and no error occurred during loading
-      if (fontDataRef.current && !fontLoadingError) {
+      // Attempt to use custom font only if it was loaded successfully
+      if (fontDataRef.current) {
         try {
           doc.addFileToVFS('NotoSans-Regular.ttf', fontDataRef.current);
           doc.addFont('NotoSans-Regular.ttf', 'NotoSans', 'normal');
@@ -146,24 +143,11 @@ const QuizView: React.FC<QuizViewProps> = ({
           console.error("NotoSans fontunu PDF'e gömerken veya test ederken hata:", e);
           fontNameToUse = "Helvetica"; // Fallback to Helvetica
           doc.setFont(fontNameToUse, "normal"); // Explicitly set active font to Helvetica
-          alert("Özel font (NotoSans) PDF'e işlenirken bir hata oluştu. Bazı Türkçe karakterler doğru görüntülenmeyebilir. Varsayılan font (Helvetica) kullanılacak.");
         }
       } else {
-        // This block is entered if fontDataRef.current is null (e.g., placeholder detected, fetch failed)
-        // OR if fontLoadingError was set during the font loading effect.
-        fontNameToUse = "Helvetica"; // Ensure Helvetica
-        doc.setFont(fontNameToUse, "normal"); // Explicitly set active font
-        
-        const fontWarningBase = "Bazı Türkçe karakterler PDF'te doğru görüntülenmeyebilir. Varsayılan font (Helvetica) kullanılacak.";
-        if (fontLoadingError) {
-            if (fontLoadingError.includes("Yer tutucu font dosyası algılandı")) {
-                 alert(`Uyarı: Özel font (NotoSans-Regular.ttf) bir yer tutucu dosya olarak algılandı veya çok küçük. ${fontWarningBase}`);
-            } else {
-                 alert(`Uyarı: Özel font yüklenemedi ('${fontLoadingError}'). ${fontWarningBase}`);
-            }
-        } else if (!fontDataRef.current) { 
-            alert(`Uyarı: Özel font (NotoSans) yüklenmedi veya bir yer tutucu olarak algılandı. ${fontWarningBase}`);
-        }
+        // Font not loaded, use default
+        fontNameToUse = "Helvetica";
+        doc.setFont(fontNameToUse, "normal");
       }
       
       const setFontWithStyle = (style: 'normal' | 'bold' | 'italic') => {

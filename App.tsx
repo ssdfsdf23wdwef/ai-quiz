@@ -1,5 +1,5 @@
 
-import React, { useEffect, useMemo, useCallback, useState }  from 'react';
+import React, { useEffect, useMemo, useCallback, useState } from 'react';
 import { AppConfig, AppState, AppSettings, SavedQuizData, QuizQuestion, QuizDifficulty, LearningObjective, Achievement, Course, PersonalizedQuizType, User } from './types';
 import { loadAppConfig, getConfig } from './services/configService';
 
@@ -48,9 +48,9 @@ const App: React.FC = () => {
 
   const {
     allSavedQuizzes, learningObjectives, allCourses, achievements, selectedQuizForViewing,
-    currentViewingCourseO, // Typo from previous state: currentViewingCourseForLO
-    isLoadingData: persistentDataLoading, loadInitialData,
-    addCourse, deleteCourse, saveQuizResult, viewQuizFromList, deleteQuizFromList,
+    currentViewingCourseForLO,
+    isLoadingData: persistentDataLoading,
+    addCourse, deleteCourse, saveQuizResult, deleteQuizFromList,
     addOrUpdateLOs, updateMultipleQuizzes, resetPersistentDataSelectionState,
     setSelectedQuizForViewingState, setCurrentViewingCourseForLOState,
   } = usePersistentData(currentUser, setRouterError, appConfig);
@@ -59,14 +59,11 @@ const App: React.FC = () => {
     currentQuizMode, currentPersonalizedQuizType, extractedPdfText, currentPdfName, numQuizQuestions,
     selectedDifficulty, isTimerEnabledForQuiz, identifiedNewSubtopics, confirmedExistingSubtopics,
     selectedSubtopics, currentQuizQuestions, currentUserAnswers, currentSelectedCourseId, 
-    isLoading: quizWorkflowLoading, setQuizWorkflowLoading, setQuizWorkflowError,
+    isLoading: quizWorkflowLoading,
     handleCourseSelectedForQuiz, handleNewCourseCreatedForQuiz, handlePersonalizedQuizTypeSelected,
     handlePdfTextExtracted, handleSubtopicsSelected, handleCancelSubtopicSelection,
     handlePreferencesSubmit, handleQuizSubmitAndUpdateLOs, resetQuizWorkflowState,
-    setCurrentQuizModeState, setCurrentSelectedCourseIdState,
-    setExtractedPdfTextState, setCurrentPdfNameState, setIdentifiedNewSubtopicsState,
-    setConfirmedExistingSubtopicsState, setSelectedSubtopicsState,
-    setCurrentQuizQuestionsState, setCurrentUserAnswersState,
+    setCurrentQuizModeState, setCurrentSelectedCourseIdState,setCurrentUserAnswersState,
   } = useQuizWorkflow(
     currentUser, appConfig, appSettings, learningObjectives, allCourses, addOrUpdateLOs, 
     setRouterError, navigateTo, currentSelectedCourseIdForFlow
@@ -118,10 +115,8 @@ const App: React.FC = () => {
   }, [routerStartQuizFlow, resetQuizWorkflowState, resetPersistentDataSelectionState, setCurrentQuizModeState, appSettings, setRouterError]);
 
   const setIsTimerEnabledForQuizStateProxy = useCallback((enabled: boolean) => {
-    // This function doesn't exist on useQuizWorkflow, it's part of its internal state.
-    // If you need to set it from App.tsx, you'd need to expose a setter from useQuizWorkflow.
-    // For now, assuming initial timer state is set by useAppSettings and quiz preferences.
-    console.warn("setIsTimerEnabledForQuizStateProxy called, but direct state update from App.tsx isn't standard for this hook structure. Timer is set via preferences.");
+    // Timer state is managed through quiz preferences, no direct state update needed here
+    // This is a placeholder function for the workflow's interface compatibility
   }, []);
 
 
@@ -529,7 +524,7 @@ const App: React.FC = () => {
       case 'viewing_course_learning_objectives':
         pageContent = <LearningObjectivesPage 
                           objectives={learningObjectives} 
-                          filterByCourse={appState === 'viewing_course_learning_objectives' ? currentViewingCourseO : null} // Corrected: currentViewingCourseForLO
+                          filterByCourse={appState === 'viewing_course_learning_objectives' ? currentViewingCourseForLO : null}
                           onBack={appState === 'viewing_course_learning_objectives' ? () => navigateTo('viewing_courses_list') : () => routerResetAppToDashboard(resetQuizWorkflowState, resetPersistentDataSelectionState)} 
                       />;
         break;

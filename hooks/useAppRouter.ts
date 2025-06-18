@@ -55,7 +55,11 @@ export const useAppRouter = () => {
 
   const setError = useCallback((error: string | Error, isDataOperationError: boolean = false) => {
     const messageString = error instanceof Error ? error.message : error;
-    console.error("AppRouter Hata:", messageString, error);
+    
+    // Don't log empty errors
+    if (messageString && messageString.trim()) {
+      console.error("AppRouter Hata:", messageString, error);
+    }
     
     let displayMessage = messageString;
     if (messageString.includes("Firebase:")) { // Basic check for Firebase specific errors
@@ -63,8 +67,12 @@ export const useAppRouter = () => {
     } else if (isDataOperationError) {
         displayMessage = `Veri işlemi sırasında bir hata oluştu: ${messageString}. Lütfen internet bağlantınızı kontrol edin ve tekrar deneyin.`;
     }
-    setErrorMessage(displayMessage);
-    setAppState('error');
+    
+    // Only set error state if there's actually an error message
+    if (displayMessage && displayMessage.trim()) {
+      setErrorMessage(displayMessage);
+      setAppState('error');
+    }
     setIsLoading(false);
     setAuthLoading(false); 
   }, []);
