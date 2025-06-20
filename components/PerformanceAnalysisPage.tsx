@@ -11,14 +11,14 @@ interface PerformanceAnalysisPageProps {
 }
 
 const StatCard: React.FC<{ title: string; value: string | number; icon: string; iconColorClass?: string, iconBgClass?: string, subValue?: string }> = React.memo(({ title, value, icon, iconColorClass = 'text-primary-600 dark:text-primary-400', iconBgClass = 'bg-primary-100 dark:bg-primary-500/10', subValue }) => (
-  <div className="bg-white dark:bg-secondary-800 p-5 rounded-xl shadow-lg flex items-center space-x-4 ring-1 ring-gray-200 dark:ring-secondary-700/50 min-h-[100px]">
-    <div className={`p-3.5 rounded-lg ${iconBgClass} ${iconColorClass} self-start mt-1`}>
+  <div className="bg-white dark:bg-secondary-800 p-5 rounded-xl shadow-lg flex items-center space-x-4 ring-1 ring-gray-200 dark:ring-secondary-700/50 min-h-[100px] hover:shadow-xl hover:ring-primary-200 dark:hover:ring-primary-700/50 transition-all duration-300 group">
+    <div className={`p-3.5 rounded-lg ${iconBgClass} ${iconColorClass} self-start mt-1 group-hover:scale-110 transition-transform duration-300`}>
       <i className={`${icon} text-3xl`}></i>
     </div>
     <div className="flex-grow">
-      <p className="text-sm text-gray-500 dark:text-gray-400">{title}</p>
-      <p className="text-2xl font-bold text-gray-900 dark:text-white">{value}</p>
-      {subValue && <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{subValue}</p>}
+      <p className="text-sm text-gray-500 dark:text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors">{title}</p>
+      <p className="text-2xl font-bold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">{value}</p>
+      {subValue && <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors">{subValue}</p>}
     </div>
   </div>
 ));
@@ -42,21 +42,56 @@ const PerformanceAnalysisPage: React.FC<PerformanceAnalysisPageProps> = ({
 }) => {
   const [selectedCourseId, setSelectedCourseId] = useState<string>('all');
   const [selectedQuizTypeFilter, setSelectedQuizTypeFilter] = useState<string>('all');
+  const [selectedTimeFilter, setSelectedTimeFilter] = useState<string>('all');
 
   const filteredQuizzes = useMemo(() => {
     return (savedQuizzes || []).filter(quiz => {
+      // Course filter
       const courseMatch = selectedCourseId === 'all' || quiz.courseId === selectedCourseId;
       if (!courseMatch) return false;
 
-      if (selectedQuizTypeFilter === 'all') return true;
-      if (selectedQuizTypeFilter === 'quick') return quiz.quizType === 'Hızlı Sınav';
-      if (selectedQuizTypeFilter === 'personalized_all') return quiz.quizType === 'Kişiselleştirilmiş Sınav';
-      if (selectedQuizTypeFilter === 'personalized_comprehensive') return quiz.quizType === 'Kişiselleştirilmiş Sınav' && quiz.personalizedQuizType === 'comprehensive';
-      if (selectedQuizTypeFilter === 'personalized_new_topics') return quiz.quizType === 'Kişiselleştirilmiş Sınav' && quiz.personalizedQuizType === 'new_topics';
-      if (selectedQuizTypeFilter === 'personalized_weak_topics') return quiz.quizType === 'Kişiselleştirilmiş Sınav' && quiz.personalizedQuizType === 'weak_topics';
+      // Quiz type filter
+      if (selectedQuizTypeFilter !== 'all') {
+        if (selectedQuizTypeFilter === 'quick' && quiz.quizType !== 'Hızlı Sınav') return false;
+        if (selectedQuizTypeFilter === 'personalized_all' && quiz.quizType !== 'Kişiselleştirilmiş Sınav') return false;
+        if (selectedQuizTypeFilter === 'personalized_comprehensive' && 
+            (quiz.quizType !== 'Kişiselleştirilmiş Sınav' || quiz.personalizedQuizType !== 'comprehensive')) return false;
+        if (selectedQuizTypeFilter === 'personalized_new_topics' && 
+            (quiz.quizType !== 'Kişiselleştirilmiş Sınav' || quiz.personalizedQuizType !== 'new_topics')) return false;
+        if (selectedQuizTypeFilter === 'personalized_weak_topics' && 
+            (quiz.quizType !== 'Kişiselleştirilmiş Sınav' || quiz.personalizedQuizType !== 'weak_topics')) return false;
+      }
+
+      // Time filter
+      if (selectedTimeFilter !== 'all') {
+        const now = Date.now();
+        const quizDate = quiz.savedAt;
+        const timeDiff = now - quizDate;
+        
+        switch (selectedTimeFilter) {
+          case 'last_hour':
+            if (timeDiff > 60 * 60 * 1000) return false; // 1 hour
+            break;
+          case 'last_day':
+            if (timeDiff > 24 * 60 * 60 * 1000) return false; // 1 day
+            break;
+          case 'last_3_days':
+            if (timeDiff > 3 * 24 * 60 * 60 * 1000) return false; // 3 days
+            break;
+          case 'last_week':
+            if (timeDiff > 7 * 24 * 60 * 60 * 1000) return false; // 1 week
+            break;
+          case 'last_month':
+            if (timeDiff > 30 * 24 * 60 * 60 * 1000) return false; // 1 month
+            break;
+          default:
+            break;
+        }
+      }
+
       return true;
     });
-  }, [savedQuizzes, selectedCourseId, selectedQuizTypeFilter]);
+  }, [savedQuizzes, selectedCourseId, selectedQuizTypeFilter, selectedTimeFilter]);
 
   const filteredLearningObjectives = useMemo(() => {
     if (selectedCourseId === 'all') return learningObjectives || [];
@@ -65,22 +100,48 @@ const PerformanceAnalysisPage: React.FC<PerformanceAnalysisPageProps> = ({
 
   const overallStats = useMemo(() => {
     if (filteredQuizzes.length === 0) {
-      return { totalQuizzes: 0, averageScore: 0, highestScore: 0, lowestScore: 0 };
+      return { 
+        totalQuizzes: 0, 
+        averageScore: 0, 
+        highestScore: 0, 
+        lowestScore: 0,
+        totalQuestionsAnswered: 0,
+        totalCorrectAnswers: 0,
+        passedQuizzes: 0,
+        failedQuizzes: 0
+      };
     }
+    
     let totalScoreSum = 0;
     let highestScore = 0;
     let lowestScore = 100;
+    let totalQuestionsAnswered = 0;
+    let totalCorrectAnswers = 0;
+    let passedQuizzes = 0;
+    let failedQuizzes = 0;
+    
     filteredQuizzes.forEach(quiz => {
       const percentage = quiz.totalQuestions > 0 ? (quiz.score / quiz.totalQuestions) * 100 : 0;
       totalScoreSum += percentage;
+      totalQuestionsAnswered += quiz.totalQuestions;
+      totalCorrectAnswers += quiz.score;
+      
+      if (percentage >= 60) passedQuizzes++;
+      else failedQuizzes++;
+      
       if (percentage > highestScore) highestScore = percentage;
       if (percentage < lowestScore) lowestScore = percentage;
     });
+    
     return {
       totalQuizzes: filteredQuizzes.length,
       averageScore: Math.round(totalScoreSum / filteredQuizzes.length),
       highestScore: Math.round(highestScore),
       lowestScore: Math.round(lowestScore === 100 ? Math.min(...filteredQuizzes.map(q => q.totalQuestions > 0 ? (q.score/q.totalQuestions)*100 : 0)) : lowestScore),
+      totalQuestionsAnswered,
+      totalCorrectAnswers,
+      passedQuizzes,
+      failedQuizzes
     };
   }, [filteredQuizzes]);
 
@@ -222,6 +283,15 @@ const PerformanceAnalysisPage: React.FC<PerformanceAnalysisPageProps> = ({
     { value: 'personalized_weak_topics', label: 'Kişisel - Zayıf Konular' },
   ];
 
+  const timeFilterOptions = [
+    { value: 'all', label: 'Tüm Zamanlar', icon: 'fas fa-infinity' },
+    { value: 'last_hour', label: 'Son 1 Saat', icon: 'fas fa-clock' },
+    { value: 'last_day', label: 'Son 1 Gün', icon: 'fas fa-calendar-day' },
+    { value: 'last_3_days', label: 'Son 3 Gün', icon: 'fas fa-calendar-days' },
+    { value: 'last_week', label: 'Son 1 Hafta', icon: 'fas fa-calendar-week' },
+    { value: 'last_month', label: 'Son 1 Ay', icon: 'fas fa-calendar' },
+  ];
+
   const personalizedQuizTypeLabels: Record<PersonalizedQuizType, string> = {
     comprehensive: "Kapsamlı",
     new_topics: "Yeni Konular",
@@ -248,15 +318,21 @@ const PerformanceAnalysisPage: React.FC<PerformanceAnalysisPageProps> = ({
 
       {/* Filters Card */}
       <section className="mb-6 bg-white dark:bg-secondary-800 p-4 sm:p-5 rounded-xl shadow-lg ring-1 ring-gray-200 dark:ring-secondary-700/50">
-        <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-3">Filtreler</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center">
+          <i className="fas fa-filter mr-2 text-primary-600 dark:text-primary-400"></i>
+          Filtreler
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           <div>
-            <label htmlFor="courseFilter" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Ders Seçin</label>
+            <label htmlFor="courseFilter" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <i className="fas fa-book mr-1.5 text-primary-600 dark:text-primary-400"></i>
+              Ders Seçin
+            </label>
             <select
               id="courseFilter"
               value={selectedCourseId}
               onChange={(e) => setSelectedCourseId(e.target.value)}
-              className="w-full p-2.5 bg-gray-50 dark:bg-secondary-700 border border-gray-300 dark:border-secondary-600 rounded-lg text-gray-800 dark:text-gray-200 focus:ring-primary-500 focus:border-primary-500"
+              className="w-full p-2.5 bg-gray-50 dark:bg-secondary-700 border border-gray-300 dark:border-secondary-600 rounded-lg text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
             >
               <option value="all">Tüm Dersler</option>
               {allCourses.map(course => (
@@ -265,17 +341,64 @@ const PerformanceAnalysisPage: React.FC<PerformanceAnalysisPageProps> = ({
             </select>
           </div>
           <div>
-            <label htmlFor="quizTypeFilter" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Sınav Türü Seçin</label>
+            <label htmlFor="quizTypeFilter" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <i className="fas fa-graduation-cap mr-1.5 text-primary-600 dark:text-primary-400"></i>
+              Sınav Türü Seçin
+            </label>
             <select
               id="quizTypeFilter"
               value={selectedQuizTypeFilter}
               onChange={(e) => setSelectedQuizTypeFilter(e.target.value)}
-              className="w-full p-2.5 bg-gray-50 dark:bg-secondary-700 border border-gray-300 dark:border-secondary-600 rounded-lg text-gray-800 dark:text-gray-200 focus:ring-primary-500 focus:border-primary-500"
+              className="w-full p-2.5 bg-gray-50 dark:bg-secondary-700 border border-gray-300 dark:border-secondary-600 rounded-lg text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
             >
               {quizTypeFilterOptions.map(opt => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}
             </select>
+          </div>
+          <div>
+            <label htmlFor="timeFilter" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <i className="fas fa-clock mr-1.5 text-primary-600 dark:text-primary-400"></i>
+              Zaman Aralığı
+            </label>
+            <select
+              id="timeFilter"
+              value={selectedTimeFilter}
+              onChange={(e) => setSelectedTimeFilter(e.target.value)}
+              className="w-full p-2.5 bg-gray-50 dark:bg-secondary-700 border border-gray-300 dark:border-secondary-600 rounded-lg text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+            >
+              {timeFilterOptions.map(opt => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+        
+        {/* Filter Summary */}
+        <div className="mt-4 pt-3 border-t border-gray-200 dark:border-secondary-600">
+          <div className="flex flex-wrap gap-2 items-center">
+            <span className="text-sm text-gray-600 dark:text-gray-400">Aktif Filtreler:</span>
+            {selectedCourseId !== 'all' && (
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300">
+                <i className="fas fa-book mr-1"></i>
+                {allCourses.find(c => c.id === selectedCourseId)?.name || 'Ders'}
+              </span>
+            )}
+            {selectedQuizTypeFilter !== 'all' && (
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+                <i className="fas fa-graduation-cap mr-1"></i>
+                {quizTypeFilterOptions.find(opt => opt.value === selectedQuizTypeFilter)?.label || 'Sınav Türü'}
+              </span>
+            )}
+            {selectedTimeFilter !== 'all' && (
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
+                <i className={`${timeFilterOptions.find(opt => opt.value === selectedTimeFilter)?.icon || 'fas fa-clock'} mr-1`}></i>
+                {timeFilterOptions.find(opt => opt.value === selectedTimeFilter)?.label || 'Zaman'}
+              </span>
+            )}
+            {selectedCourseId === 'all' && selectedQuizTypeFilter === 'all' && selectedTimeFilter === 'all' && (
+              <span className="text-xs text-gray-500 dark:text-gray-400 italic">Tüm veriler gösteriliyor</span>
+            )}
           </div>
         </div>
       </section>
@@ -301,18 +424,81 @@ const PerformanceAnalysisPage: React.FC<PerformanceAnalysisPageProps> = ({
         <div className="flex-grow overflow-y-auto space-y-8 custom-scrollbar pr-1 pb-4">
           {/* Overall Stats */}
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 px-1">Genel Filtrelenmiş İstatistikler</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              <StatCard title="Toplam Sınav" value={overallStats.totalQuizzes} icon="fas fa-graduation-cap" />
-              <StatCard title="Ortalama Skor" value={`${overallStats.averageScore}%`} icon="fas fa-percentage" iconColorClass="text-blue-600 dark:text-blue-400" iconBgClass="bg-blue-100 dark:bg-blue-500/10"/>
-              <StatCard title="En Yüksek Skor" value={`${overallStats.highestScore}%`} icon="fas fa-arrow-trend-up" iconColorClass="text-green-600 dark:text-green-400" iconBgClass="bg-green-100 dark:bg-green-500/10" />
-              <StatCard title="En Düşük Skor" value={`${overallStats.lowestScore}%`} icon="fas fa-arrow-trend-down" iconColorClass="text-red-600 dark:text-red-400" iconBgClass="bg-red-100 dark:bg-red-500/10" />
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 px-1 flex items-center">
+              <i className="fas fa-chart-line mr-2 text-primary-600 dark:text-primary-400"></i>
+              Genel Filtrelenmiş İstatistikler
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              <StatCard 
+                title="Toplam Sınav" 
+                value={overallStats.totalQuizzes} 
+                icon="fas fa-graduation-cap" 
+                iconColorClass="text-primary-600 dark:text-primary-400" 
+                iconBgClass="bg-primary-100 dark:bg-primary-500/10"
+              />
+              <StatCard 
+                title="Ortalama Skor" 
+                value={`${overallStats.averageScore}%`} 
+                icon="fas fa-percentage" 
+                iconColorClass="text-blue-600 dark:text-blue-400" 
+                iconBgClass="bg-blue-100 dark:bg-blue-500/10"
+              />
+              <StatCard 
+                title="En Yüksek Skor" 
+                value={`${overallStats.highestScore}%`} 
+                icon="fas fa-arrow-trend-up" 
+                iconColorClass="text-green-600 dark:text-green-400" 
+                iconBgClass="bg-green-100 dark:bg-green-500/10" 
+              />
+              <StatCard 
+                title="En Düşük Skor" 
+                value={`${overallStats.lowestScore}%`} 
+                icon="fas fa-arrow-trend-down" 
+                iconColorClass="text-red-600 dark:text-red-400" 
+                iconBgClass="bg-red-100 dark:bg-red-500/10" 
+              />
+              <StatCard 
+                title="Toplam Soru" 
+                value={overallStats.totalQuestionsAnswered} 
+                icon="fas fa-question-circle" 
+                iconColorClass="text-indigo-600 dark:text-indigo-400" 
+                iconBgClass="bg-indigo-100 dark:bg-indigo-500/10"
+                subValue={`${overallStats.totalCorrectAnswers} doğru`}
+              />
+              <StatCard 
+                title="Doğruluk Oranı" 
+                value={overallStats.totalQuestionsAnswered > 0 ? 
+                  `${Math.round((overallStats.totalCorrectAnswers / overallStats.totalQuestionsAnswered) * 100)}%` : '0%'} 
+                icon="fas fa-bullseye" 
+                iconColorClass="text-purple-600 dark:text-purple-400" 
+                iconBgClass="bg-purple-100 dark:bg-purple-500/10"
+                subValue={`${overallStats.totalCorrectAnswers}/${overallStats.totalQuestionsAnswered}`}
+              />
+              <StatCard 
+                title="Başarılı Sınav" 
+                value={overallStats.passedQuizzes} 
+                icon="fas fa-check-circle" 
+                iconColorClass="text-emerald-600 dark:text-emerald-400" 
+                iconBgClass="bg-emerald-100 dark:bg-emerald-500/10"
+                subValue={`≥60% (${overallStats.totalQuizzes > 0 ? Math.round((overallStats.passedQuizzes / overallStats.totalQuizzes) * 100) : 0}%)`}
+              />
+              <StatCard 
+                title="Başarısız Sınav" 
+                value={overallStats.failedQuizzes} 
+                icon="fas fa-times-circle" 
+                iconColorClass="text-orange-600 dark:text-orange-400" 
+                iconBgClass="bg-orange-100 dark:bg-orange-500/10"
+                subValue={`<60% (${overallStats.totalQuizzes > 0 ? Math.round((overallStats.failedQuizzes / overallStats.totalQuizzes) * 100) : 0}%)`}
+              />
             </div>
           </section>
 
           {/* Quiz Type Detailed Stats */}
           <section className="bg-white dark:bg-secondary-800 p-5 sm:p-6 rounded-xl shadow-lg ring-1 ring-gray-200 dark:ring-secondary-700/50">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-5">Sınav Türü Detayları (Filtrelenmiş)</h2>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-5 flex items-center">
+              <i className="fas fa-layer-group mr-2 text-primary-600 dark:text-primary-400"></i>
+              Sınav Türü Detayları (Filtrelenmiş)
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
               {quizTypeStats.quick.count > 0 && (
                 <StatCard 
@@ -358,7 +544,10 @@ const PerformanceAnalysisPage: React.FC<PerformanceAnalysisPageProps> = ({
           {/* Learning Objectives Stats */}
            { (selectedCourseId !== 'all' || learningObjectiveStats.totalLOs > 0) && (
             <section className="bg-white dark:bg-secondary-800 p-5 sm:p-6 rounded-xl shadow-lg ring-1 ring-gray-200 dark:ring-secondary-700/50">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-5">Öğrenme Hedefleri Analizi {selectedCourseId !== 'all' && allCourses.find(c=>c.id === selectedCourseId) ? `(${allCourses.find(c=>c.id === selectedCourseId)?.name})` : '(Tüm Dersler)'}</h2>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-5 flex items-center">
+                  <i className="fas fa-target mr-2 text-primary-600 dark:text-primary-400"></i>
+                  Öğrenme Hedefleri Analizi {selectedCourseId !== 'all' && allCourses.find(c=>c.id === selectedCourseId) ? `(${allCourses.find(c=>c.id === selectedCourseId)?.name})` : '(Tüm Dersler)'}
+                </h2>
                 {learningObjectiveStats.totalLOs > 0 ? (
                 <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
                     <div className="w-full md:w-1/2">
@@ -399,30 +588,64 @@ const PerformanceAnalysisPage: React.FC<PerformanceAnalysisPageProps> = ({
 
           {/* Score Timeline Chart */}
           <section className="bg-white dark:bg-secondary-800 p-5 sm:p-6 rounded-xl shadow-lg ring-1 ring-gray-200 dark:ring-secondary-700/50">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">Sınav Skorları Zaman Çizelgesi (Filtrelenmiş)</h2>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6 flex items-center">
+              <i className="fas fa-chart-area mr-2 text-primary-600 dark:text-primary-400"></i>
+              Sınav Skorları Zaman Çizelgesi (Filtrelenmiş)
+            </h2>
             {sortedQuizzesForChart.length > 0 ? (
-              <div className="flex items-end space-x-1.5 h-72 bg-gray-100 dark:bg-secondary-700/30 p-4 rounded-lg overflow-x-auto custom-scrollbar-chart">
-                {sortedQuizzesForChart.map((quiz) => {
-                  const percentage = quiz.totalQuestions > 0 ? (quiz.score / quiz.totalQuestions) * 100 : 0;
-                  const barHeight = Math.max(5, percentage); 
-                  const { color: barColor, typeLabel, specificTypeLabel } = getScoreColorAndType(quiz);
-                  const tooltipText = `${quiz.pdfName || (quiz.courseName ? `${quiz.courseName} Sınavı` : 'Sınav')}\nTür: ${typeLabel}${specificTypeLabel ? ' - ' + specificTypeLabel : ''}\nTarih: ${formatDate(quiz.savedAt, true)}\nSkor: ${Math.round(percentage)}% (${quiz.score}/${quiz.totalQuestions})`;
-                  return (
-                    <div key={quiz.id} className="flex flex-col items-center flex-shrink-0 w-12 group relative" title={tooltipText}>
-                      <div
-                        className={`w-8 rounded-t-md transition-all duration-300 ease-out ${barColor} group-hover:opacity-75`}
-                        style={{ height: `${barHeight}%` }}
-                        aria-label={`Sınav skoru: ${Math.round(percentage)}%`}
-                      ></div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400 mt-1.5 whitespace-nowrap group-hover:font-semibold group-hover:text-primary-600 dark:group-hover:text-primary-300">
-                        {formatDate(quiz.savedAt)}
+              <div className="space-y-4">
+                {/* Chart Info */}
+                <div className="bg-gray-50 dark:bg-secondary-700/30 p-3 rounded-lg">
+                  <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
+                    <span className="flex items-center">
+                      <i className="fas fa-info-circle mr-1.5 text-primary-600 dark:text-primary-400"></i>
+                      <strong>{sortedQuizzesForChart.length}</strong> sınav gösteriliyor
+                    </span>
+                    {selectedTimeFilter !== 'all' && (
+                      <span className="flex items-center">
+                        <i className="fas fa-clock mr-1.5 text-green-600 dark:text-green-400"></i>
+                        {timeFilterOptions.find(opt => opt.value === selectedTimeFilter)?.label}
+                      </span>
+                    )}
+                    <span className="flex items-center">
+                      <i className="fas fa-calendar-alt mr-1.5 text-blue-600 dark:text-blue-400"></i>
+                      {formatDate(Math.min(...sortedQuizzesForChart.map(q => q.savedAt)))} - {formatDate(Math.max(...sortedQuizzesForChart.map(q => q.savedAt)))}
+                    </span>
+                  </div>
+                </div>
+                
+                {/* Chart */}
+                <div className="flex items-end space-x-1.5 h-72 bg-gray-100 dark:bg-secondary-700/30 p-4 rounded-lg overflow-x-auto custom-scrollbar-chart">
+                  {sortedQuizzesForChart.map((quiz) => {
+                    const percentage = quiz.totalQuestions > 0 ? (quiz.score / quiz.totalQuestions) * 100 : 0;
+                    const barHeight = Math.max(5, percentage); 
+                    const { color: barColor, typeLabel, specificTypeLabel } = getScoreColorAndType(quiz);
+                    const tooltipText = `${quiz.pdfName || (quiz.courseName ? `${quiz.courseName} Sınavı` : 'Sınav')}\nTür: ${typeLabel}${specificTypeLabel ? ' - ' + specificTypeLabel : ''}\nTarih: ${formatDate(quiz.savedAt, true)}\nSkor: ${Math.round(percentage)}% (${quiz.score}/${quiz.totalQuestions})`;
+                    return (
+                      <div key={quiz.id} className="flex flex-col items-center flex-shrink-0 w-12 group relative" title={tooltipText}>
+                        <div
+                          className={`w-8 rounded-t-md transition-all duration-300 ease-out ${barColor} group-hover:opacity-75 group-hover:scale-105`}
+                          style={{ height: `${barHeight}%` }}
+                          aria-label={`Sınav skoru: ${Math.round(percentage)}%`}
+                        ></div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1.5 whitespace-nowrap group-hover:font-semibold group-hover:text-primary-600 dark:group-hover:text-primary-300 transition-colors">
+                          {formatDate(quiz.savedAt)}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
             ) : (
-              <p className="text-gray-500 dark:text-gray-400">Zaman çizelgesi için filtrelenmiş veri yok.</p>
+              <div className="text-center py-12">
+                <i className="fas fa-chart-line text-4xl text-gray-400 dark:text-gray-600 mb-4"></i>
+                <p className="text-gray-500 dark:text-gray-400 text-lg">Zaman çizelgesi için filtrelenmiş veri yok.</p>
+                {selectedTimeFilter !== 'all' && (
+                  <p className="text-gray-400 dark:text-gray-500 text-sm mt-2">
+                    Daha geniş bir zaman aralığı seçmeyi deneyin.
+                  </p>
+                )}
+              </div>
             )}
           </section>
         </div>

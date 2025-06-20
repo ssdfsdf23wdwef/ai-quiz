@@ -87,7 +87,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     { icon: 'fas fa-clipboard-list', text: 'Sınavlarım',  appStateLink: ['viewing_quiz_list', 'viewing_specific_saved_result'], onClick: onNavigateToQuizList, requiresAuth: true },
     { icon: 'fas fa-bullseye', text: 'Öğrenme Hedeflerim', appStateLink: ['viewing_learning_objectives', 'viewing_course_learning_objectives'], onClick: onNavigateToLearningObjectives, requiresAuth: true },
     { icon: 'fas fa-chart-line', text: 'Performans Analizi', appStateLink: 'viewing_performance_analysis', onClick: onNavigateToPerformanceAnalysis, requiresAuth: true },
-    { icon: 'fas fa-trophy', text: 'Başarılarım', appStateLink: 'viewing_achievements', onClick: onNavigateToAchievements, requiresAuth: true },
+    { icon: 'fas fa-trophy', text: 'Başarılarım', appStateLink: 'viewing_achievements', onClick: undefined, requiresAuth: true },
   ];
 
   const getInitials = (name?: string | null, email?: string | null): string => {
@@ -186,16 +186,6 @@ const Sidebar: React.FC<SidebarProps> = ({
               text="Ayarlar"
               isActive={appState === 'viewing_settings'}
               onClick={onNavigateToSettings}
-              isCollapsed={isCollapsed}
-              isBottom={true}
-              showBadge={false}
-            />
-            
-            {/* Logout Item */}
-            <SidebarItem
-              icon="fas fa-sign-out-alt"
-              text="Çıkış Yap"
-              onClick={onLogout}
               isCollapsed={isCollapsed}
               isBottom={true}
               showBadge={false}
