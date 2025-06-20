@@ -377,7 +377,6 @@ const PerformanceAnalysisPage: React.FC<PerformanceAnalysisPageProps> = ({
         {/* Filter Summary */}
         <div className="mt-4 pt-3 border-t border-gray-200 dark:border-secondary-600">
           <div className="flex flex-wrap gap-2 items-center">
-            <span className="text-sm text-gray-600 dark:text-gray-400">Aktif Filtreler:</span>
             {selectedCourseId !== 'all' && (
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300">
                 <i className="fas fa-book mr-1"></i>
@@ -397,7 +396,7 @@ const PerformanceAnalysisPage: React.FC<PerformanceAnalysisPageProps> = ({
               </span>
             )}
             {selectedCourseId === 'all' && selectedQuizTypeFilter === 'all' && selectedTimeFilter === 'all' && (
-              <span className="text-xs text-gray-500 dark:text-gray-400 italic">Tüm veriler gösteriliyor</span>
+              <span className="text-gray-500 dark:text-gray-400"></span>
             )}
           </div>
         </div>

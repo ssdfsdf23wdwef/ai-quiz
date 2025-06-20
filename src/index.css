@@ -1,6 +1,37 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/* Custom fonts */
+@font-face {
+  font-family: 'Noto Sans';
+  src: url('/fonts/NotoSans-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* Tailwind theme configuration */
+@theme {
+  --font-family-sans: 'Noto Sans', 'Inter', system-ui, sans-serif;
+  --color-primary-50: #f0f9ff;
+  --color-primary-100: #e0f2fe;
+  --color-primary-200: #bae6fd;
+  --color-primary-300: #7dd3fc;
+  --color-primary-400: #38bdf8;
+  --color-primary-500: #0ea5e9;
+  --color-primary-600: #0284c7;
+  --color-primary-700: #0369a1;
+  --color-primary-800: #075985;
+  --color-primary-900: #0c4a6e;
+  --color-secondary-50: #f8fafc;
+  --color-secondary-100: #f1f5f9;
+  --color-secondary-200: #e2e8f0;
+  --color-secondary-300: #cbd5e1;
+  --color-secondary-400: #94a3b8;
+  --color-secondary-500: #64748b;
+  --color-secondary-600: #475569;
+  --color-secondary-700: #334155;
+  --color-secondary-800: #1e293b;
+  --color-secondary-900: #0f172a;
+}
 
 /* Custom base styles */
 @layer base {
@@ -21,5 +52,18 @@
   
   .card {
     @apply bg-white dark:bg-secondary-800 rounded-lg shadow-sm border border-secondary-200 dark:border-secondary-700;
+  }
+
+  /* Main page responsive improvements */
+  .dashboard-container {
+    @apply min-h-full w-full;
+  }
+  
+  .feature-grid {
+    @apply grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8;
+  }
+  
+  .feature-card {
+    @apply transform transition-all duration-200 hover:scale-[1.02] hover:shadow-2xl;
   }
 }
