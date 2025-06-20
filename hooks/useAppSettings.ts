@@ -9,10 +9,7 @@ export const useAppSettings = (appConfig: AppConfig | null) => {
 
   useEffect(() => {
     if (!appConfig) {
-      // Config not loaded yet, or failed to load.
-      // We might already have settings from a previous session, or we might need to wait.
-      // For now, if appConfig is null, we assume we might still be in a loading phase or using defaults.
-      // If settings were previously loaded from localStorage, they might persist until config provides new defaults.
+
       return;
     }
     

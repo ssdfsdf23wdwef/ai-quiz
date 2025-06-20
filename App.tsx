@@ -1,6 +1,5 @@
 
-import React, { useEffect, useMemo, useCallback, useState } from 'react';
-import { AppConfig, AppState, AppSettings, SavedQuizData, QuizQuestion, QuizDifficulty, LearningObjective, Achievement, Course, PersonalizedQuizType, User } from './types';
+import React, { useEffect, useMemo, useCallback} from 'react';
 import { loadAppConfig, getConfig } from './services/configService';
 
 import PdfUploader from './components/PdfUploader';
@@ -36,12 +35,12 @@ import { signOutUser } from './services/authService';
 const App: React.FC = () => {
   const {
     appState, isLoading: isRouterLoading, errorMessage, isSidebarCollapsed, currentUser, authLoading, authError, authMessage,
-    currentQuizModeForFlow, currentPersonalizedQuizTypeForFlow, currentSelectedCourseIdForFlow, currentViewingCourseForLOForFlow,
-    navigateTo, setLoading: setRouterLoading, setError: setRouterError, clearError, toggleSidebar, startQuizFlow: routerStartQuizFlow,
+   currentSelectedCourseIdForFlow,
+    navigateTo, setLoading: setRouterLoading, setError: setRouterError, toggleSidebar, startQuizFlow: routerStartQuizFlow,
     resetAppToDashboard: routerResetAppToDashboard,
-    appConfig, configLoading, initializeConfig, setAppConfigValue, setConfigLoadingStatus,
+    appConfig, configLoading, initializeConfig, 
     setAuthLoadingState, setAuthErrorState, setAuthMessageState,
-    setCurrentSelectedCourseIdForFlowState, setCurrentPersonalizedQuizTypeForFlowState, setCurrentViewingCourseForLOForFlowState,
+     setCurrentPersonalizedQuizTypeForFlowState,
   } = useAppRouter();
 
   const { appSettings, updateAppSettings, isLoading: settingsLoading, theme } = useAppSettings(appConfig);
@@ -51,7 +50,7 @@ const App: React.FC = () => {
     currentViewingCourseForLO,
     isLoadingData: persistentDataLoading,
     addCourse, deleteCourse, saveQuizResult, deleteQuizFromList,
-    addOrUpdateLOs, updateMultipleQuizzes, resetPersistentDataSelectionState,
+    addOrUpdateLOs, resetPersistentDataSelectionState,
     setSelectedQuizForViewingState, setCurrentViewingCourseForLOState,
   } = usePersistentData(currentUser, setRouterError, appConfig);
 
@@ -219,7 +218,7 @@ const App: React.FC = () => {
     },
     {
       icon: 'fas fa-user-graduate',
-      tag: { text: 'Premium', colorClass: 'text-pink-800 dark:text-pink-300', bgColorClass: 'bg-pink-200 dark:bg-pink-500/30' },
+      tag: { text: '', colorClass: 'text-pink-800 dark:text-pink-300', bgColorClass: 'bg-pink-200 dark:bg-pink-500/30' },
       title: 'Kişiselleştirilmiş Sınav',
       description: 'Öğrenme hedeflerinize, zayıf olduğunuz konulara veya belgedeki yeni konulara odaklanan özel sınavlar oluşturun. Gelişiminizi takip edin.',
       buttonText: 'Kişisel Sınav Oluştur',
@@ -298,8 +297,10 @@ const App: React.FC = () => {
                     onNavigateToProfile={() => navigateTo('profile')}
                     onLogout={handleLogout}
                 />}
-                <main className="flex-grow p-1 sm:p-2 md:p-4 lg:p-6 overflow-y-auto flex items-center justify-center">
-                    <LoadingSpinner text="Veriler yükleniyor..." />
+                <main className="flex-grow overflow-y-auto flex items-center justify-center">
+                    <div className="p-4 sm:p-6 lg:p-8">
+                        <LoadingSpinner text="Veriler yükleniyor..." />
+                    </div>
                 </main>
             </div>
         );
@@ -612,8 +613,10 @@ const App: React.FC = () => {
                 onLogout={handleLogout}
             />
         )}
-        <main className={`flex-grow p-1 sm:p-2 md:p-4 lg:p-6 overflow-y-auto transition-all duration-300 ease-in-out ${isSidebarCollapsed && currentUser ? 'ml-20' : !isSidebarCollapsed && currentUser ? 'ml-72' : 'ml-0'} app-main-content`}>
-          {overallLoading && appState !== 'error' && !authError && !authMessage ? <LoadingSpinner text="Yükleniyor..." /> : pageContent}
+        <main className={`flex-grow overflow-y-auto transition-all duration-300 ease-in-out ${isSidebarCollapsed && currentUser ? 'ml-20' : !isSidebarCollapsed && currentUser ? 'ml-72' : 'ml-0'} app-main-content`}>
+          <div className="min-h-full p-4 sm:p-6 lg:p-8">
+            {overallLoading && appState !== 'error' && !authError && !authMessage ? <LoadingSpinner text="Yükleniyor..." /> : pageContent}
+          </div>
         </main>
         <style>{`
             .app-main-content {
