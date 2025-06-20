@@ -1,4 +1,3 @@
-
 import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
 import { QuizQuestion, GroundingChunk, QuizDifficulty, PersonalizedQuizType } from '../types';
 import { getConfig } from './configService'; // Import config service
@@ -73,7 +72,7 @@ export const identifySubtopicsFromText = async (
       }
     });
 
-    const rawResponseText = response.text.trim();
+    const rawResponseText = response.text?.trim() || "";
 
     if (rawResponseText === "Konu tespit edilemedi.") {
       return {
@@ -97,6 +96,13 @@ export const identifySubtopicsFromText = async (
           }
         }
       }
+    }
+    
+    // Maksimum alt konu sayısını sınırla
+    const maxSubtopics = appConfig.quizDefaults.maxSubtopicsPerDocument || 10;
+    if (parsedSubtopics.length > maxSubtopics) {
+      console.log(`Alt konu sayısı ${parsedSubtopics.length}, maksimum ${maxSubtopics} ile sınırlandırılıyor`);
+      parsedSubtopics.splice(maxSubtopics); // İlk 10'unu al
     }
     
     return {
@@ -247,30 +253,62 @@ export const generateQuizFromText = async (
       }
     });
 
-    let jsonStr = response.text.trim();
+    let jsonStr = response.text?.trim() || "";
+    
+    // Debug logging
+    console.log("Gemini Model Response Length:", jsonStr.length);
+    console.log("Gemini Model Response Preview:", jsonStr.substring(0, 200) + "...");
+
+    if (!jsonStr) {
+      throw new Error("Gemini'den boş yanıt alındı. Model metnin özünü yakalayamadığı için soru oluşturamayabilir.");
+    }
     const fenceRegex = /^```(?:json)?\s*\n?(.*?)\n?\s*```$/s;
     const match = jsonStr.match(fenceRegex);
     if (match && match[1]) {
       jsonStr = match[1].trim();
     }
 
-    const parsedData = JSON.parse(jsonStr);
+    let parsedData;
+    try {
+      parsedData = JSON.parse(jsonStr);
+    } catch (parseError) {
+      console.error("JSON Parse Error:", parseError);
+      console.error("Raw JSON String:", jsonStr);
+      throw new Error("Gemini'den alınan yanıt geçerli JSON formatında değil. Model beklenmedik bir format döndürmüş olabilir.");
+    }
 
-    if (!Array.isArray(parsedData) || (parsedData.length > 0 && !parsedData.every(q => isValidQuestion(q, numOptions)))) {
-      console.error("Invalid quiz data structure received:", parsedData);
-      throw new Error(`Oluşturulan sınav verisi beklenen formatta değil. Model, soruları, 'subtopic' alanını veya belirtilen ${numOptions} seçenek sayısını doğru formatta döndürmemiş olabilir.`);
+    // Enhanced validation
+    if (!Array.isArray(parsedData)) {
+      console.error("Response is not an array:", typeof parsedData, parsedData);
+      throw new Error("Gemini yanıtı beklenen dizi formatında değil. Model farklı bir yapı döndürmüş.");
     }
-    
+
+    if (parsedData.length === 0) {
+      console.warn("Gemini sıfır soru döndürdü. Prompt veya metin içeriği yetersiz olabilir.");
+      throw new Error("Model hiç soru oluşturamadı. Metin içeriği yetersiz olabilir veya seçilen konular çok spesifik olabilir.");
+    }
+
+    // Question validation with detailed error reporting
+    const validationErrors: string[] = [];
+    parsedData.forEach((q, index) => {
+      if (!isValidQuestion(q, numOptions)) {
+        validationErrors.push(`Soru ${index + 1}: ${getQuestionValidationError(q, numOptions)}`);
+      }
+    });
+
+    if (validationErrors.length > 0) {
+      console.error("Question validation errors:", validationErrors);
+      throw new Error(`Oluşturulan sorularda format hataları var:\n${validationErrors.join('\n')}`);
+    }
+    // Subtopic validation for personalized quizzes
     if (quizMode === 'personalized' && selectedSubtopics && selectedSubtopics.length > 0) {
-        const allSubtopicsValid = parsedData.every(q => 
-            !q.subtopic || selectedSubtopics.includes(q.subtopic)
-        );
-        if (!allSubtopicsValid) {
-            console.warn("Gemini, seçilen alt konular listesi dışında bir alt konu döndürdü. Bu, prompt'ta bir yanlış anlaşılma olabilir.");
-        }
-    }
-     if (parsedData.length === 0 && numQuestions > 0) {
-        console.warn("Gemini sıfır soru döndürdü, ancak sorular istendi.");
+      const invalidSubtopics = parsedData.filter(q => 
+        q.subtopic && !selectedSubtopics.includes(q.subtopic)
+      );
+      if (invalidSubtopics.length > 0) {
+        console.warn("Model seçilen alt konular dışında konular döndürdü:", invalidSubtopics.map(q => q.subtopic));
+        // Don't throw error, just warn as this might be acceptable in some cases
+      }
     }
 
     const questionsWithIds: QuizQuestion[] = parsedData.map((q, index) => ({
@@ -300,10 +338,35 @@ const isValidQuestion = (item: any, expectedNumOptions: number): item is QuizQue
     typeof item.question === 'string' &&
     Array.isArray(item.options) &&
     item.options.every((opt: any) => typeof opt === 'string') &&
-    item.options.length >= 2 && // Min 2 options, actual number of options check might be more complex if it can vary from expectedNumOptions
+    item.options.length === expectedNumOptions && // Exact match for expected options
     typeof item.correctAnswerIndex === 'number' &&
     item.correctAnswerIndex >= 0 &&
     item.correctAnswerIndex < item.options.length &&
     (typeof item.subtopic === 'string' || typeof item.subtopic === 'undefined')
   );
+};
+
+const getQuestionValidationError = (item: any, expectedNumOptions: number): string => {
+  if (typeof item !== 'object' || item === null) {
+    return 'Soru nesnesi geçersiz';
+  }
+  if (typeof item.question !== 'string') {
+    return 'Soru metni eksik veya geçersiz';
+  }
+  if (!Array.isArray(item.options)) {
+    return 'Seçenekler dizi formatında değil';
+  }
+  if (item.options.length !== expectedNumOptions) {
+    return `Beklenen seçenek sayısı ${expectedNumOptions}, alınan ${item.options.length}`;
+  }
+  if (!item.options.every((opt: any) => typeof opt === 'string')) {
+    return 'Bazı seçenekler metin formatında değil';
+  }
+  if (typeof item.correctAnswerIndex !== 'number') {
+    return 'Doğru cevap indeksi sayı formatında değil';
+  }
+  if (item.correctAnswerIndex < 0 || item.correctAnswerIndex >= item.options.length) {
+    return 'Doğru cevap indeksi geçersiz aralıkta';
+  }
+  return 'Bilinmeyen validasyon hatası';
 };

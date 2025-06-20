@@ -47,19 +47,19 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ features, onStartQuizFlow
   }));
 
   return (
-    <div className="min-h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <section className="text-center mb-8 lg:mb-12">
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold">
-          <span className="text-teal-500 dark:text-teal-400">AI Quiz</span>
+    <div className="min-h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <section className="text-center mb-12 lg:mb-16">
+        <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-2">
+          <span className="bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-500 bg-clip-text text-transparent">AI Quiz</span>
         </h2>
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 dark:text-white mb-4">
-          Yapay Zeka Destekli Öğrenme Platformu
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-6">
+          Yapay Zeka Quiz Platformu
         </h1>
-        <p className="text-gray-600 dark:text-gray-400 max-w-3xl mx-auto text-base sm:text-lg leading-relaxed">
+        <p className="text-gray-600 dark:text-gray-400 max-w-4xl mx-auto text-lg sm:text-xl leading-relaxed font-medium px-4">
           Bilgi seviyenizi ölçün, eksiklerinizi tespit edin ve öğrenme sürecinizi <strong className="text-primary-600 dark:text-primary-300">kişiselleştirilmiş bir deneyimle</strong> optimize edin.
         </p>
       </section>
-      <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 max-w-5xl mx-auto">
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 max-w-6xl mx-auto">
         {updatedFeatures.map(feature => (
           <FeatureCard key={feature.title} {...feature} />
         ))}

@@ -185,7 +185,7 @@ const App: React.FC = () => {
   ]);
   
   const handleDeleteSpecificSavedResult = useCallback(async(quizId: string) => {
-    if (!currentUser) { // Added currentUser check for safety
+    if (!currentUser) {
         setRouterError("Bu işlem için giriş yapmalısınız.");
         return;
     }
@@ -196,11 +196,7 @@ const App: React.FC = () => {
 
   const handlePdfProcessingStateChange = useCallback((isProcessing: boolean) => {
     setRouterLoading(isProcessing);
-    if (!isProcessing && appState === 'parsing_pdf') { // If processing finished but state is still parsing
-        // This might indicate an error handled by PdfUploader, or successful extraction
-        // If successful, handlePdfTextExtracted should have navigated.
-        // If error, PdfUploader onError should have called setRouterError.
-        // This is a fallback or redundant check.
+    if (!isProcessing && appState === 'parsing_pdf') { 
     } else if (isProcessing) {
         navigateTo('parsing_pdf');
     }

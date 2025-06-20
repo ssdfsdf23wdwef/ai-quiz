@@ -135,6 +135,7 @@ export interface AppConfig {
     maxQuestionsForQuiz: number;
     minSubtopicsForDynamicOptions: number;
     maxSubtopicsForDynamicOptions: number;
+    maxSubtopicsPerDocument: number;
   };
   appSettingsDefaults: {
     secondsPerQuestion: number;
