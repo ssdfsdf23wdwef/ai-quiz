@@ -35,8 +35,8 @@ An intelligent quiz application built with React, TypeScript, and Google Gemini 
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/ai-quiz-app.git
-   cd ai-quiz-app
+   git clone https://github.com/ssdfsdf23wdwef/ai-quiz.git
+   cd ai-quiz
    ```
 
 2. **Install dependencies:**
