@@ -45,7 +45,7 @@ export const identifySubtopicsFromText = async (
   const appConfig = getConfig();
   const textSnippet = text.substring(0, appConfig.maxPdfTextLength);
   
-  const templatePath = '/identify_conceptual_subtopics_prompt.txt';
+  const templatePath = '/ai-quiz/identify_conceptual_subtopics_prompt.txt';
   let promptTemplate: string;
   try {
     promptTemplate = await loadPrompt(templatePath);
@@ -217,7 +217,7 @@ export const generateQuizFromText = async (
   
   let promptTemplate: string;
   try {
-    promptTemplate = await loadPrompt('/generate_quiz_prompt_template.txt');
+    promptTemplate = await loadPrompt('/ai-quiz/generate_quiz_prompt_template.txt');
   } catch (loadError) {
     if (loadError instanceof Error) {
       console.error("Sınav oluşturma prompt şablonu yüklenemedi:", loadError.message);
