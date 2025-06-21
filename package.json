@@ -1,5 +1,5 @@
 {
-  "name": "ai-quiz-app",
+  "name": "ai-quiz",
   "private": true,
   "version": "1.0.0",
   "description": "An intelligent quiz application built with React, TypeScript, and Google Gemini AI",
