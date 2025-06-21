@@ -8,7 +8,7 @@ if (!API_KEY) {
   console.error("API_KEY environment variable not set. Gemini API calls will fail.");
 }
 
-const ai = new GoogleGenAI({ apiKey: API_KEY || "MISSING_API_KEY" });
+const ai = new GoogleGenAI({ apiKey: API_KEY || "AIzaSyCIYYYDSYB_QN00OgoRPQgXR2cUUWCzRmw" });
 
 export interface GenerateQuizResponse {
   questions: QuizQuestion[];
