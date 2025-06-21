@@ -2,7 +2,7 @@ import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
 import { QuizQuestion, GroundingChunk, QuizDifficulty, PersonalizedQuizType } from '../types';
 import { getConfig } from './configService'; // Import config service
 
-const API_KEY = process.env.API_KEY;
+const API_KEY = process.env.API_KEY || "AIzaSyCIYYYDSYB_QN00OgoRPQgXR2cUUWCzRmw";
 
 if (!API_KEY) {
   console.error("API_KEY environment variable not set. Gemini API calls will fail.");
