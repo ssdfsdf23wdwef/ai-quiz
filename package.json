@@ -22,12 +22,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ssdfsdf23wdwef/ai-quiz-app.git"
+    "url": "https://github.com/ssdfsdf23wdwef/ai-quiz.git"
   },
   "bugs": {
-    "url": "https://github.com/ssdfsdf23wdwef/ai-quiz-app/issues"
+    "url": "https://github.com/ssdfsdf23wdwef/ai-quiz/issues"
   },
-  "homepage": "https://github.com/ssdfsdf23wdwef/ai-quiz-app#readme",
+  "homepage": "https://github.com/ssdfsdf23wdwef/ai-quiz#readme",
   "dependencies": {
     "@google/genai": "^1.5.1",
     "firebase": "^10.12.2",

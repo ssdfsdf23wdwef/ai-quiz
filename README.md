@@ -22,7 +22,7 @@ An intelligent quiz application built with React, TypeScript, and Google Gemini 
 
 ## Live Demo
 
-🌐 **[View Live Demo](https://ssdfsdf23wdwef.github.io/ai-quiz-app/)**
+🌐 **[View Live Demo](https://ssdfsdf23wdwef.github.io/ai-quiz/)**
 
 ## Prerequisites
 
