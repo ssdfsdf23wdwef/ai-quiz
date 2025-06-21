@@ -18,6 +18,11 @@ An intelligent quiz application built with React, TypeScript, and Google Gemini 
 - **Backend**: Firebase (Authentication, Firestore)
 - **PDF Processing**: PDF.js
 - **Build Tool**: Vite
+- **Deployment**: GitHub Pages with GitHub Actions
+
+## Live Demo
+
+🌐 **[View Live Demo](https://ssdfsdf23wdwef.github.io/ai-quiz-app/)**
 
 ## Prerequisites
 
