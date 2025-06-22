@@ -79,23 +79,31 @@ const QuizResult: React.FC<QuizResultProps> = ({
   }
 
   return (
-    <div className={`w-full max-w-3xl p-6 md:p-8 rounded-xl shadow-2xl ${getContainerClasses(theme)}`}>
-      <h2 className={`text-3xl font-bold text-center mb-2 ${getTextClasses(theme, 'primary')}`}>Sınav Sonucu</h2>
+    <div className={`w-full max-w-4xl p-4 sm:p-6 md:p-8 rounded-xl shadow-2xl ${getContainerClasses(theme)}`}>
+      <h2 className={`text-2xl sm:text-3xl font-bold text-center mb-2 ${getTextClasses(theme, 'primary')}`}>Sınav Sonucu</h2>
       {isViewingSaved && pdfName && (
-        <p className={`text-center text-sm mb-1 ${getTextClasses(theme, 'muted')}`}>PDF Kaynağı: {pdfName}</p>
+        <p className={`text-center text-xs sm:text-sm mb-1 px-2 ${getTextClasses(theme, 'muted')}`}>
+          <span className="hidden sm:inline">PDF Kaynağı: </span>
+          <span className="font-medium">{pdfName}</span>
+        </p>
       )}
       {isViewingSaved && savedAt && (
-        <p className={`text-center text-xs mb-4 ${getTextClasses(theme, 'muted')}`}>Kaydedilme Tarihi: {new Date(savedAt).toLocaleString('tr-TR')}</p>
+        <p className={`text-center text-xs mb-4 ${getTextClasses(theme, 'muted')}`}>
+          <span className="hidden sm:inline">Kaydedilme Tarihi: </span>
+          {new Date(savedAt).toLocaleString('tr-TR')}
+        </p>
       )}
       
-      <div className={`text-center mb-8 p-6 rounded-lg ${resultColors.bg} border-2 ${resultColors.border}`}>
-        <p className={`text-5xl font-extrabold mb-2 ${resultColors.text}`}>{percentage}%</p>
-        <p className={`text-xl ${getTextClasses(theme, 'secondary')}`}>
-          {score} / {totalQuestions} doğru cevap
+      <div className={`text-center mb-6 sm:mb-8 p-4 sm:p-6 rounded-lg ${resultColors.bg} border-2 ${resultColors.border}`}>
+        <p className={`text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-2 ${resultColors.text}`}>{percentage}%</p>
+        <p className={`text-base sm:text-lg lg:text-xl ${getTextClasses(theme, 'secondary')}`}>
+          <span className="block sm:inline">{score} / {totalQuestions}</span>
+          <span className="hidden sm:inline"> </span>
+          <span className="block sm:inline">doğru cevap</span>
         </p>
       </div>
 
-      <div className="space-y-6 mb-8 max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar-results">
+      <div className="space-y-4 sm:space-y-6 mb-6 sm:mb-8 max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar-results">
         {questions.map((q, index) => {
           const userAnswer = userAnswers[q.id];
           const isCorrect = userAnswer === q.correctAnswerIndex;
@@ -105,13 +113,15 @@ const QuizResult: React.FC<QuizResultProps> = ({
             : (isDark ? 'bg-red-500/10 border-red-500/30' : 'bg-red-50 border-red-200');
           
           return (
-            <div key={q.id} className={`p-4 border rounded-lg ${itemBgColor}`}>
-              <div className="flex items-start justify-between mb-1">
-                <p className={`font-semibold ${getTextClasses(theme, 'primary')}`}>Soru {index + 1}: {q.question}</p>
+            <div key={q.id} className={`p-3 sm:p-4 border rounded-lg ${itemBgColor}`}>
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-2 sm:mb-1 gap-2">
+                <p className={`font-semibold text-sm sm:text-base pr-2 ${getTextClasses(theme, 'primary')}`}>
+                  <span className="font-bold">Soru {index + 1}:</span> {q.question}
+                </p>
                 {q.explanation && (
                   <button
                     onClick={() => toggleExplanation(q.id)}
-                    className={`ml-3 px-2 py-1 text-xs rounded-md transition-colors flex items-center gap-1 flex-shrink-0 ${
+                    className={`self-start sm:ml-3 px-2 py-1 text-xs rounded-md transition-colors flex items-center gap-1 flex-shrink-0 touch-target ${
                       showExplanations[q.id]
                         ? (isDark 
                             ? 'text-blue-300 bg-blue-500/20 hover:bg-blue-500/30' 
@@ -128,17 +138,18 @@ const QuizResult: React.FC<QuizResultProps> = ({
                 )}
               </div>
               {q.subtopic && (
-                <p className={`text-xs mb-2 italic ${theme === 'dark' ? 'text-primary-400' : 'text-primary-600'}`}>
+                <p className={`text-xs mb-2 italic font-medium ${theme === 'dark' ? 'text-primary-400' : 'text-primary-600'}`}>
+                  <i className="fas fa-tag mr-1 opacity-70"></i>
                   Alt Konu: {q.subtopic}
                 </p>
               )}
-              <ul className="list-none space-y-1 pl-0">
+              <ul className="list-none space-y-1.5 sm:space-y-1 pl-0">
                 {q.options.map((option, optIndex) => {
                   const isDark = theme === 'dark';
                   const isCorrectOption = optIndex === q.correctAnswerIndex;
                   const isUserAnswer = userAnswer === optIndex;
                   
-                  let optionClasses = 'flex items-center p-2 rounded text-sm ';
+                  let optionClasses = 'flex items-start p-2 rounded text-xs sm:text-sm leading-relaxed ';
                   
                   if (isCorrectOption) {
                     optionClasses += isDark ? 'font-bold text-green-300' : 'font-bold text-green-700';
@@ -158,14 +169,27 @@ const QuizResult: React.FC<QuizResultProps> = ({
                   
                   return (
                     <li key={optIndex} className={optionClasses}>
-                      {isCorrectOption && <CheckCircleIcon className={`w-5 h-5 mr-2 shrink-0 ${isDark ? 'text-green-400' : 'text-green-500'}`} />}
-                      {isUserAnswer && !isCorrectOption && <XCircleIcon className={`w-5 h-5 mr-2 shrink-0 ${isDark ? 'text-red-400' : 'text-red-500'}`} />}
-                      {!(isCorrectOption || (isUserAnswer && !isCorrectOption)) && <span className="w-5 h-5 mr-2 shrink-0"></span>}
+                      {isCorrectOption && <CheckCircleIcon className={`w-4 h-4 sm:w-5 sm:h-5 mr-2 mt-0.5 flex-shrink-0 ${isDark ? 'text-green-400' : 'text-green-500'}`} />}
+                      {isUserAnswer && !isCorrectOption && <XCircleIcon className={`w-4 h-4 sm:w-5 sm:h-5 mr-2 mt-0.5 flex-shrink-0 ${isDark ? 'text-red-400' : 'text-red-500'}`} />}
+                      {!(isCorrectOption || (isUserAnswer && !isCorrectOption)) && <span className="w-4 h-4 sm:w-5 sm:h-5 mr-2 mt-0.5 flex-shrink-0"></span>}
 
-                      <span className="min-w-0 break-words">{option}</span>
-                      {isUserAnswer && <span className="ml-2 text-xs italic">({isCorrect ? 'Sizin Cevabınız - Doğru' : 'Sizin Cevabınız - Yanlış'})</span>}
-                      {!isUserAnswer && isCorrectOption && userAnswer !== undefined && <span className="ml-2 text-xs italic">(Doğru Cevap)</span>}
-                      {userAnswer === undefined && isCorrectOption && <span className="ml-2 text-xs italic">(Doğru Cevap)</span>}
+                      <span className="min-w-0 break-words flex-grow">{option}</span>
+                      {isUserAnswer && (
+                        <span className="ml-2 text-xs italic whitespace-nowrap hidden sm:inline">
+                          ({isCorrect ? 'Sizin Cevabınız - Doğru' : 'Sizin Cevabınız - Yanlış'})
+                        </span>
+                      )}
+                      {isUserAnswer && (
+                        <span className="ml-1 text-xs italic sm:hidden">
+                          ({isCorrect ? 'Doğru' : 'Yanlış'})
+                        </span>
+                      )}
+                      {!isUserAnswer && isCorrectOption && userAnswer !== undefined && (
+                        <span className="ml-2 text-xs italic whitespace-nowrap hidden sm:inline">(Doğru Cevap)</span>
+                      )}
+                      {userAnswer === undefined && isCorrectOption && (
+                        <span className="ml-2 text-xs italic whitespace-nowrap hidden sm:inline">(Doğru Cevap)</span>
+                      )}
                     </li>
                   );
                 })}
@@ -205,27 +229,35 @@ const QuizResult: React.FC<QuizResultProps> = ({
         })}
       </div>
 
-      <div className="text-center space-y-3 md:space-y-0 md:flex md:justify-center md:space-x-4">
+      <div className="text-center space-y-3 md:space-y-0 md:flex md:justify-center md:gap-4">
         <button
           onClick={onRestart}
-          className={`w-full md:w-auto px-8 py-3 rounded-lg font-semibold shadow-lg text-lg focus:ring-2 focus:ring-opacity-50 ${getButtonClasses(theme, 'primary')}`}
+          className={`w-full md:w-auto px-6 sm:px-8 py-3 rounded-lg font-semibold shadow-lg text-base sm:text-lg focus:ring-2 focus:ring-opacity-50 touch-target ${getButtonClasses(theme, 'primary')}`}
         >
-          <i className="fas fa-redo-alt mr-2"></i> {restartButtonText()}
+          <i className="fas fa-redo-alt mr-2"></i> 
+          <span className="hidden sm:inline">{restartButtonText()}</span>
+          <span className="sm:hidden">
+            {onDeleteSpecificResult ? "Sınav Listesi" : isViewingSaved ? "Ana Sayfa" : "Yeni Sınav"}
+          </span>
         </button>
         {!isViewingSaved && onSaveResult && (
           <button
             onClick={onSaveResult}
-            className={`w-full md:w-auto px-8 py-3 rounded-lg font-semibold shadow-lg text-lg focus:ring-2 focus:ring-opacity-50 ${getButtonClasses(theme, 'success')}`}
+            className={`w-full md:w-auto px-6 sm:px-8 py-3 rounded-lg font-semibold shadow-lg text-base sm:text-lg focus:ring-2 focus:ring-opacity-50 touch-target ${getButtonClasses(theme, 'success')}`}
           >
-            <i className="fas fa-save mr-2"></i> Sonuçları Kaydet
+            <i className="fas fa-save mr-2"></i> 
+            <span className="hidden sm:inline">Sonuçları Kaydet</span>
+            <span className="sm:hidden">Kaydet</span>
           </button>
         )}
          {isViewingSaved && onDeleteSpecificResult && quizId && (
           <button
             onClick={() => onDeleteSpecificResult(quizId)}
-            className={`w-full md:w-auto px-8 py-3 rounded-lg font-semibold shadow-lg text-lg focus:ring-2 focus:ring-opacity-50 ${getButtonClasses(theme, 'danger')}`}
+            className={`w-full md:w-auto px-6 sm:px-8 py-3 rounded-lg font-semibold shadow-lg text-base sm:text-lg focus:ring-2 focus:ring-opacity-50 touch-target ${getButtonClasses(theme, 'danger')}`}
           >
-            <i className="fas fa-trash-alt mr-2"></i> Kayıtlı Sonucu Sil
+            <i className="fas fa-trash-alt mr-2"></i> 
+            <span className="hidden sm:inline">Kayıtlı Sonucu Sil</span>
+            <span className="sm:hidden">Sil</span>
           </button>
         )}
       </div>

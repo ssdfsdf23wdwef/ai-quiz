@@ -17,6 +17,7 @@ import PerformanceAnalysisPage from './components/PerformanceAnalysisPage';
 import AchievementsPage from './components/AchievementsPage';
 import DashboardPage, { FeatureCardProps } from './components/DashboardPage';
 import Sidebar from './components/Sidebar';
+import MobileMenuButton from './components/MobileMenuButton';
 import CoursesPage from './components/CoursesPage';
 import CourseSelectionForQuizStep from './components/CourseSelectionForQuizStep';
 import PersonalizedQuizTypeSelector from './components/PersonalizedQuizTypeSelector';
@@ -114,7 +115,7 @@ const App: React.FC = () => {
     routerStartQuizFlow(mode, resetQuizWorkflowState, resetPersistentDataSelectionState, setCurrentQuizModeState, setIsTimerEnabledForQuizStateProxy, appSettings);
   }, [routerStartQuizFlow, resetQuizWorkflowState, resetPersistentDataSelectionState, setCurrentQuizModeState, appSettings, setRouterError]);
 
-  const setIsTimerEnabledForQuizStateProxy = useCallback((enabled: boolean) => {
+  const setIsTimerEnabledForQuizStateProxy = useCallback((_enabled: boolean) => {
     // Timer state is managed through quiz preferences, no direct state update needed here
     // This is a placeholder function for the workflow's interface compatibility
   }, []);
@@ -612,8 +613,18 @@ const App: React.FC = () => {
 
 
     return (
-      <div className={`flex h-screen font-sans ${theme === 'dark' ? 'bg-secondary-900' : 'bg-gray-100'}`}>
+      <div className={`flex h-screen font-sans overflow-hidden ${theme === 'dark' ? 'bg-secondary-900' : 'bg-gray-100'}`}>
         {authFeedbackMessage}
+        
+        {/* Mobile Menu Button */}
+        {currentUser && !['login', 'signup', 'forgot_password', 'auth_loading'].includes(appState) && (
+          <MobileMenuButton
+            isOpen={!isSidebarCollapsed}
+            onClick={toggleSidebar}
+            theme={theme}
+          />
+        )}
+        
         {currentUser && !['login', 'signup', 'forgot_password', 'auth_loading'].includes(appState) && (
             <Sidebar
                 appState={appState}
@@ -632,16 +643,19 @@ const App: React.FC = () => {
                 theme={theme}
             />
         )}
-        <main className={`flex-grow overflow-y-auto transition-all duration-300 ease-in-out ${isSidebarCollapsed && currentUser ? 'ml-20' : !isSidebarCollapsed && currentUser ? 'ml-72' : 'ml-0'} app-main-content`}>
-          <div className="min-h-full p-4 sm:p-6 lg:p-8">
+        <main className={`flex-grow overflow-y-auto transition-all duration-300 ease-in-out ${
+          currentUser && !['login', 'signup', 'forgot_password', 'auth_loading'].includes(appState)
+            ? `ml-0 lg:ml-${isSidebarCollapsed ? '20' : '72'}`
+            : 'ml-0'
+        } ${
+          currentUser && !['login', 'signup', 'forgot_password', 'auth_loading'].includes(appState)
+            ? 'pt-16 lg:pt-0' 
+            : ''
+        }`}>
+          <div className="min-h-full p-3 sm:p-4 lg:p-6 xl:p-8">
             {overallLoading && appState !== 'error' && !authError && !authMessage ? <LoadingSpinner text="Yükleniyor..." /> : pageContent}
           </div>
         </main>
-        <style>{`
-            .app-main-content {
-                 margin-left: ${currentUser ? (isSidebarCollapsed ? '5rem' : '18rem') : '0'};
-            }
-        `}</style>
       </div>
     );
   };

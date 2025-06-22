@@ -292,32 +292,32 @@ const QuizView: React.FC<QuizViewProps> = ({
   return (
     <div className={`w-full h-full flex flex-col ${themeClasses.bg.secondary} ${themeClasses.text.secondary}`}>
       {/* Header */}
-      <header className={`p-4 sm:p-5 border-b sticky top-0 z-20 shadow-sm ${themeClasses.border.primary} ${themeClasses.bg.primary}`}>
+      <header className={`p-3 sm:p-5 border-b sticky top-0 z-20 shadow-sm ${themeClasses.border.primary} ${themeClasses.bg.primary}`}>
         <div className="flex items-center justify-between mb-3">
             <div className="flex items-center">
                 <button
                     onClick={handleCancelQuiz}
-                    className={`flex items-center text-lg transition-colors ${themeClasses.text.secondary} hover:${themeClasses.text.primary.replace('text-', 'hover:text-')}`}
+                    className={`flex items-center text-base sm:text-lg transition-colors touch-target ${themeClasses.text.secondary} hover:${themeClasses.text.primary.replace('text-', 'hover:text-')}`}
                     title="Sınavdan Çık"
                     aria-label="Sınavdan çık ve ana sayfaya dön"
                 >
-                    <i className="fas fa-chevron-left mr-2 text-xl"></i> 
-                    <span className="font-medium">Sınav</span>
+                    <i className="fas fa-chevron-left mr-1.5 sm:mr-2 text-lg sm:text-xl"></i> 
+                    <span className="font-medium hidden sm:inline">Sınav</span>
                 </button>
             </div>
           
-            <div className="flex items-center space-x-3 sm:space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
                 <button
                     onClick={handleDownloadPdf}
-                    className={`px-3 py-1.5 rounded-md transition-colors text-sm font-medium flex items-center shadow-sm ${themeClasses.bg.button.secondary} ${themeClasses.text.secondary}`}
+                    className={`px-2 sm:px-3 py-1.5 rounded-md transition-colors text-xs sm:text-sm font-medium flex items-center shadow-sm touch-target ${themeClasses.bg.button.secondary} ${themeClasses.text.secondary}`}
                     title="Sınavı PDF Olarak İndir"
                     aria-label="Sınavı PDF olarak indir"
                 >
-                    <i className={`fas fa-file-pdf mr-2 ${theme === 'dark' ? 'text-red-400' : 'text-red-500'}`}></i>
+                    <i className={`fas fa-file-pdf mr-1 sm:mr-2 ${theme === 'dark' ? 'text-red-400' : 'text-red-500'}`}></i>
                     <span className="hidden sm:inline">PDF İndir</span>
                 </button>
                 {isTimerEnabled && (
-                    <div className={`text-sm font-medium p-1.5 px-3 rounded-md flex items-center shadow-sm ${
+                    <div className={`text-xs sm:text-sm font-medium p-1.5 px-2 sm:px-3 rounded-md flex items-center shadow-sm ${
                       remainingTime <= 60 
                         ? (theme === 'dark' 
                             ? 'bg-red-500/20 text-red-300 ring-1 ring-red-500/50' 
@@ -326,16 +326,17 @@ const QuizView: React.FC<QuizViewProps> = ({
                             ? 'bg-secondary-700 text-gray-300' 
                             : 'bg-gray-100 text-gray-700')
                     }`}>
-                        <i className="far fa-clock mr-2"></i>
-                        <span>{formatTime(remainingTime)}</span>
+                        <i className="far fa-clock mr-1 sm:mr-2"></i>
+                        <span className="text-xs sm:text-sm">{formatTime(remainingTime)}</span>
                     </div>
                 )}
-                <div className={`text-sm font-medium p-1.5 px-3 rounded-md shadow-sm ${
+                <div className={`text-xs sm:text-sm font-medium p-1.5 px-2 sm:px-3 rounded-md shadow-sm whitespace-nowrap ${
                   theme === 'dark' 
                     ? 'text-gray-400 bg-secondary-700' 
                     : 'text-gray-500 bg-gray-100'
                 }`}>
-                {answeredCount} / {totalQuestions} yanıtlandı
+                <span className="hidden sm:inline">{answeredCount} / {totalQuestions} yanıtlandı</span>
+                <span className="sm:hidden">{answeredCount}/{totalQuestions}</span>
                 </div>
             </div>
         </div>
@@ -353,19 +354,19 @@ const QuizView: React.FC<QuizViewProps> = ({
       </header>
 
       {/* Questions List */}
-      <main id="quiz-main-content" className="flex-grow overflow-y-auto p-4 sm:p-6 space-y-6 min-h-0 relative">
+      <main id="quiz-main-content" className="flex-grow overflow-y-auto p-3 sm:p-6 space-y-4 sm:space-y-6 min-h-0 relative">
         {questions.map((question, index) => {
           const questionId = `question-${question.id}`;
           const isDark = theme === 'dark';
           return (
-            <section key={question.id} aria-labelledby={`${questionId}-text`} className={`p-5 sm:p-6 rounded-xl shadow-lg ring-1 ${
+            <section key={question.id} aria-labelledby={`${questionId}-text`} className={`p-4 sm:p-6 rounded-xl shadow-lg ring-1 ${
               isDark 
                 ? 'bg-secondary-800 ring-secondary-700/50' 
                 : 'bg-white ring-gray-200'
             }`}>
-              <div className="flex items-start justify-between mb-3.5">
-                <div className="flex items-center gap-3">
-                  <h2 className={`text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full ${
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-3 sm:mb-3.5 gap-2 sm:gap-3">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                  <h2 className={`text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full whitespace-nowrap ${
                     isDark 
                       ? 'text-blue-400 bg-blue-500/10' 
                       : 'text-blue-600 bg-blue-100'
@@ -375,7 +376,7 @@ const QuizView: React.FC<QuizViewProps> = ({
                   {question.explanation && (
                     <button
                       onClick={() => toggleExplanation(question.id)}
-                      className={`text-xs font-medium px-2.5 py-1 rounded-full transition-colors flex items-center gap-1 ${
+                      className={`text-xs font-medium px-2.5 py-1 rounded-full transition-colors flex items-center gap-1 touch-target ${
                         showExplanations[question.id]
                           ? (isDark 
                               ? 'text-green-400 bg-green-500/20 hover:bg-green-500/30' 
@@ -388,22 +389,23 @@ const QuizView: React.FC<QuizViewProps> = ({
                       aria-label={`Soru ${index + 1} açıklaması ${showExplanations[question.id] ? 'gizle' : 'göster'}`}
                     >
                       <i className={`fas ${showExplanations[question.id] ? 'fa-eye-slash' : 'fa-lightbulb'}`}></i>
-                      <span>{showExplanations[question.id] ? 'Gizle' : 'Açıklama'}</span>
+                      <span className="hidden sm:inline">{showExplanations[question.id] ? 'Gizle' : 'Açıklama'}</span>
                     </button>
                   )}
                 </div>
                 {question.subtopic && (
-                  <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
+                  <span className={`text-xs font-medium px-2.5 py-1 rounded-full self-start sm:self-auto ${
                     isDark 
                       ? 'text-purple-400 bg-purple-500/10' 
                       : 'text-purple-600 bg-purple-100'
                   }`}>
-                    <i className="fas fa-tags mr-1.5 opacity-70"></i>{question.subtopic}
+                    <i className="fas fa-tags mr-1 sm:mr-1.5 opacity-70"></i>
+                    <span className="truncate max-w-[150px] sm:max-w-none">{question.subtopic}</span>
                   </span>
                 )}
               </div>
 
-              <p id={`${questionId}-text`} className={`text-base sm:text-lg font-medium mb-5 leading-relaxed ${
+              <p id={`${questionId}-text`} className={`text-sm sm:text-base lg:text-lg font-medium mb-4 sm:mb-5 leading-relaxed ${
                 isDark ? 'text-gray-100' : 'text-gray-800'
               }`}>
                 {question.question}
@@ -436,13 +438,13 @@ const QuizView: React.FC<QuizViewProps> = ({
                 </div>
               )}
 
-              <div role="radiogroup" aria-labelledby={`${questionId}-text`} className="space-y-3">
+              <div role="radiogroup" aria-labelledby={`${questionId}-text`} className="space-y-2.5 sm:space-y-3">
                 {question.options.map((option, optIndex) => {
                   const isSelected = answers[question.id] === optIndex;
                   const optionInputId = `${question.id}-option-${optIndex}`;
                   
                   const getOptionClasses = () => {
-                    let optionClasses = 'flex items-center p-3.5 border-2 rounded-lg cursor-pointer transition-all duration-150 ease-in-out transform hover:scale-[1.01] ';
+                    let optionClasses = 'flex items-center p-3 sm:p-3.5 border-2 rounded-lg cursor-pointer transition-all duration-150 ease-in-out transform hover:scale-[1.01] touch-target ';
                     
                     if (isSelected) {
                       optionClasses += isDark 
@@ -475,14 +477,14 @@ const QuizView: React.FC<QuizViewProps> = ({
                       htmlFor={optionInputId}
                       className={`${getOptionClasses()} ${getFocusClasses()}`}
                     >
-                      <span className={`w-5 h-5 rounded-full border-2 flex-shrink-0 mr-3 flex items-center justify-center transition-colors ${
+                      <span className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full border-2 flex-shrink-0 mr-3 flex items-center justify-center transition-colors ${
                         isSelected 
                           ? 'border-blue-300 bg-blue-400' 
                           : (isDark 
                               ? 'border-gray-500 group-hover:border-blue-400' 
                               : 'border-gray-400 group-hover:border-blue-400')
                       }`}>
-                        {isSelected && <div className="w-2 h-2 bg-white rounded-full"></div>}
+                        {isSelected && <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-white rounded-full"></div>}
                       </span>
                       <input
                         type="radio"
@@ -494,8 +496,8 @@ const QuizView: React.FC<QuizViewProps> = ({
                         className="sr-only"
                         aria-label={`Seçenek ${optIndex + 1}: ${option}`}
                       />
-                      <span className="text-sm sm:text-base flex-grow min-w-0 break-words">{option}</span>
-                       {isSelected && <i className="fas fa-check-circle ml-auto text-blue-200 text-lg"></i>}
+                      <span className="text-sm sm:text-base flex-grow min-w-0 break-words leading-relaxed">{option}</span>
+                       {isSelected && <i className="fas fa-check-circle ml-auto text-blue-200 text-base sm:text-lg"></i>}
                     </label>
                   );
                 })}
@@ -506,18 +508,19 @@ const QuizView: React.FC<QuizViewProps> = ({
           );
         })}
 
-        <div className={`mt-8 mb-4 pt-4 border-t ${theme === 'dark' ? 'border-secondary-700/50' : 'border-gray-200'}`}>
+        <div className={`mt-6 sm:mt-8 mb-4 pt-4 border-t ${theme === 'dark' ? 'border-secondary-700/50' : 'border-gray-200'}`}>
             <button
                 onClick={() => handleSubmit(false)}
                 disabled={totalQuestions === 0} 
-                className={`w-full px-6 py-3.5 text-white rounded-lg font-semibold shadow-lg focus:outline-none focus:ring-2 focus:ring-opacity-70 text-base flex items-center justify-center disabled:opacity-60 disabled:cursor-not-allowed ${
+                className={`w-full px-4 sm:px-6 py-3 sm:py-3.5 text-white rounded-lg font-semibold shadow-lg focus:outline-none focus:ring-2 focus:ring-opacity-70 text-sm sm:text-base flex items-center justify-center disabled:opacity-60 disabled:cursor-not-allowed touch-target ${
                   theme === 'dark' 
                     ? 'bg-green-600 hover:bg-green-700 focus:ring-green-500' 
                     : 'bg-green-500 hover:bg-green-600 focus:ring-green-500'
                 }`}
                 aria-label="Sınavı Bitir ve Sonuçları Gör"
             >
-                Sınavı Bitir <i className="fas fa-check-circle ml-2 text-lg"></i>
+                <span>Sınavı Bitir</span>
+                <i className="fas fa-check-circle ml-2 text-base sm:text-lg"></i>
             </button>
         </div>
       </main>

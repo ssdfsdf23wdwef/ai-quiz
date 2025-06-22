@@ -135,44 +135,77 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 
   return (
-    <aside className={`flex flex-col shadow-2xl shrink-0 transition-all duration-300 ease-in-out fixed top-0 left-0 h-full z-50 border-r ${isCollapsed ? 'w-20' : 'w-72'} ${
+    <aside className={`flex flex-col shadow-2xl shrink-0 transition-all duration-300 ease-in-out fixed top-0 left-0 h-full z-50 border-r ${
+      isCollapsed ? 'w-20' : 'w-72'
+    } ${
       theme === 'dark' 
         ? 'bg-secondary-800 border-secondary-700' 
         : 'bg-white border-gray-200'
+    } lg:relative lg:translate-x-0 ${
+      // Mobile: hide sidebar completely when collapsed, show overlay when expanded
+      isCollapsed ? '-translate-x-full lg:translate-x-0' : 'translate-x-0'
     }`}>
-      {/* Header Section */}
-      <div className={`relative p-4 border-b ${isCollapsed ? 'px-2' : 'px-4'} ${
-        theme === 'dark' 
-          ? 'border-secondary-700' 
-          : 'border-gray-200'
-      }`}>
-        <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-3'}`}>
-          <div className={`p-2.5 bg-gradient-to-br from-purple-600 via-blue-600 to-teal-500 rounded-xl shadow-lg ${isCollapsed ? 'mb-0' : ''}`}>
-            <i className="fas fa-robot text-xl text-white"></i>
-          </div>
-          {!isCollapsed && (
-            <div className="flex-grow">
-              <h1 className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>AI Quiz</h1>
-              <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Yapay Zeka Quiz Platformu</p>
+      
+      {/* Mobile Overlay */}
+      {!isCollapsed && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={onToggleCollapse}
+        />
+      )}
+      
+      {/* Sidebar Content */}
+      <div className="relative z-50 flex flex-col h-full">
+        {/* Header Section */}
+        <div className={`relative p-4 border-b ${isCollapsed ? 'px-2' : 'px-4'} ${
+          theme === 'dark' 
+            ? 'border-secondary-700' 
+            : 'border-gray-200'
+        }`}>
+          <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-3'}`}>
+            <div className={`p-2.5 bg-gradient-to-br from-purple-600 via-blue-600 to-teal-500 rounded-xl shadow-lg ${isCollapsed ? 'mb-0' : ''}`}>
+              <i className="fas fa-robot text-xl text-white"></i>
             </div>
+            {!isCollapsed && (
+              <div className="flex-grow">
+                <h1 className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>AI Quiz</h1>
+                <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Yapay Zeka Quiz Platformu</p>
+              </div>
+            )}
+          </div>
+          
+          {/* Toggle Button */}
+          <button 
+            onClick={onToggleCollapse} 
+            className={`absolute top-1/2 -translate-y-1/2 transform hover:bg-primary-500 hover:text-white w-8 h-8 rounded-full flex items-center justify-center focus:outline-none shadow-lg transition-all duration-200 hover:scale-110 ${
+              isCollapsed ? '-right-4' : '-right-4'
+            } ${
+              theme === 'dark' 
+                ? 'bg-secondary-800 text-gray-300 border-secondary-600' 
+                : 'bg-white text-gray-600 border-gray-200'
+            } border lg:block hidden`}
+            aria-label={isCollapsed ? "Kenar çubuğunu genişlet" : "Kenar çubuğunu daralt"}
+            title={isCollapsed ? "Genişlet" : "Daralt"}
+          >
+            <i className={`fas ${isCollapsed ? 'fa-chevron-right' : 'fa-chevron-left'} text-xs`}></i>
+          </button>
+
+          {/* Mobile Close Button */}
+          {!isCollapsed && (
+            <button 
+              onClick={onToggleCollapse} 
+              className={`absolute top-1/2 -translate-y-1/2 transform w-8 h-8 rounded-full flex items-center justify-center focus:outline-none transition-all duration-200 -right-4 lg:hidden ${
+                theme === 'dark' 
+                  ? 'bg-secondary-700 text-gray-300 hover:bg-secondary-600' 
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+              aria-label="Kenar çubuğunu kapat"
+            >
+              <i className="fas fa-times text-sm"></i>
+            </button>
           )}
         </div>
-        
-        {/* Toggle Button */}
-        <button 
-          onClick={onToggleCollapse} 
-          className={`absolute top-1/2 -translate-y-1/2 transform hover:bg-primary-500 hover:text-white w-8 h-8 rounded-full flex items-center justify-center focus:outline-none shadow-lg transition-all duration-200 hover:scale-110 ${isCollapsed ? '-right-4' : '-right-4'} ${
-            theme === 'dark' 
-              ? 'bg-secondary-800 text-gray-300 border-secondary-600' 
-              : 'bg-white text-gray-600 border-gray-200'
-          } border`}
-          aria-label={isCollapsed ? "Kenar çubuğunu genişlet" : "Kenar çubuğunu daralt"}
-          title={isCollapsed ? "Genişlet" : "Daralt"}
-        >
-          <i className={`fas ${isCollapsed ? 'fa-chevron-right' : 'fa-chevron-left'} text-xs`}></i>
-        </button>
-      </div>
-
+      
       {/* Navigation Section */}
       <nav className="flex-grow flex flex-col px-3 py-4 space-y-1 overflow-y-auto custom-scrollbar-sidebar">
         {navItems.filter(item => !item.requiresAuth || currentUser).map(item => {
@@ -256,6 +289,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             theme={theme}
           />
         )}
+      </div>
       </div>
       <style>{`
         .custom-scrollbar-sidebar::-webkit-scrollbar {
