@@ -85,31 +85,31 @@ const PdfUploader: React.FC<PdfUploaderProps> = ({
     <div className="w-full text-center">
       <label
         htmlFor="pdf-upload"
-        className={`cursor-pointer flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-lg transition-colors ${
+        className={`cursor-pointer flex flex-col items-center justify-center p-6 sm:p-8 border-2 border-dashed rounded-lg transition-colors touch-target ${
           theme === 'dark' 
             ? 'border-secondary-600 hover:border-primary-500 bg-secondary-700/50 hover:bg-secondary-700/80' 
             : 'border-gray-300 hover:border-primary-500 bg-gray-50 hover:bg-gray-100'
         }`}
       >
-        <UploadIcon className={`w-16 h-16 mb-4 ${
+        <UploadIcon className={`w-12 h-12 sm:w-16 sm:h-16 mb-3 sm:mb-4 ${
           theme === 'dark' ? 'text-primary-400' : 'text-primary-500'
         }`} />
-        <span className={`text-xl font-semibold ${
+        <span className={`text-lg sm:text-xl font-semibold ${
           theme === 'dark' ? 'text-gray-100' : 'text-gray-700'
         }`}>PDF Dosyanızı Seçin</span>
-        <span className={`text-sm mt-1 ${
+        <span className={`text-xs sm:text-sm mt-1 px-2 ${
           theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
         }`}>Sınav oluşturmak için bir PDF yükleyin</span>
         {fileName && !isProcessing && ( 
-          <p className={`mt-2 text-sm px-2 py-1 rounded ${
+          <p className={`mt-2 text-xs sm:text-sm px-2 py-1 rounded max-w-full truncate ${
             theme === 'dark' 
               ? 'text-green-400 bg-green-700/30' 
               : 'text-green-600 bg-green-100'
-          }`}>Yüklendi: {fileName}</p>
+          }`} title={fileName}>Yüklendi: {fileName}</p>
         )}
-        {isProcessing && fileName && <p className={`mt-2 text-sm ${
+        {isProcessing && fileName && <p className={`mt-2 text-xs sm:text-sm max-w-full truncate ${
           theme === 'dark' ? 'text-blue-400' : 'text-blue-600'
-        }`}>Yükleniyor: {fileName}</p>}
+        }`} title={fileName}>Yükleniyor: {fileName}</p>}
         <input
           id="pdf-upload"
           type="file"
