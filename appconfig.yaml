@@ -1,0 +1,27 @@
+gemini:
+  textModel: "gemini-2.5-flash-preview-04-17"
+  identifySubtopics:
+    temperature: 0.0
+    thinkingBudget: 0
+  generateQuiz:
+    defaultTemperature: 0.0
+    personalizedTemperature: 0.0
+    thinkingBudget: 0
+    responseMimeType: "application/json"
+
+quizDefaults:
+  defaultNumQuestions: 6
+  minQuestionsPerSubtopic: 2
+  minQuestionsForQuiz: 3
+  maxQuestionsForQuiz: 20
+  minSubtopicsForDynamicOptions: 3
+  maxSubtopicsForDynamicOptions: 10
+  maxSubtopicsPerDocument: 10
+
+appSettingsDefaults:
+  secondsPerQuestion: 90
+  numOptionsPerQuestion: 4
+  theme: "light"
+  defaultTimerEnabled: false
+
+maxPdfTextLength: 100000
