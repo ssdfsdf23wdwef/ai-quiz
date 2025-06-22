@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { signUpUser } from '../services/authService';
 import { useAppRouter } from '../hooks/useAppRouter';
+import { getThemeClasses } from '../utils/themeUtils';
 
 interface SignupPageProps {
   onSignupSuccess: () => void;
   navigateTo: (state: 'login' | 'dashboard_main') => void;
   setAuthLoading: (loading: boolean) => void;
   setAuthError: (error: string | null) => void;
+  theme?: string;
 }
 
-const SignupPage: React.FC<SignupPageProps> = ({ onSignupSuccess, navigateTo, setAuthLoading, setAuthError }) => {
+const SignupPage: React.FC<SignupPageProps> = ({ onSignupSuccess, navigateTo, setAuthLoading, setAuthError, theme }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -43,21 +45,23 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSignupSuccess, navigateTo, se
     }
   };
 
+  const themeClasses = getThemeClasses(theme);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-secondary-900 px-4 py-12">
-      <div className="w-full max-w-md p-8 bg-white dark:bg-secondary-800 rounded-xl shadow-2xl space-y-8">
+    <div className={`min-h-screen flex items-center justify-center px-4 py-12 ${themeClasses.bg.tertiary}`}>
+      <div className={`w-full max-w-md p-8 rounded-xl shadow-2xl space-y-8 ${themeClasses.bg.card}`}>
         <div>
           <div className="flex justify-center mb-4">
              <div className="p-3 bg-gradient-to-tr from-purple-600 to-blue-500 rounded-lg">
                 <i className="fas fa-brain text-4xl text-white"></i>
             </div>
           </div>
-          <h2 className="text-center text-3xl font-extrabold text-gray-900 dark:text-white">
+          <h2 className={`text-center text-3xl font-extrabold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
             Yeni Hesap Oluşturun
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
+          <p className={`mt-2 text-center text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
             Zaten hesabınız var mı?{' '}
-            <button onClick={() => navigateTo('login')} className="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300">
+            <button onClick={() => navigateTo('login')} className={`font-medium ${theme === 'dark' ? 'text-primary-400 hover:text-primary-300' : 'text-primary-600 hover:text-primary-500'}`}>
               Giriş Yapın
             </button>
           </p>
@@ -71,7 +75,7 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSignupSuccess, navigateTo, se
                 name="displayName"
                 type="text"
                 autoComplete="name"
-                className="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 dark:border-secondary-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-secondary-700 rounded-t-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-400 dark:focus:border-primary-400 focus:z-10 sm:text-sm"
+                className={`appearance-none rounded-none relative block w-full px-3 py-3 border ${theme === 'dark' ? 'border-secondary-600 placeholder-gray-400 text-white bg-secondary-700 focus:ring-primary-400 focus:border-primary-400' : 'border-gray-300 placeholder-gray-500 text-gray-900 bg-white focus:ring-primary-500 focus:border-primary-500'} rounded-t-md focus:outline-none focus:z-10 sm:text-sm`}
                 placeholder="Görünen Ad (İsteğe Bağlı)"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
@@ -85,7 +89,7 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSignupSuccess, navigateTo, se
                 type="email"
                 autoComplete="email"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 dark:border-secondary-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-secondary-700 focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-400 dark:focus:border-primary-400 focus:z-10 sm:text-sm"
+                className={`appearance-none rounded-none relative block w-full px-3 py-3 border ${theme === 'dark' ? 'border-secondary-600 placeholder-gray-400 text-white bg-secondary-700 focus:ring-primary-400 focus:border-primary-400' : 'border-gray-300 placeholder-gray-500 text-gray-900 bg-white focus:ring-primary-500 focus:border-primary-500'} focus:outline-none focus:z-10 sm:text-sm`}
                 placeholder="E-posta Adresi"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -99,7 +103,7 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSignupSuccess, navigateTo, se
                 type="password"
                 autoComplete="new-password"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 dark:border-secondary-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-secondary-700 focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-400 dark:focus:border-primary-400 focus:z-10 sm:text-sm"
+                className={`appearance-none rounded-none relative block w-full px-3 py-3 border ${theme === 'dark' ? 'border-secondary-600 placeholder-gray-400 text-white bg-secondary-700 focus:ring-primary-400 focus:border-primary-400' : 'border-gray-300 placeholder-gray-500 text-gray-900 bg-white focus:ring-primary-500 focus:border-primary-500'} focus:outline-none focus:z-10 sm:text-sm`}
                 placeholder="Şifre (en az 6 karakter)"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -113,7 +117,7 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSignupSuccess, navigateTo, se
                 type="password"
                 autoComplete="new-password"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 dark:border-secondary-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-secondary-700 rounded-b-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-400 dark:focus:border-primary-400 focus:z-10 sm:text-sm"
+                className={`appearance-none rounded-none relative block w-full px-3 py-3 border ${theme === 'dark' ? 'border-secondary-600 placeholder-gray-400 text-white bg-secondary-700 focus:ring-primary-400 focus:border-primary-400' : 'border-gray-300 placeholder-gray-500 text-gray-900 bg-white focus:ring-primary-500 focus:border-primary-500'} rounded-b-md focus:outline-none focus:z-10 sm:text-sm`}
                 placeholder="Şifreyi Onayla"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}

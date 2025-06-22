@@ -7,9 +7,10 @@ interface QuizListPageProps {
   onViewQuiz: (quiz: SavedQuizData) => void;
   onAddNewQuiz: () => void;
   onAddNewPersonalizedQuiz?: () => void; 
+  theme?: string;
 }
 
-const QuizListPage: React.FC<QuizListPageProps> = ({ savedQuizzes, onViewQuiz, onAddNewQuiz, onAddNewPersonalizedQuiz }) => {
+const QuizListPage: React.FC<QuizListPageProps> = ({ savedQuizzes, onViewQuiz, onAddNewQuiz, onAddNewPersonalizedQuiz, theme }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredQuizzes = (savedQuizzes || []).filter(quiz =>
@@ -26,8 +27,8 @@ const QuizListPage: React.FC<QuizListPageProps> = ({ savedQuizzes, onViewQuiz, o
   return (
     <div className="w-full h-full flex flex-col p-0">
       <div className="mb-6 px-1">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">Sınavlarım</h1>
-        <p className="text-gray-500 dark:text-gray-400">Geçmiş sınavlarınızı görüntüleyin ve yeni sınavlar oluşturun.</p>
+        <h1 className={`text-3xl font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Sınavlarım</h1>
+        <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Geçmiş sınavlarınızı görüntüleyin ve yeni sınavlar oluşturun.</p>
       </div>
 
       <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-1">
@@ -37,21 +38,21 @@ const QuizListPage: React.FC<QuizListPageProps> = ({ savedQuizzes, onViewQuiz, o
             placeholder="Sınav ara..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full p-3 pl-10 bg-white dark:bg-secondary-800 border border-gray-300 dark:border-secondary-700 rounded-lg text-gray-800 dark:text-gray-200 focus:ring-primary-500 focus:border-primary-500 placeholder-gray-400 dark:placeholder-gray-500"
+            className={`w-full p-3 pl-10 border rounded-lg focus:ring-primary-500 focus:border-primary-500 ${theme === 'dark' ? 'bg-secondary-800 border-secondary-700 text-gray-200 placeholder-gray-500' : 'bg-white border-gray-300 text-gray-800 placeholder-gray-400'}`}
             aria-label="Sınav arama"
           />
-          <i className="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500"></i>
+          <i className={`fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 ${theme === 'dark' ? 'text-gray-500' : 'text-gray-400'}`}></i>
         </div>
         <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
           <div className="relative">
             <select
-              className="appearance-none w-full sm:w-auto p-3 pr-10 bg-white dark:bg-secondary-800 border border-gray-300 dark:border-secondary-700 rounded-lg text-gray-800 dark:text-gray-200 focus:ring-primary-500 focus:border-primary-500"
+              className={`appearance-none w-full sm:w-auto p-3 pr-10 border rounded-lg focus:ring-primary-500 focus:border-primary-500 ${theme === 'dark' ? 'bg-secondary-800 border-secondary-700 text-gray-200' : 'bg-white border-gray-300 text-gray-800'}`}
               aria-label="Sınav türüne göre filtrele"
               defaultValue="all"
             >
               <option value="all">Tüm Sınavlar</option>
             </select>
-            <i className="fas fa-chevron-down absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 pointer-events-none"></i>
+            <i className={`fas fa-chevron-down absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none ${theme === 'dark' ? 'text-gray-500' : 'text-gray-400'}`}></i>
           </div>
           <button
             onClick={onAddNewQuiz}

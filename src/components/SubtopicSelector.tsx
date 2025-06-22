@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import LoadingSpinner from './LoadingSpinner';
+import { getThemeClasses } from '../utils/themeUtils';
 
 interface SubtopicSelectorProps {
   newSubtopics: string[];
@@ -9,6 +10,7 @@ interface SubtopicSelectorProps {
   onCancel: () => void;
   isLoading?: boolean;
   selectionContext?: 'pdf_scan' | 'weak_topics';
+  theme?: string;
 }
 
 const SubtopicSelector: React.FC<SubtopicSelectorProps> = ({
@@ -18,7 +20,9 @@ const SubtopicSelector: React.FC<SubtopicSelectorProps> = ({
   onCancel,
   isLoading,
   selectionContext = 'pdf_scan',
+  theme,
 }) => {
+  const themeClasses = getThemeClasses(theme);
   const allAvailableSubtopics = useMemo(() => {
     if (selectionContext === 'weak_topics') {
       return Array.from(new Set([...newSubtopics]));
@@ -85,35 +89,47 @@ const SubtopicSelector: React.FC<SubtopicSelectorProps> = ({
   
   const getTopicTypeDetails = (topic: string): { label: string; colorClasses: string } | null => {
     if (selectionContext !== 'pdf_scan') return null;
+    const isDark = theme === 'dark';
+    
     if (newSubtopics.includes(topic)) {
-      return { label: 'Yeni', colorClasses: 'bg-teal-100 dark:bg-teal-700/30 text-teal-700 dark:text-teal-300' };
+      return { 
+        label: 'Yeni', 
+        colorClasses: isDark 
+          ? 'bg-teal-700/30 text-teal-300' 
+          : 'bg-teal-100 text-teal-700' 
+      };
     }
     if (confirmedExistingSubtopics.includes(topic)) {
-      return { label: 'Mevcut', colorClasses: 'bg-sky-100 dark:bg-sky-700/30 text-sky-700 dark:text-sky-300' };
+      return { 
+        label: 'Mevcut', 
+        colorClasses: isDark 
+          ? 'bg-sky-700/30 text-sky-300' 
+          : 'bg-sky-100 text-sky-700' 
+      };
     }
     return null;
   };
 
 
   return (
-    <div className="w-full max-w-2xl p-6 md:p-8 bg-white dark:bg-secondary-800 rounded-xl shadow-2xl text-gray-700 dark:text-gray-200">
+    <div className={`w-full max-w-2xl p-6 md:p-8 rounded-xl shadow-2xl ${themeClasses.bg.card} ${themeClasses.text.secondary}`}>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">{pageTitle}</h2>
+        <h2 className={`text-2xl font-semibold ${themeClasses.text.primary}`}>{pageTitle}</h2>
         <button 
             onClick={onCancel} 
-            className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white transition-colors flex items-center"
+            className={`text-sm transition-colors flex items-center ${themeClasses.text.muted} hover:${themeClasses.text.primary.replace('text-', 'hover:text-')}`}
             title={cancelButtonText}
           >
             <i className="fas fa-times mr-1.5"></i> {cancelButtonText}
         </button>
       </div>
       
-      <p className="text-gray-600 dark:text-gray-300 mb-6 text-sm">
+      <p className={`mb-6 text-sm ${themeClasses.text.tertiary}`}>
         {selectionGuidance}
       </p>
 
       {allAvailableSubtopics.length === 0 ? (
-        <p className="text-center text-gray-500 dark:text-gray-400 py-4">
+        <p className={`text-center py-4 ${themeClasses.text.muted}`}>
           {selectionContext === 'weak_topics' 
             ? "Bu ders için görüntülenecek zayıf konu bulunmuyor." 
             : "Bu PDF'ten alt konu çıkarılamadı veya PDF içeriği yetersiz."
@@ -124,7 +140,11 @@ const SubtopicSelector: React.FC<SubtopicSelectorProps> = ({
           <div className="mb-4 text-right">
             <button
               onClick={handleSelectAll}
-              className="px-4 py-2 text-sm bg-gray-100 dark:bg-secondary-700 text-gray-700 dark:text-gray-200 rounded-md hover:bg-gray-200 dark:hover:bg-secondary-600 transition-colors shadow-sm"
+              className={`px-4 py-2 text-sm rounded-md transition-colors shadow-sm ${
+                theme === 'dark' 
+                  ? 'bg-secondary-700 text-gray-200 hover:bg-secondary-600' 
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
             >
               {selected.length === allAvailableSubtopics.length ? 'Tüm Seçimi Kaldır' : 'Tümünü Seç'}
             </button>
@@ -135,15 +155,50 @@ const SubtopicSelector: React.FC<SubtopicSelectorProps> = ({
                 const isSelected = selected.includes(subtopic);
                 const checkboxId = `subtopic-checkbox-${index}`;
                 const textId = `subtopic-text-${index}`;
+                const isDark = theme === 'dark';
+                
+                const getCardClasses = () => {
+                  let cardClasses = 'block p-4 rounded-lg transition-all duration-150 ease-in-out border cursor-pointer ';
+                  
+                  if (isSelected) {
+                    cardClasses += isDark 
+                      ? 'bg-primary-900/40 border-primary-600 ring-2 ring-primary-600 shadow-md' 
+                      : 'bg-primary-50 border-primary-500 ring-2 ring-primary-500 shadow-md';
+                  } else {
+                    cardClasses += isDark 
+                      ? 'bg-secondary-700/80 border-secondary-600 hover:border-primary-500/70 hover:bg-secondary-700/90' 
+                      : 'bg-white border-gray-300 hover:border-primary-400 hover:bg-gray-50';
+                  }
+                  
+                  return cardClasses;
+                };
+                
+                const getCheckboxClasses = () => {
+                  const baseClasses = 'form-checkbox h-5 w-5 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 mr-4 shrink-0 rounded ';
+                  const themeClasses = isDark 
+                    ? 'text-primary-400 focus:ring-offset-secondary-800 bg-secondary-600 border-secondary-500' 
+                    : 'text-primary-600 focus:ring-offset-white bg-gray-200 border-gray-400';
+                  
+                  return baseClasses + themeClasses;
+                };
+                
+                const getTextClasses = () => {
+                  let textClasses = 'text-base font-medium break-words ';
+                  
+                  if (isSelected) {
+                    textClasses += isDark ? 'text-primary-100' : 'text-primary-700';
+                  } else {
+                    textClasses += isDark ? 'text-gray-100' : 'text-gray-800';
+                  }
+                  
+                  return textClasses;
+                };
+                
               return (
                 <label
                   key={`${index}-${subtopic.replace(/\s+/g, '-')}`}
                   htmlFor={checkboxId}
-                  className={`block p-4 rounded-lg transition-all duration-150 ease-in-out border
-                              ${isSelected
-                                  ? 'bg-primary-50 dark:bg-primary-900/40 border-primary-500 dark:border-primary-600 ring-2 ring-primary-500 dark:ring-primary-600 shadow-md'
-                                  : 'bg-white dark:bg-secondary-700/80 border-gray-300 dark:border-secondary-600 hover:border-primary-400 dark:hover:border-primary-500/70 hover:bg-gray-50 dark:hover:bg-secondary-700/90'
-                              } cursor-pointer`}
+                  className={getCardClasses()}
                 >
                   <div className="flex items-center">
                     <input
@@ -151,13 +206,13 @@ const SubtopicSelector: React.FC<SubtopicSelectorProps> = ({
                       type="checkbox"
                       checked={isSelected}
                       onChange={() => handleToggleSubtopic(subtopic)}
-                      className="form-checkbox h-5 w-5 text-primary-600 dark:text-primary-400 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-secondary-800 mr-4 shrink-0 rounded bg-gray-200 dark:bg-secondary-600 border-gray-400 dark:border-secondary-500"
+                      className={getCheckboxClasses()}
                       aria-labelledby={textId}
                     />
                     <div className="flex-grow min-w-0">
                       <span 
                         id={textId}
-                        className={`text-base font-medium break-words ${isSelected ? 'text-primary-700 dark:text-primary-100' : 'text-gray-800 dark:text-gray-100'}`}
+                        className={getTextClasses()}
                       >
                         {subtopic}
                       </span>
@@ -167,7 +222,7 @@ const SubtopicSelector: React.FC<SubtopicSelectorProps> = ({
                         {topicDetails.label}
                       </span>
                     )}
-                    {isSelected && <i className="fas fa-check-circle ml-3 text-primary-600 dark:text-primary-400 text-lg"></i>}
+                    {isSelected && <i className={`fas fa-check-circle ml-3 text-lg ${theme === 'dark' ? 'text-primary-400' : 'text-primary-600'}`}></i>}
                   </div>
                 </label>
               )
@@ -176,11 +231,15 @@ const SubtopicSelector: React.FC<SubtopicSelectorProps> = ({
         </>
       )}
 
-      <div className="flex justify-end items-center mt-8 pt-6 border-t border-gray-300 dark:border-secondary-700">
+      <div className={`flex justify-end items-center mt-8 pt-6 border-t ${theme === 'dark' ? 'border-secondary-700' : 'border-gray-300'}`}>
         <button
           onClick={handleSubmit}
           disabled={isSubmitDisabled()} 
-          className="px-8 py-3 bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white rounded-lg font-semibold shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-70 disabled:opacity-50 disabled:cursor-not-allowed"
+          className={`px-8 py-3 text-white rounded-lg font-semibold shadow-lg focus:outline-none focus:ring-2 focus:ring-opacity-70 disabled:opacity-50 disabled:cursor-not-allowed ${
+            theme === 'dark' 
+              ? 'bg-green-600 hover:bg-green-700 focus:ring-green-500' 
+              : 'bg-green-500 hover:bg-green-600 focus:ring-green-500'
+          }`}
           aria-label="Seçili Konularla Devam Et"
         >
           Devam Et <i className="fas fa-arrow-right ml-2"></i>

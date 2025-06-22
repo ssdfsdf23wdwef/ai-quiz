@@ -19,7 +19,7 @@ export const useAppSettings = (appConfig: AppConfig | null) => {
       defaultTimerEnabled: configDefaults.defaultTimerEnabled,
       secondsPerQuestion: configDefaults.secondsPerQuestion,
       numOptionsPerQuestion: configDefaults.numOptionsPerQuestion,
-      theme: (configDefaults.theme === 'light' || configDefaults.theme === 'dark') ? configDefaults.theme : 'dark',
+      theme: (configDefaults.theme === 'light' || configDefaults.theme === 'dark') ? configDefaults.theme : 'light',
     };
 
     let currentActiveSettings = { ...defaultValues };
@@ -43,7 +43,10 @@ export const useAppSettings = (appConfig: AppConfig | null) => {
 
   useEffect(() => {
     if (!appSettings) return;
+    
     const root = document.documentElement;
+    
+    // Force theme application
     if (appSettings.theme === 'light') {
       root.classList.remove('dark');
       root.style.setProperty('--scrollbar-track-color', '#e2e8f0'); // secondary-200 for light
@@ -66,6 +69,7 @@ export const useAppSettings = (appConfig: AppConfig | null) => {
         numOptionsPerQuestion: typeof newSettings.numOptionsPerQuestion === 'number' && newSettings.numOptionsPerQuestion >= 2 && newSettings.numOptionsPerQuestion <= 6 ? newSettings.numOptionsPerQuestion : appSettings.numOptionsPerQuestion,
         theme: (newSettings.theme === 'light' || newSettings.theme === 'dark') ? newSettings.theme : appSettings.theme,
     };
+
     setAppSettings(validatedSettings);
     try {
         localStorage.setItem(LOCAL_STORAGE_KEY_APP_SETTINGS, JSON.stringify(validatedSettings));

@@ -193,6 +193,28 @@
         };
       })();
     </script>
+    <script>
+      // Theme initialization script - must run before React app loads
+      (function() {
+        try {
+          // Force light theme as default
+          const root = document.documentElement;
+          root.classList.remove('dark');
+          
+          // Check for saved settings
+          const savedSettings = localStorage.getItem('aiQuizAppSettings');
+          if (savedSettings) {
+            const settings = JSON.parse(savedSettings);
+            if (settings.theme === 'dark') {
+              root.classList.add('dark');
+            }
+          }
+        } catch (error) {
+          // Ensure light theme as fallback
+          document.documentElement.classList.remove('dark');
+        }
+      })();
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script type="importmap">
 {
@@ -214,7 +236,7 @@
 </script>
 <link rel="stylesheet" href="/src/index.css">
 </head>
-  <body class="overflow-hidden font-sans">
+  <body class="font-sans bg-white dark:bg-secondary-900 text-gray-900 dark:text-gray-100">
     <noscript>Bu</noscript>
     <div id="root"></div>
     <script type="module" src="/src/index.tsx"></script>

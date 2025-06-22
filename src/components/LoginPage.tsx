@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
 import { signInUser } from '../services/authService'; 
 import { useAppRouter } from '../hooks/useAppRouter'; // Assuming navigateTo is part of useAppRouter
+import { getThemeClasses } from '../utils/themeUtils';
 
 interface LoginPageProps {
   onLoginSuccess: () => void;
   navigateTo: (state: 'signup' | 'forgot_password' | 'dashboard_main') => void;
   setAuthLoading: (loading: boolean) => void;
   setAuthError: (error: string | null) => void;
+  theme?: string;
 }
 
-const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, navigateTo, setAuthLoading, setAuthError }) => {
+const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, navigateTo, setAuthLoading, setAuthError, theme }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  
+  const themeClasses = getThemeClasses(theme);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,8 +41,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, navigateTo, setAu
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-secondary-900 px-4 py-12">
-      <div className="w-full max-w-md p-8 bg-white dark:bg-secondary-800 rounded-xl shadow-2xl space-y-8">
+    <div className={`min-h-screen flex items-center justify-center px-4 py-12 ${themeClasses.bg.tertiary}`}>
+      <div className={`w-full max-w-md p-8 rounded-xl shadow-2xl space-y-8 ${themeClasses.bg.card}`}>
         <div>
           <div className="flex justify-center mb-4">
              <div className="p-3 bg-gradient-to-tr from-purple-600 to-blue-500 rounded-lg">

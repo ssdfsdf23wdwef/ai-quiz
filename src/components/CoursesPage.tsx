@@ -9,6 +9,7 @@ interface CoursesPageProps {
   onDeleteCourse: (courseId: string) => void;
   onViewCourseLOs: (course: Course) => void; 
   onBack?: () => void;
+  theme?: string;
 }
 
 const CoursesPage: React.FC<CoursesPageProps> = ({ 
@@ -17,7 +18,8 @@ const CoursesPage: React.FC<CoursesPageProps> = ({
   onAddCourse, 
   onDeleteCourse, 
   onViewCourseLOs,
-  onBack 
+  onBack,
+  theme
 }) => {
   const [newCourseName, setNewCourseName] = useState('');
   const [isAddingCourse, setIsAddingCourse] = useState(false);
@@ -46,16 +48,16 @@ const CoursesPage: React.FC<CoursesPageProps> = ({
   };
 
   return (
-    <div className="w-full h-full flex flex-col p-0 text-gray-800 dark:text-gray-200">
+    <div className={`w-full h-full flex flex-col p-0 ${theme === 'dark' ? 'text-gray-200' : 'text-gray-800'}`}>
       <div className="mb-6 px-1 flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">Derslerim</h1>
-          <p className="text-gray-500 dark:text-gray-400">Oluşturduğunuz dersleri yönetin ve kişiselleştirilmiş sınavlar için kullanın.</p>
+          <h1 className={`text-3xl font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Derslerim</h1>
+          <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Oluşturduğunuz dersleri yönetin ve kişiselleştirilmiş sınavlar için kullanın.</p>
         </div>
         {onBack && !isAddingCourse && (
           <button
             onClick={onBack}
-            className="px-4 py-2 bg-gray-200 dark:bg-secondary-700 hover:bg-gray-300 dark:hover:bg-secondary-600 text-gray-700 dark:text-gray-200 rounded-lg transition-colors flex items-center"
+            className={`px-4 py-2 rounded-lg transition-colors flex items-center ${theme === 'dark' ? 'bg-secondary-700 hover:bg-secondary-600 text-gray-200' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}`}
             aria-label="Ana Sayfaya Dön"
           >
             <i className="fas fa-arrow-left mr-2"></i> Ana Sayfa

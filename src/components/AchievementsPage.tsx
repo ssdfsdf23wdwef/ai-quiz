@@ -5,9 +5,10 @@ import EmptyState from './EmptyState';
 interface AchievementsPageProps {
   achievements: Achievement[];
   onBack?: () => void;
+  theme?: string;
 }
 
-const AchievementCard: React.FC<{ achievement: Achievement }> = React.memo(({ achievement }) => {
+const AchievementCard: React.FC<{ achievement: Achievement; theme?: string }> = React.memo(({ achievement, theme }) => {
   const { title, description, icon, isUnlocked, unlockedDate, progress, category } = achievement;
   
   const progressBarWidth = progress && isUnlocked ? (progress.current / progress.target) * 100 : (isUnlocked ? 100 : 0);

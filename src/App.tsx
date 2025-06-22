@@ -253,12 +253,14 @@ const App: React.FC = () => {
                                             navigateTo={(state) => navigateTo(state)}
                                             setAuthLoading={setAuthLoadingState}
                                             setAuthError={setAuthErrorState}
+                                            theme={theme}
                                         />;
         if (appState === 'signup') return <SignupPage 
                                             onSignupSuccess={() => navigateTo('dashboard_main')} 
                                             navigateTo={(state) => navigateTo(state)}
                                             setAuthLoading={setAuthLoadingState}
                                             setAuthError={setAuthErrorState}
+                                            theme={theme}
                                         />;
         if (appState === 'forgot_password') return <ForgotPasswordPage 
                                                     navigateTo={(state) => navigateTo(state)}
@@ -277,7 +279,7 @@ const App: React.FC = () => {
     // Show spinner if any critical data is loading for the main app view
     if (settingsLoading || persistentDataLoading || (!appConfig && !errorMessage)) {
         return (
-            <div className="flex h-screen bg-gray-100 dark:bg-secondary-900">
+            <div className={`flex h-screen ${theme === 'dark' ? 'bg-secondary-900' : 'bg-gray-100'}`}>
                 {!configLoading && <Sidebar 
                     appState={appState} 
                     isCollapsed={isSidebarCollapsed} 
@@ -292,6 +294,7 @@ const App: React.FC = () => {
                     currentUser={currentUser}
                     onNavigateToProfile={() => navigateTo('profile')}
                     onLogout={handleLogout}
+                    theme={theme}
                 />}
                 <main className="flex-grow overflow-y-auto flex items-center justify-center">
                     <div className="p-4 sm:p-6 lg:p-8">
@@ -376,6 +379,7 @@ const App: React.FC = () => {
                                         onCancel={() => handleCancelSubtopicSelection(navigateTo, setRouterLoading)}
                                         isLoading={quizWorkflowLoading && (appState === 'identifying_subtopics' || appState === 'parsing_pdf')}
                                         selectionContext="weak_topics"
+                                        theme={theme}
                                     />;
                     creationStageKey = 'subtopic_selection';
                 } else { // new_topics or comprehensive, needs PDF
@@ -428,6 +432,7 @@ const App: React.FC = () => {
                             onCancel={() => handleCancelSubtopicSelection(navigateTo, setRouterLoading)}
                             isLoading={quizWorkflowLoading}
                             selectionContext={currentPersonalizedQuizType === 'weak_topics' ? 'weak_topics' : 'pdf_scan'}
+                            theme={theme}
                          />;
         } else if (appState === 'preferences_setup') {
           childContent = <QuizPreferences
@@ -442,6 +447,7 @@ const App: React.FC = () => {
                             currentQuizMode={currentQuizMode}
                             currentPersonalizedQuizType={currentPersonalizedQuizType}
                             quizDefaults={appConfig.quizDefaults}
+                            theme={theme}
                           />;
         } else if (appState === 'generating_quiz') {
           childContent = <LoadingSpinner text="Sınavınız oluşturuluyor, lütfen bekleyin..." />;
@@ -473,6 +479,7 @@ const App: React.FC = () => {
                             isTimerEnabled={isTimerEnabledForQuiz}
                             totalTimeInSeconds={isTimerEnabledForQuiz ? numQuizQuestions * appSettings.secondsPerQuestion : 0}
                             pdfSourceFilename={currentPdfName || undefined}
+                            theme={theme}
                         />;
         }
         break;
@@ -490,7 +497,7 @@ const App: React.FC = () => {
         }
         break;
       case 'dashboard_main':
-        pageContent = <DashboardPage features={mainFeatureCards} onStartQuizFlow={handleStartQuizFlow} />;
+        pageContent = <DashboardPage features={mainFeatureCards} onStartQuizFlow={handleStartQuizFlow} theme={theme} />;
         break;
       case 'viewing_quiz_list':
         pageContent = <QuizListPage 
@@ -498,6 +505,7 @@ const App: React.FC = () => {
                           onViewQuiz={(quiz) => { setSelectedQuizForViewingState(quiz); navigateTo('viewing_specific_saved_result'); }} 
                           onAddNewQuiz={() => handleStartQuizFlow('quick')}
                           onAddNewPersonalizedQuiz={() => handleStartQuizFlow('personalized')}
+                          theme={theme}
                       />;
         break;
       case 'viewing_specific_saved_result':
@@ -534,7 +542,7 @@ const App: React.FC = () => {
                         />;
         break;
       case 'viewing_achievements':
-        pageContent = <AchievementsPage achievements={achievements} onBack={() => routerResetAppToDashboard(resetQuizWorkflowState, resetPersistentDataSelectionState)} />;
+        pageContent = <AchievementsPage achievements={achievements} onBack={() => routerResetAppToDashboard(resetQuizWorkflowState, resetPersistentDataSelectionState)} theme={theme} />;
         break;
       case 'viewing_courses_list':
         pageContent = <CoursesPage 
@@ -544,6 +552,7 @@ const App: React.FC = () => {
                         onDeleteCourse={deleteCourse} 
                         onViewCourseLOs={(course) => {setCurrentViewingCourseForLOState(course); navigateTo('viewing_course_learning_objectives');}}
                         onBack={() => routerResetAppToDashboard(resetQuizWorkflowState, resetPersistentDataSelectionState)}
+                        theme={theme}
                       />;
         break;
       case 'viewing_settings':
@@ -552,6 +561,7 @@ const App: React.FC = () => {
                         onSaveSettings={updateAppSettings} 
                         onBack={() => routerResetAppToDashboard(resetQuizWorkflowState, resetPersistentDataSelectionState)}
                         appConfigDefaults={appConfig.appSettingsDefaults}
+                        theme={theme}
                       />;
         break;
       case 'profile':
@@ -561,6 +571,7 @@ const App: React.FC = () => {
                         onBack={() => routerResetAppToDashboard(resetQuizWorkflowState, resetPersistentDataSelectionState)}
                         setAuthLoading={setAuthLoadingState}
                         setAuthError={setAuthErrorState}
+                        theme={theme}
                       />;
         break;
       default:
@@ -590,7 +601,7 @@ const App: React.FC = () => {
 
 
     return (
-      <div className="flex h-screen bg-gray-100 dark:bg-secondary-900 font-sans">
+      <div className={`flex h-screen font-sans ${theme === 'dark' ? 'bg-secondary-900' : 'bg-gray-100'}`}>
         {authFeedbackMessage}
         {currentUser && !['login', 'signup', 'forgot_password', 'auth_loading'].includes(appState) && (
             <Sidebar
@@ -607,6 +618,7 @@ const App: React.FC = () => {
                 currentUser={currentUser}
                 onNavigateToProfile={() => navigateTo('profile')}
                 onLogout={handleLogout}
+                theme={theme}
             />
         )}
         <main className={`flex-grow overflow-y-auto transition-all duration-300 ease-in-out ${isSidebarCollapsed && currentUser ? 'ml-20' : !isSidebarCollapsed && currentUser ? 'ml-72' : 'ml-0'} app-main-content`}>

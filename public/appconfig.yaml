@@ -21,7 +21,7 @@ quizDefaults:
 appSettingsDefaults:
   secondsPerQuestion: 90
   numOptionsPerQuestion: 4
-  theme: "dark"
+  theme: "light"
   defaultTimerEnabled: false
 
 maxPdfTextLength: 100000

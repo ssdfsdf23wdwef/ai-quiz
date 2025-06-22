@@ -2,6 +2,7 @@ import React from 'react';
 import { QuizQuestion } from '../types';
 import CheckCircleIcon from './icons/CheckCircleIcon';
 import XCircleIcon from './icons/XCircleIcon';
+import { getContainerClasses, getTextClasses, getButtonClasses } from '../utils/themeUtils';
 
 interface QuizResultProps {
   questions: QuizQuestion[];
@@ -13,6 +14,7 @@ interface QuizResultProps {
   pdfName?: string;
   savedAt?: number;
   quizId?: string; 
+  theme?: string;
 }
 
 const QuizResult: React.FC<QuizResultProps> = ({ 
@@ -24,8 +26,9 @@ const QuizResult: React.FC<QuizResultProps> = ({
   isViewingSaved = false,
   pdfName,
   savedAt,
-  quizId
- }) => {
+  quizId,
+  theme,
+}) => {
   const calculateScore = () => {
     let correctAnswers = 0;
     questions.forEach(q => {
@@ -41,20 +44,21 @@ const QuizResult: React.FC<QuizResultProps> = ({
   const percentage = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 0;
 
   const getResultColorClasses = () => {
+    const isDark = theme === 'dark';
     if (percentage >= 75) return { 
-      text: 'text-green-600 dark:text-green-400', 
-      border: 'border-green-500 dark:border-green-500/50', 
-      bg: 'bg-green-50 dark:bg-green-500/10' 
+      text: isDark ? 'text-green-400' : 'text-green-600', 
+      border: isDark ? 'border-green-500/50' : 'border-green-500', 
+      bg: isDark ? 'bg-green-500/10' : 'bg-green-50' 
     };
     if (percentage >= 50) return { 
-      text: 'text-yellow-600 dark:text-yellow-400', 
-      border: 'border-yellow-500 dark:border-yellow-500/50', 
-      bg: 'bg-yellow-50 dark:bg-yellow-500/10' 
+      text: isDark ? 'text-yellow-400' : 'text-yellow-600', 
+      border: isDark ? 'border-yellow-500/50' : 'border-yellow-500', 
+      bg: isDark ? 'bg-yellow-500/10' : 'bg-yellow-50' 
     };
     return { 
-      text: 'text-red-600 dark:text-red-400', 
-      border: 'border-red-500 dark:border-red-500/50', 
-      bg: 'bg-red-50 dark:bg-red-500/10' 
+      text: isDark ? 'text-red-400' : 'text-red-600', 
+      border: isDark ? 'border-red-500/50' : 'border-red-500', 
+      bg: isDark ? 'bg-red-500/10' : 'bg-red-50' 
     };
   };
   
@@ -67,18 +71,18 @@ const QuizResult: React.FC<QuizResultProps> = ({
   }
 
   return (
-    <div className="w-full max-w-3xl p-6 md:p-8 bg-white dark:bg-secondary-800 rounded-xl shadow-2xl text-gray-800 dark:text-gray-200">
-      <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-2">Sınav Sonucu</h2>
+    <div className={`w-full max-w-3xl p-6 md:p-8 rounded-xl shadow-2xl ${getContainerClasses(theme)}`}>
+      <h2 className={`text-3xl font-bold text-center mb-2 ${getTextClasses(theme, 'primary')}`}>Sınav Sonucu</h2>
       {isViewingSaved && pdfName && (
-        <p className="text-center text-sm text-gray-500 dark:text-gray-400 mb-1">PDF Kaynağı: {pdfName}</p>
+        <p className={`text-center text-sm mb-1 ${getTextClasses(theme, 'muted')}`}>PDF Kaynağı: {pdfName}</p>
       )}
       {isViewingSaved && savedAt && (
-        <p className="text-center text-xs text-gray-400 dark:text-gray-500 mb-4">Kaydedilme Tarihi: {new Date(savedAt).toLocaleString('tr-TR')}</p>
+        <p className={`text-center text-xs mb-4 ${getTextClasses(theme, 'muted')}`}>Kaydedilme Tarihi: {new Date(savedAt).toLocaleString('tr-TR')}</p>
       )}
       
       <div className={`text-center mb-8 p-6 rounded-lg ${resultColors.bg} border-2 ${resultColors.border}`}>
         <p className={`text-5xl font-extrabold mb-2 ${resultColors.text}`}>{percentage}%</p>
-        <p className="text-xl text-gray-700 dark:text-gray-300">
+        <p className={`text-xl ${getTextClasses(theme, 'secondary')}`}>
           {score} / {totalQuestions} doğru cevap
         </p>
       </div>
@@ -87,41 +91,58 @@ const QuizResult: React.FC<QuizResultProps> = ({
         {questions.map((q, index) => {
           const userAnswer = userAnswers[q.id];
           const isCorrect = userAnswer === q.correctAnswerIndex;
+          const isDark = theme === 'dark';
           const itemBgColor = isCorrect 
-            ? 'bg-green-50 dark:bg-green-500/10 border-green-200 dark:border-green-500/30' 
-            : 'bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/30';
+            ? (isDark ? 'bg-green-500/10 border-green-500/30' : 'bg-green-50 border-green-200')
+            : (isDark ? 'bg-red-500/10 border-red-500/30' : 'bg-red-50 border-red-200');
           
           return (
             <div key={q.id} className={`p-4 border rounded-lg ${itemBgColor}`}>
-              <p className="font-semibold text-gray-800 dark:text-gray-100 mb-1">Soru {index + 1}: {q.question}</p>
+              <p className={`font-semibold mb-1 ${getTextClasses(theme, 'primary')}`}>Soru {index + 1}: {q.question}</p>
               {q.subtopic && (
-                <p className="text-xs text-primary-600 dark:text-primary-400 mb-2 italic">
+                <p className={`text-xs mb-2 italic ${theme === 'dark' ? 'text-primary-400' : 'text-primary-600'}`}>
                   Alt Konu: {q.subtopic}
                 </p>
               )}
               <ul className="list-none space-y-1 pl-0">
-                {q.options.map((option, optIndex) => (
-                  <li 
-                    key={optIndex} 
-                    className={`flex items-center p-2 rounded text-sm
-                                ${optIndex === q.correctAnswerIndex ? 'font-bold text-green-700 dark:text-green-300' : 'text-gray-700 dark:text-gray-300'}
-                                ${userAnswer === optIndex && !isCorrect ? 'text-red-700 dark:text-red-300 line-through' : ''}
-                                ${userAnswer === optIndex && isCorrect ? 'bg-green-100 dark:bg-green-500/20' : ''}
-                                ${userAnswer === optIndex && !isCorrect && optIndex !== q.correctAnswerIndex ? 'bg-red-100 dark:bg-red-500/20' : ''}
-                                `}
-                  >
-                    {optIndex === q.correctAnswerIndex && <CheckCircleIcon className="w-5 h-5 mr-2 text-green-500 dark:text-green-400 shrink-0" />}
-                    {userAnswer === optIndex && optIndex !== q.correctAnswerIndex && <XCircleIcon className="w-5 h-5 mr-2 text-red-500 dark:text-red-400 shrink-0" />}
-                    {!(optIndex === q.correctAnswerIndex || (userAnswer === optIndex && optIndex !== q.correctAnswerIndex)) && <span className="w-5 h-5 mr-2 shrink-0"></span>}
+                {q.options.map((option, optIndex) => {
+                  const isDark = theme === 'dark';
+                  const isCorrectOption = optIndex === q.correctAnswerIndex;
+                  const isUserAnswer = userAnswer === optIndex;
+                  
+                  let optionClasses = 'flex items-center p-2 rounded text-sm ';
+                  
+                  if (isCorrectOption) {
+                    optionClasses += isDark ? 'font-bold text-green-300' : 'font-bold text-green-700';
+                  } else {
+                    optionClasses += isDark ? 'text-gray-300' : 'text-gray-700';
+                  }
+                  
+                  if (isUserAnswer && !isCorrect) {
+                    optionClasses += isDark ? ' text-red-300 line-through' : ' text-red-700 line-through';
+                  }
+                  
+                  if (isUserAnswer && isCorrect) {
+                    optionClasses += isDark ? ' bg-green-500/20' : ' bg-green-100';
+                  } else if (isUserAnswer && !isCorrect && !isCorrectOption) {
+                    optionClasses += isDark ? ' bg-red-500/20' : ' bg-red-100';
+                  }
+                  
+                  return (
+                    <li key={optIndex} className={optionClasses}>
+                      {isCorrectOption && <CheckCircleIcon className={`w-5 h-5 mr-2 shrink-0 ${isDark ? 'text-green-400' : 'text-green-500'}`} />}
+                      {isUserAnswer && !isCorrectOption && <XCircleIcon className={`w-5 h-5 mr-2 shrink-0 ${isDark ? 'text-red-400' : 'text-red-500'}`} />}
+                      {!(isCorrectOption || (isUserAnswer && !isCorrectOption)) && <span className="w-5 h-5 mr-2 shrink-0"></span>}
 
-                     <span className="min-w-0 break-words">{option}</span>
-                     {userAnswer === optIndex && <span className="ml-2 text-xs italic">({isCorrect ? 'Sizin Cevabınız - Doğru' : 'Sizin Cevabınız - Yanlış'})</span>}
-                     {userAnswer !== optIndex && optIndex === q.correctAnswerIndex && userAnswer !== undefined && <span className="ml-2 text-xs italic">(Doğru Cevap)</span>}
-                     {userAnswer === undefined && optIndex === q.correctAnswerIndex && <span className="ml-2 text-xs italic">(Doğru Cevap)</span>}
-                  </li>
-                ))}
-                 {userAnswers[q.id] === undefined && (
-                  <li className="mt-1 text-xs text-yellow-600 dark:text-yellow-400 italic">Bu soru cevaplanmadı.</li>
+                      <span className="min-w-0 break-words">{option}</span>
+                      {isUserAnswer && <span className="ml-2 text-xs italic">({isCorrect ? 'Sizin Cevabınız - Doğru' : 'Sizin Cevabınız - Yanlış'})</span>}
+                      {!isUserAnswer && isCorrectOption && userAnswer !== undefined && <span className="ml-2 text-xs italic">(Doğru Cevap)</span>}
+                      {userAnswer === undefined && isCorrectOption && <span className="ml-2 text-xs italic">(Doğru Cevap)</span>}
+                    </li>
+                  );
+                })}
+                {userAnswers[q.id] === undefined && (
+                  <li className={`mt-1 text-xs italic ${theme === 'dark' ? 'text-yellow-400' : 'text-yellow-600'}`}>Bu soru cevaplanmadı.</li>
                 )}
               </ul>
             </div>
@@ -132,14 +153,14 @@ const QuizResult: React.FC<QuizResultProps> = ({
       <div className="text-center space-y-3 md:space-y-0 md:flex md:justify-center md:space-x-4">
         <button
           onClick={onRestart}
-          className="w-full md:w-auto px-8 py-3 bg-primary-500 hover:bg-primary-600 text-white rounded-lg font-semibold shadow-lg text-lg focus:ring-2 focus:ring-primary-400 focus:ring-opacity-50"
+          className={`w-full md:w-auto px-8 py-3 rounded-lg font-semibold shadow-lg text-lg focus:ring-2 focus:ring-opacity-50 ${getButtonClasses(theme, 'primary')}`}
         >
           <i className="fas fa-redo-alt mr-2"></i> {restartButtonText()}
         </button>
         {!isViewingSaved && onSaveResult && (
           <button
             onClick={onSaveResult}
-            className="w-full md:w-auto px-8 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold shadow-lg text-lg focus:ring-2 focus:ring-green-400 focus:ring-opacity-50"
+            className={`w-full md:w-auto px-8 py-3 rounded-lg font-semibold shadow-lg text-lg focus:ring-2 focus:ring-opacity-50 ${getButtonClasses(theme, 'success')}`}
           >
             <i className="fas fa-save mr-2"></i> Sonuçları Kaydet
           </button>
@@ -147,7 +168,7 @@ const QuizResult: React.FC<QuizResultProps> = ({
          {isViewingSaved && onDeleteSpecificResult && quizId && (
           <button
             onClick={() => onDeleteSpecificResult(quizId)}
-            className="w-full md:w-auto px-8 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg font-semibold shadow-lg text-lg focus:ring-2 focus:ring-red-400 focus:ring-opacity-50"
+            className={`w-full md:w-auto px-8 py-3 rounded-lg font-semibold shadow-lg text-lg focus:ring-2 focus:ring-opacity-50 ${getButtonClasses(theme, 'danger')}`}
           >
             <i className="fas fa-trash-alt mr-2"></i> Kayıtlı Sonucu Sil
           </button>

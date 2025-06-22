@@ -8,9 +8,10 @@ interface ProfilePageProps {
   onBack?: () => void; // Optional back navigation
   setAuthLoading: (loading: boolean) => void;
   setAuthError: (error: string | null) => void;
+  theme?: string;
 }
 
-const ProfilePage: React.FC<ProfilePageProps> = ({ currentUser, onLogout, onBack, setAuthLoading, setAuthError }) => {
+const ProfilePage: React.FC<ProfilePageProps> = ({ currentUser, onLogout, onBack, setAuthLoading, setAuthError, theme }) => {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = async () => {
@@ -47,11 +48,13 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ currentUser, onLogout, onBack
     return (
       <div className="min-h-full flex flex-col items-center justify-center p-8">
         <div className="text-center space-y-4">
-          <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto">
+          <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto ${
+            theme === 'dark' ? 'bg-red-900/30' : 'bg-red-100'
+          }`}>
             <i className="fas fa-exclamation-triangle text-red-500 text-xl"></i>
           </div>
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Kullanıcı Bulunamadı</h2>
-          <p className="text-gray-600 dark:text-gray-400">Kullanıcı bilgileri yüklenemedi veya oturum açılmamış.</p>
+          <h2 className={`text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Kullanıcı Bulunamadı</h2>
+          <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Kullanıcı bilgileri yüklenemedi veya oturum açılmamış.</p>
           {onBack && (
             <button
               onClick={onBack}

@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { QuizQuestion } from '../types';
 import jsPDF from 'jspdf';
+import { getThemeClasses } from '../utils/themeUtils';
 
 interface QuizViewProps {
   questions: QuizQuestion[];
@@ -10,6 +11,7 @@ interface QuizViewProps {
   isTimerEnabled?: boolean;
   totalTimeInSeconds?: number;
   pdfSourceFilename?: string; 
+  theme?: string;
 }
 
 const QuizView: React.FC<QuizViewProps> = ({ 
@@ -19,11 +21,14 @@ const QuizView: React.FC<QuizViewProps> = ({
   isTimerEnabled = false,
   totalTimeInSeconds = 0,
   pdfSourceFilename,
+  theme,
 }) => {
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [remainingTime, setRemainingTime] = useState<number>(totalTimeInSeconds);
   const timerRef = useRef<number | null>(null);
   const fontDataRef = useRef<string | null>(null);
+  
+  const themeClasses = getThemeClasses(theme);
 
   useEffect(() => {
     const loadFont = async () => {
@@ -263,13 +268,13 @@ const QuizView: React.FC<QuizViewProps> = ({
 
   if (!questions || questions.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-full text-gray-500 dark:text-gray-400 p-8 text-center">
-        <i className="fas fa-box-open text-5xl mb-6 text-primary-500 dark:text-primary-400"></i>
-        <p className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-2">Sınav Yüklenemedi</p>
-        <p className="text-gray-600 dark:text-gray-400 mb-8">Görüntülenecek soru bulunamadı. Lütfen geri dönüp tekrar deneyin.</p>
+      <div className={`flex flex-col items-center justify-center h-full p-8 text-center ${themeClasses.text.muted}`}>
+        <i className={`fas fa-box-open text-5xl mb-6 ${themeClasses.text.accent}`}></i>
+        <p className={`text-xl font-semibold mb-2 ${themeClasses.text.secondary}`}>Sınav Yüklenemedi</p>
+        <p className={`mb-8 ${themeClasses.text.muted}`}>Görüntülenecek soru bulunamadı. Lütfen geri dönüp tekrar deneyin.</p>
         <button
             onClick={handleCancelQuiz}
-            className="px-6 py-3 bg-primary-500 hover:bg-primary-600 text-white rounded-lg transition-colors shadow-md font-medium flex items-center"
+            className={`px-6 py-3 text-white rounded-lg transition-colors shadow-md font-medium flex items-center ${themeClasses.bg.button.primary}`}
         >
             <i className="fas fa-arrow-left mr-2"></i> Ana Sayfaya Dön
         </button>
@@ -278,14 +283,14 @@ const QuizView: React.FC<QuizViewProps> = ({
   }
 
   return (
-    <div className="w-full h-full flex flex-col bg-gray-50 dark:bg-secondary-900 text-gray-800 dark:text-gray-200">
+    <div className={`w-full h-full flex flex-col ${themeClasses.bg.secondary} ${themeClasses.text.secondary}`}>
       {/* Header */}
-      <header className="p-4 sm:p-5 border-b border-gray-200 dark:border-secondary-700 sticky top-0 bg-white dark:bg-secondary-900 z-20 shadow-sm">
+      <header className={`p-4 sm:p-5 border-b sticky top-0 z-20 shadow-sm ${themeClasses.border.primary} ${themeClasses.bg.primary}`}>
         <div className="flex items-center justify-between mb-3">
             <div className="flex items-center">
                 <button
                     onClick={handleCancelQuiz}
-                    className="flex items-center text-lg text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                    className={`flex items-center text-lg transition-colors ${themeClasses.text.secondary} hover:${themeClasses.text.primary.replace('text-', 'hover:text-')}`}
                     title="Sınavdan Çık"
                     aria-label="Sınavdan çık ve ana sayfaya dön"
                 >
@@ -297,25 +302,37 @@ const QuizView: React.FC<QuizViewProps> = ({
             <div className="flex items-center space-x-3 sm:space-x-4">
                 <button
                     onClick={handleDownloadPdf}
-                    className="px-3 py-1.5 bg-gray-100 dark:bg-secondary-700 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-secondary-600 rounded-md transition-colors text-sm font-medium flex items-center shadow-sm"
+                    className={`px-3 py-1.5 rounded-md transition-colors text-sm font-medium flex items-center shadow-sm ${themeClasses.bg.button.secondary} ${themeClasses.text.secondary}`}
                     title="Sınavı PDF Olarak İndir"
                     aria-label="Sınavı PDF olarak indir"
                 >
-                    <i className="fas fa-file-pdf mr-2 text-red-500 dark:text-red-400"></i>
+                    <i className={`fas fa-file-pdf mr-2 ${theme === 'dark' ? 'text-red-400' : 'text-red-500'}`}></i>
                     <span className="hidden sm:inline">PDF İndir</span>
                 </button>
                 {isTimerEnabled && (
-                    <div className={`text-sm font-medium p-1.5 px-3 rounded-md flex items-center shadow-sm ${remainingTime <= 60 ? 'bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-300 ring-1 ring-red-300 dark:ring-red-500/50' : 'bg-gray-100 dark:bg-secondary-700 text-gray-700 dark:text-gray-300'}`}>
+                    <div className={`text-sm font-medium p-1.5 px-3 rounded-md flex items-center shadow-sm ${
+                      remainingTime <= 60 
+                        ? (theme === 'dark' 
+                            ? 'bg-red-500/20 text-red-300 ring-1 ring-red-500/50' 
+                            : 'bg-red-100 text-red-600 ring-1 ring-red-300')
+                        : (theme === 'dark' 
+                            ? 'bg-secondary-700 text-gray-300' 
+                            : 'bg-gray-100 text-gray-700')
+                    }`}>
                         <i className="far fa-clock mr-2"></i>
                         <span>{formatTime(remainingTime)}</span>
                     </div>
                 )}
-                <div className="text-sm text-gray-500 dark:text-gray-400 font-medium bg-gray-100 dark:bg-secondary-700 p-1.5 px-3 rounded-md shadow-sm">
+                <div className={`text-sm font-medium p-1.5 px-3 rounded-md shadow-sm ${
+                  theme === 'dark' 
+                    ? 'text-gray-400 bg-secondary-700' 
+                    : 'text-gray-500 bg-gray-100'
+                }`}>
                 {answeredCount} / {totalQuestions} yanıtlandı
                 </div>
             </div>
         </div>
-        <div className="w-full bg-gray-200 dark:bg-secondary-700 rounded-full h-1.5">
+        <div className={`w-full rounded-full h-1.5 ${theme === 'dark' ? 'bg-secondary-700' : 'bg-gray-200'}`}>
           <div
             className="bg-blue-500 h-1.5 rounded-full transition-all duration-300 ease-out"
             style={{ width: `${progressPercentage}%` }}
@@ -332,20 +349,35 @@ const QuizView: React.FC<QuizViewProps> = ({
       <main id="quiz-main-content" className="flex-grow overflow-y-auto p-4 sm:p-6 space-y-6 min-h-0 relative">
         {questions.map((question, index) => {
           const questionId = `question-${question.id}`;
+          const isDark = theme === 'dark';
           return (
-            <section key={question.id} aria-labelledby={`${questionId}-text`} className="bg-white dark:bg-secondary-800 p-5 sm:p-6 rounded-xl shadow-lg ring-1 ring-gray-200 dark:ring-secondary-700/50">
+            <section key={question.id} aria-labelledby={`${questionId}-text`} className={`p-5 sm:p-6 rounded-xl shadow-lg ring-1 ${
+              isDark 
+                ? 'bg-secondary-800 ring-secondary-700/50' 
+                : 'bg-white ring-gray-200'
+            }`}>
               <div className="flex items-start justify-between mb-3.5">
-                <h2 className="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-500/10 px-2.5 py-1 rounded-full">
+                <h2 className={`text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full ${
+                  isDark 
+                    ? 'text-blue-400 bg-blue-500/10' 
+                    : 'text-blue-600 bg-blue-100'
+                }`}>
                   Soru {index + 1} / {totalQuestions}
                 </h2>
                 {question.subtopic && (
-                  <span className="text-xs text-purple-600 dark:text-purple-400 bg-purple-100 dark:bg-purple-500/10 px-2.5 py-1 rounded-full font-medium">
+                  <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
+                    isDark 
+                      ? 'text-purple-400 bg-purple-500/10' 
+                      : 'text-purple-600 bg-purple-100'
+                  }`}>
                     <i className="fas fa-tags mr-1.5 opacity-70"></i>{question.subtopic}
                   </span>
                 )}
               </div>
 
-              <p id={`${questionId}-text`} className="text-base sm:text-lg font-medium text-gray-800 dark:text-gray-100 mb-5 leading-relaxed">
+              <p id={`${questionId}-text`} className={`text-base sm:text-lg font-medium mb-5 leading-relaxed ${
+                isDark ? 'text-gray-100' : 'text-gray-800'
+              }`}>
                 {question.question}
               </p>
 
@@ -353,18 +385,48 @@ const QuizView: React.FC<QuizViewProps> = ({
                 {question.options.map((option, optIndex) => {
                   const isSelected = answers[question.id] === optIndex;
                   const optionInputId = `${question.id}-option-${optIndex}`;
+                  
+                  const getOptionClasses = () => {
+                    let optionClasses = 'flex items-center p-3.5 border-2 rounded-lg cursor-pointer transition-all duration-150 ease-in-out transform hover:scale-[1.01] ';
+                    
+                    if (isSelected) {
+                      optionClasses += isDark 
+                        ? 'bg-blue-600 border-blue-500 text-white shadow-md' 
+                        : 'bg-blue-500 border-blue-500 text-white shadow-md';
+                    } else {
+                      optionClasses += isDark 
+                        ? 'bg-secondary-700/80 border-secondary-600 hover:border-blue-500/70 text-gray-300' 
+                        : 'bg-gray-50 border-gray-300 hover:border-blue-400 text-gray-700';
+                    }
+                    
+                    return optionClasses;
+                  };
+                  
+                  const getFocusClasses = () => {
+                    const baseClasses = 'focus-within:ring-2 focus-within:ring-offset-2 ';
+                    const offsetClasses = isDark 
+                      ? 'focus-within:ring-offset-secondary-800' 
+                      : 'focus-within:ring-offset-white';
+                    const ringClasses = isDark 
+                      ? 'focus-within:ring-blue-400' 
+                      : 'focus-within:ring-blue-500';
+                    
+                    return baseClasses + offsetClasses + ' ' + ringClasses;
+                  };
+                  
                   return (
                     <label
                       key={optionInputId}
                       htmlFor={optionInputId}
-                      className={`flex items-center p-3.5 border-2 rounded-lg cursor-pointer transition-all duration-150 ease-in-out transform hover:scale-[1.01] focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-white dark:focus-within:ring-offset-secondary-800 focus-within:ring-blue-500 dark:focus-within:ring-blue-400
-                                  ${isSelected
-                                      ? 'bg-blue-500 dark:bg-blue-600 border-blue-500 dark:border-blue-500 text-white shadow-md'
-                                      : 'bg-gray-50 dark:bg-secondary-700/80 border-gray-300 dark:border-secondary-600 hover:border-blue-400 dark:hover:border-blue-500/70 text-gray-700 dark:text-gray-300'
-                                  }`}
+                      className={`${getOptionClasses()} ${getFocusClasses()}`}
                     >
-                      <span className={`w-5 h-5 rounded-full border-2 flex-shrink-0 mr-3 flex items-center justify-center transition-colors
-                                        ${isSelected ? 'border-blue-300 bg-blue-400' : 'border-gray-400 dark:border-gray-500 group-hover:border-blue-400'}`}>
+                      <span className={`w-5 h-5 rounded-full border-2 flex-shrink-0 mr-3 flex items-center justify-center transition-colors ${
+                        isSelected 
+                          ? 'border-blue-300 bg-blue-400' 
+                          : (isDark 
+                              ? 'border-gray-500 group-hover:border-blue-400' 
+                              : 'border-gray-400 group-hover:border-blue-400')
+                      }`}>
                         {isSelected && <div className="w-2 h-2 bg-white rounded-full"></div>}
                       </span>
                       <input
@@ -387,11 +449,15 @@ const QuizView: React.FC<QuizViewProps> = ({
           );
         })}
 
-        <div className="mt-8 mb-4 pt-4 border-t border-gray-200 dark:border-secondary-700/50">
+        <div className={`mt-8 mb-4 pt-4 border-t ${theme === 'dark' ? 'border-secondary-700/50' : 'border-gray-200'}`}>
             <button
                 onClick={() => handleSubmit(false)}
                 disabled={totalQuestions === 0} 
-                className="w-full px-6 py-3.5 bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white rounded-lg font-semibold shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-70 text-base flex items-center justify-center disabled:opacity-60 disabled:cursor-not-allowed"
+                className={`w-full px-6 py-3.5 text-white rounded-lg font-semibold shadow-lg focus:outline-none focus:ring-2 focus:ring-opacity-70 text-base flex items-center justify-center disabled:opacity-60 disabled:cursor-not-allowed ${
+                  theme === 'dark' 
+                    ? 'bg-green-600 hover:bg-green-700 focus:ring-green-500' 
+                    : 'bg-green-500 hover:bg-green-600 focus:ring-green-500'
+                }`}
                 aria-label="Sınavı Bitir ve Sonuçları Gör"
             >
                 Sınavı Bitir <i className="fas fa-check-circle ml-2 text-lg"></i>

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { QuizDifficulty, PersonalizedQuizType, AppConfig } from '../types';
 
@@ -14,6 +13,7 @@ interface QuizPreferencesProps {
   currentQuizMode?: 'quick' | 'personalized' | null;
   currentPersonalizedQuizType?: PersonalizedQuizType | null;
   quizDefaults: AppConfig['quizDefaults']; // Pass quizDefaults from config
+  theme?: string;
 }
 
 const QuizPreferences: React.FC<QuizPreferencesProps> = ({
@@ -28,6 +28,7 @@ const QuizPreferences: React.FC<QuizPreferencesProps> = ({
   currentQuizMode,
   currentPersonalizedQuizType,
   quizDefaults,
+  theme,
 }) => {
   const [numQuestions, setNumQuestions] = useState(initialNumQuestions || quizDefaults.defaultNumQuestions);
   const [difficulty, setDifficulty] = useState<QuizDifficulty>(initialDifficulty);
@@ -145,14 +146,13 @@ const QuizPreferences: React.FC<QuizPreferencesProps> = ({
 
 
   return (
-    <div className="w-full max-w-lg mx-auto p-4 md:p-0 text-gray-700 dark:text-gray-200">
-      <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">Sınav Ayarları</h2>
-      <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">{subtopicInfoText} Lütfen soru sayısı, zorluk seviyesi ve zamanlayıcı tercihini seçin.</p>
-
+    <div className={`w-full max-w-lg mx-auto p-4 md:p-0 ${theme === 'dark' ? 'text-gray-200' : 'text-gray-700'}`}>
+      <h2 className={`text-xl font-semibold mb-2 ${theme === 'dark' ? 'text-gray-100' : 'text-gray-800'}`}>Sınav Ayarları</h2>
+      <p className={`text-sm mb-6 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>{subtopicInfoText} Lütfen soru sayısı, zorluk seviyesi ve zamanlayıcı tercihini seçin.</p>
       <div className="space-y-6">
         <div>
-          <label htmlFor="num-questions-slider" className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">
-            Soru Sayısı: <span className="font-bold text-primary-600 dark:text-primary-300">{numQuestions}</span>
+          <label htmlFor="num-questions-slider" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+            Soru Sayısı: <span className={`font-bold ${theme === 'dark' ? 'text-primary-300' : 'text-primary-600'}`}>{numQuestions}</span>
           </label>
           {currentSliderOptions.length > 0 ? (
             <>
@@ -170,7 +170,7 @@ const QuizPreferences: React.FC<QuizPreferencesProps> = ({
                     , sliderMin);
                     setNumQuestions(closest);
                 }}
-                className="w-full h-2 bg-gray-200 dark:bg-secondary-600 rounded-lg appearance-none cursor-pointer accent-primary-500"
+                className={`w-full h-2 rounded-lg appearance-none cursor-pointer accent-primary-500 ${theme === 'dark' ? 'bg-secondary-600' : 'bg-gray-200'}`}
                 aria-label={`Soru sayısı, mevcut değer ${numQuestions}`}
                 list="num-questions-datalist"
             />
@@ -179,25 +179,29 @@ const QuizPreferences: React.FC<QuizPreferencesProps> = ({
                     {currentSliderOptions.map(opt => <option key={opt} value={opt} label={opt.toString()}></option>)}
                 </datalist>
             )}
-            <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1 px-1">
+            <div className={`flex justify-between text-xs mt-1 px-1 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
                 <span>{sliderMin}</span>
                 <span>{sliderMax}</span>
             </div>
             </>
           ) : (
-            <p className="text-sm text-yellow-500 dark:text-yellow-400">Seçilen alt konu sayısına göre uygun soru sayısı aralığı bulunamadı. Lütfen alt konu seçiminizi gözden geçirin veya varsayılan ayarları kullanın.</p>
+            <p className={`text-sm ${theme === 'dark' ? 'text-yellow-400' : 'text-yellow-500'}`}>Seçilen alt konu sayısına göre uygun soru sayısı aralığı bulunamadı. Lütfen alt konu seçiminizi gözden geçirin veya varsayılan ayarları kullanın.</p>
           )}
         </div>
 
         <div>
-          <label htmlFor="difficulty-select" className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">
+          <label htmlFor="difficulty-select" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
             Zorluk Seviyesi
           </label>
           <select
             id="difficulty-select"
             value={difficulty}
             onChange={(e) => setDifficulty(e.target.value as QuizDifficulty)}
-            className="w-full p-3 bg-gray-50 dark:bg-secondary-700 border border-gray-300 dark:border-secondary-600 rounded-lg text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 placeholder-gray-400"
+            className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 placeholder-gray-400 ${
+              theme === 'dark' 
+                ? 'bg-secondary-700 border-secondary-600 text-gray-200' 
+                : 'bg-gray-50 border-gray-300 text-gray-800'
+            }`}
           >
             <option value="Kolay">Kolay</option>
             <option value="Orta">Orta</option>
@@ -212,20 +216,28 @@ const QuizPreferences: React.FC<QuizPreferencesProps> = ({
                     type="checkbox"
                     checked={timerEnabled}
                     onChange={(e) => setTimerEnabled(e.target.checked)}
-                    className="form-checkbox h-5 w-5 text-primary-600 dark:text-primary-500 bg-gray-100 dark:bg-secondary-600 border-gray-300 dark:border-secondary-500 rounded focus:ring-primary-500 dark:focus:ring-primary-400 focus:ring-offset-white dark:focus:ring-offset-secondary-800"
+                    className={`form-checkbox h-5 w-5 rounded focus:ring-offset-2 ${
+                      theme === 'dark' 
+                        ? 'text-primary-500 bg-secondary-600 border-secondary-500 focus:ring-primary-400 focus:ring-offset-secondary-800' 
+                        : 'text-primary-600 bg-gray-100 border-gray-300 focus:ring-primary-500 focus:ring-offset-white'
+                    }`}
                 />
-                <span className="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300">Sınav Zamanlayıcısını Etkinleştir</span>
+                <span className={`ml-3 text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Sınav Zamanlayıcısını Etkinleştir</span>
             </label>
-            <p className="mt-1 text-xs text-gray-500 dark:text-gray-500 italic">
+            <p className={`mt-1 text-xs italic ${theme === 'dark' ? 'text-gray-500' : 'text-gray-500'}`}>
                 Etkinleştirilirse, her soru için {defaultSecondsPerQuestion} saniye süre tanınacaktır.
             </p>
         </div>
       </div>
 
-      <div className="flex justify-between items-center mt-10 pt-6 border-t border-gray-300 dark:border-secondary-700">
+      <div className={`flex justify-between items-center mt-10 pt-6 border-t ${theme === 'dark' ? 'border-secondary-700' : 'border-gray-300'}`}>
         <button
           onClick={onBack}
-          className="px-7 py-3 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white transition-colors text-base flex items-center"
+          className={`px-7 py-3 transition-colors text-base flex items-center ${
+            theme === 'dark' 
+              ? 'text-gray-300 hover:text-white' 
+              : 'text-gray-600 hover:text-gray-800'
+          }`}
           aria-label="Geri dön"
         >
           <i className="fas fa-arrow-left mr-2"></i> Geri
@@ -233,7 +245,7 @@ const QuizPreferences: React.FC<QuizPreferencesProps> = ({
         <button
           onClick={handleSubmit}
           disabled={(currentSliderOptions.length === 0 || numQuestions < sliderMin || numQuestions > sliderMax) && currentSliderOptions.length > 0} 
-          className="px-7 py-3 bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white rounded-lg font-semibold shadow-md disabled:opacity-60 disabled:cursor-not-allowed text-base flex items-center"
+          className={`px-7 py-3 ${theme === 'dark' ? 'bg-green-600 hover:bg-green-700' : 'bg-green-500 hover:bg-green-600'} text-white rounded-lg font-semibold shadow-md disabled:opacity-60 disabled:cursor-not-allowed text-base flex items-center`}
           aria-label="Sınavı Başlat"
         >
           Sınavı Başlat <i className="fas fa-play-circle ml-2"></i>
