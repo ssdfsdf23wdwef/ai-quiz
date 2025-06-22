@@ -6,6 +6,7 @@ interface CourseSelectionForQuizStepProps {
   onCourseSelected: (courseId: string) => void;
   onNewCourseCreated: (newCourseName: string) => void;
   onCancel: () => void;
+  theme?: string;
 }
 
 const CourseSelectionForQuizStep: React.FC<CourseSelectionForQuizStepProps> = ({
@@ -13,6 +14,7 @@ const CourseSelectionForQuizStep: React.FC<CourseSelectionForQuizStepProps> = ({
   onCourseSelected,
   onNewCourseCreated,
   onCancel,
+  theme,
 }) => {
   const [selectedCourseId, setSelectedCourseId] = useState<string>('');
   const [newCourseNameInput, setNewCourseNameInput] = useState<string>('');
@@ -65,7 +67,7 @@ const CourseSelectionForQuizStep: React.FC<CourseSelectionForQuizStepProps> = ({
 
   return (
     <div className="w-full max-w-lg mx-auto p-4 md:p-0">
-      <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-6 text-left">
+      <h2 className={`text-xl font-semibold mb-6 text-left ${theme === 'dark' ? 'text-gray-100' : 'text-gray-800'}`}>
         Çalışmak istediğiniz dersi seçin
       </h2>
 
@@ -75,7 +77,7 @@ const CourseSelectionForQuizStep: React.FC<CourseSelectionForQuizStepProps> = ({
             id="existing-course-select"
             value={selectedCourseId}
             onChange={(e) => handleSelectCourse(e.target.value)}
-            className="w-full p-3.5 bg-gray-50 dark:bg-secondary-700 border border-gray-300 dark:border-secondary-600 rounded-lg text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 placeholder-gray-400 dark:placeholder-gray-500 text-base"
+            className={`w-full p-3.5 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-base ${theme === 'dark' ? 'bg-secondary-700 border-secondary-600 text-gray-200 placeholder-gray-500' : 'bg-gray-50 border-gray-300 text-gray-800 placeholder-gray-400'}`}
           >
             <option value="" disabled={selectedCourseId !== ""}>Mevcut bir ders seçin...</option>
             {courses.map(course => (

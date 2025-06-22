@@ -95,45 +95,47 @@ const QuizListPage: React.FC<QuizListPageProps> = ({ savedQuizzes, onViewQuiz, o
           />
         ) : (
           <table className={`w-full min-w-full divide-y ${theme === 'dark' ? 'divide-secondary-700' : 'divide-gray-200'}`}>
-            <thead className="bg-gray-50 dark:bg-secondary-700/50 sticky top-0 z-10">
+            <thead className={`sticky top-0 z-10 ${theme === 'dark' ? 'bg-secondary-700/50' : 'bg-gray-50'}`}>
               <tr>
-                <th scope="col" className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Sinav</th>
-                <th scope="col" className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Tür</th>
-                <th scope="col" className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Tarih</th>
-                <th scope="col" className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Skor</th>
-                <th scope="col" className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">İşlemler</th>
+                <th scope="col" className={`px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider ${theme === 'dark' ? 'text-gray-300' : 'text-gray-500'}`}>Sinav</th>
+                <th scope="col" className={`px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider ${theme === 'dark' ? 'text-gray-300' : 'text-gray-500'}`}>Tür</th>
+                <th scope="col" className={`px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider ${theme === 'dark' ? 'text-gray-300' : 'text-gray-500'}`}>Tarih</th>
+                <th scope="col" className={`px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider ${theme === 'dark' ? 'text-gray-300' : 'text-gray-500'}`}>Skor</th>
+                <th scope="col" className={`px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider ${theme === 'dark' ? 'text-gray-300' : 'text-gray-500'}`}>İşlemler</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-secondary-700">
+            <tbody className={`divide-y ${theme === 'dark' ? 'divide-secondary-700' : 'divide-gray-200'}`}>
               {filteredQuizzes.map((quiz) => (
-                <tr key={quiz.id} className="hover:bg-gray-50 dark:hover:bg-secondary-700/30 transition-colors duration-150">
+                <tr key={quiz.id} className={`transition-colors duration-150 ${theme === 'dark' ? 'hover:bg-secondary-700/30' : 'hover:bg-gray-50'}`}>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
-                      <div className="mr-3 text-blue-500 dark:text-blue-400 flex-shrink-0">
+                      <div className={`mr-3 flex-shrink-0 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-500'}`}>
                         <i className="fas fa-file-alt text-xl"></i>
                       </div>
                       <div className="min-w-0">
-                        <div className="text-sm font-medium text-gray-900 dark:text-white truncate max-w-xs md:max-w-sm" title={quiz.pdfName || `Sınav (${formatDate(quiz.savedAt).split(' ')[0]})`}>
+                        <div className={`text-sm font-medium truncate max-w-xs md:max-w-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`} title={quiz.pdfName || `Sınav (${formatDate(quiz.savedAt).split(' ')[0]})`}>
                           {quiz.pdfName || `Sınav (${formatDate(quiz.savedAt).split(' ')[0]})`}
                         </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">{quiz.totalQuestions} Soru</div>
+                        <div className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>{quiz.totalQuestions} Soru</div>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                     ${quiz.quizType === 'Kişiselleştirilmiş Sınav' ? 'bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300' : 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300'}`}>
+                                     ${quiz.quizType === 'Kişiselleştirilmiş Sınav' ? 
+                                       (theme === 'dark' ? 'bg-purple-500/20 text-purple-300' : 'bg-purple-100 text-purple-700') : 
+                                       (theme === 'dark' ? 'bg-blue-500/20 text-blue-300' : 'bg-blue-100 text-blue-700')}`}>
                       {quiz.quizType || "Hızlı Sınav"}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">{formatDate(quiz.savedAt)}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
+                  <td className={`px-6 py-4 whitespace-nowrap text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>{formatDate(quiz.savedAt)}</td>
+                  <td className={`px-6 py-4 whitespace-nowrap text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
                     {`${quiz.score}/${quiz.totalQuestions} (%${Math.round((quiz.score/quiz.totalQuestions)*100)})`}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <button
                       onClick={() => onViewQuiz(quiz)}
-                      className="text-primary-600 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300 transition-colors"
+                      className={`transition-colors ${theme === 'dark' ? 'text-primary-400 hover:text-primary-300' : 'text-primary-600 hover:text-primary-500'}`}
                       aria-label={`'${quiz.pdfName || 'Bu sınavı'}' görüntüle`}
                     >
                       Sonucu Görüntüle

@@ -342,8 +342,7 @@ const App: React.FC = () => {
 
         let childContent;
         if (appState === 'initial' || appState === 'parsing_pdf' || appState === 'identifying_subtopics') {
-            if (currentQuizMode === 'personalized') {
-                if (!currentSelectedCourseId) { // Needs course selection
+            if (currentQuizMode === 'personalized') {                if (!currentSelectedCourseId) { // Needs course selection
                     childContent = <CourseSelectionForQuizStep 
                                       courses={allCourses} 
                                       onCourseSelected={(courseId) => {
@@ -358,7 +357,8 @@ const App: React.FC = () => {
                                         }
                                       }}
                                       onCancel={() => routerResetAppToDashboard(resetQuizWorkflowState, resetPersistentDataSelectionState)}
-                                  />;
+                                      theme={theme}
+                                    />;
                     creationStageKey = 'course_selection';
                 } else if (!currentPersonalizedQuizType) { // Needs personalized type selection
                     childContent = <PersonalizedQuizTypeSelector 
@@ -414,6 +414,7 @@ const App: React.FC = () => {
                                 }
                               }}
                               onCancel={() => routerResetAppToDashboard(resetQuizWorkflowState, resetPersistentDataSelectionState)}
+                              theme={theme}
                           />;
         } else if (appState === 'selecting_personalized_quiz_type') {
              childContent = <PersonalizedQuizTypeSelector 
