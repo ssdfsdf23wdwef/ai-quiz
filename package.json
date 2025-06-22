@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "npm run build && echo 'Build completed! Upload the dist/ folder to your hosting provider.'"
   },
   "keywords": [
     "quiz",
@@ -27,7 +28,7 @@
   "bugs": {
     "url": "https://github.com/ssdfsdf23wdwef/ai-quiz/issues"
   },
-  "homepage": "https://github.com/ssdfsdf23wdwef/ai-quiz#readme",
+  "homepage": "https://quizain.me/",
   "dependencies": {
     "@google/genai": "^1.5.1",
     "firebase": "^10.12.2",
