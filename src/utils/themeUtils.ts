@@ -92,3 +92,34 @@ export const getButtonClasses = (theme: string | undefined, variant: 'primary' |
       return `${baseClasses} ${isDark ? 'bg-primary-600 hover:bg-primary-700 text-white' : 'bg-primary-500 hover:bg-primary-600 text-white'}`;
   }
 };
+
+export const getAuthMessageClasses = (theme: string | undefined, type: 'success' | 'error') => {
+  const isDark = theme === 'dark';
+  
+  if (type === 'success') {
+    return isDark 
+      ? 'bg-green-700 border-green-600 text-green-100'
+      : 'bg-green-100 border-green-400 text-green-700';
+  } else {
+    return isDark
+      ? 'bg-red-700 border-red-600 text-red-100'
+      : 'bg-red-100 border-red-400 text-red-700';
+  }
+};
+
+export const getTagClasses = (theme: string | undefined, color: 'pink' = 'pink') => {
+  const isDark = theme === 'dark';
+  
+  switch (color) {
+    case 'pink':
+      return {
+        colorClass: isDark ? 'text-pink-300' : 'text-pink-800',
+        bgColorClass: isDark ? 'bg-pink-500/30' : 'bg-pink-200'
+      };
+    default:
+      return {
+        colorClass: isDark ? 'text-pink-300' : 'text-pink-800',
+        bgColorClass: isDark ? 'bg-pink-500/30' : 'bg-pink-200'
+      };
+  }
+};

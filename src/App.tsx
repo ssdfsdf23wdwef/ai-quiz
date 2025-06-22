@@ -31,6 +31,7 @@ import { usePersistentData } from './hooks/usePersistentData';
 import { useQuizWorkflow } from './hooks/useQuizWorkflow';
 import { useAppRouter } from './hooks/useAppRouter';
 import { signOutUser } from './services/authService';
+import { getAuthMessageClasses, getTagClasses } from './utils/themeUtils';
 
 const App: React.FC = () => {
   const {
@@ -214,7 +215,7 @@ const App: React.FC = () => {
     },
     {
       icon: 'fas fa-user-graduate',
-      tag: { text: '', colorClass: 'text-pink-800 dark:text-pink-300', bgColorClass: 'bg-pink-200 dark:bg-pink-500/30' },
+      tag: { text: '', colorClass: getTagClasses(theme, 'pink').colorClass, bgColorClass: getTagClasses(theme, 'pink').bgColorClass },
       title: 'Kişiselleştirilmiş Sınav',
       description: 'Öğrenme hedeflerinize, zayıf olduğunuz konulara veya belgedeki yeni konulara odaklanan özel sınavlar oluşturun. Gelişiminizi takip edin.',
       buttonText: 'Kişisel Sınav Oluştur',
@@ -536,7 +537,8 @@ const App: React.FC = () => {
         pageContent = <LearningObjectivesPage 
                           objectives={learningObjectives} 
                           filterByCourse={appState === 'viewing_course_learning_objectives' ? currentViewingCourseForLO : null}
-                          onBack={appState === 'viewing_course_learning_objectives' ? () => navigateTo('viewing_courses_list') : () => routerResetAppToDashboard(resetQuizWorkflowState, resetPersistentDataSelectionState)} 
+                          onBack={appState === 'viewing_course_learning_objectives' ? () => navigateTo('viewing_courses_list') : () => routerResetAppToDashboard(resetQuizWorkflowState, resetPersistentDataSelectionState)}
+                          theme={theme || 'light'}
                       />;
         break;
       case 'viewing_performance_analysis':
@@ -544,7 +546,8 @@ const App: React.FC = () => {
                             savedQuizzes={allSavedQuizzes} 
                             allCourses={allCourses} 
                             learningObjectives={learningObjectives}
-                            onBack={() => routerResetAppToDashboard(resetQuizWorkflowState, resetPersistentDataSelectionState)} 
+                            onBack={() => routerResetAppToDashboard(resetQuizWorkflowState, resetPersistentDataSelectionState)}
+                            theme={theme || 'light'}
                         />;
         break;
       case 'viewing_achievements':
@@ -587,7 +590,7 @@ const App: React.FC = () => {
     // Auth messages (e.g., password reset email sent, login error)
     let authFeedbackMessage = null;
     if (authError && (appState === 'login' || appState === 'signup')) {
-        authFeedbackMessage = <div className="fixed top-5 right-5 bg-red-100 dark:bg-red-700 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-100 px-4 py-3 rounded-md shadow-lg z-[100000]" role="alert">
+        authFeedbackMessage = <div className={`fixed top-5 right-5 px-4 py-3 rounded-md shadow-lg z-[100000] border ${getAuthMessageClasses(theme, 'error')}`} role="alert">
                                 <strong className="font-bold">Hata!</strong>
                                 <span className="block sm:inline ml-2">{authError}</span>
                                 <span className="absolute top-0 bottom-0 right-0 px-3 py-2" onClick={() => setAuthErrorState(null)}>
@@ -596,7 +599,7 @@ const App: React.FC = () => {
                               </div>;
     }
     if (authMessage && (appState === 'login' || appState === 'forgot_password' || appState === 'dashboard_main' || appState === 'quiz_completed' || appState === 'viewing_quiz_list')) {
-         authFeedbackMessage = <div className={`fixed top-5 right-5 px-4 py-3 rounded-md shadow-lg z-[100000] ${authMessage.type === 'success' ? 'bg-green-100 dark:bg-green-700 border border-green-400 dark:border-green-600 text-green-700 dark:text-green-100' : 'bg-red-100 dark:bg-red-700 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-100'}`} role="alert">
+         authFeedbackMessage = <div className={`fixed top-5 right-5 px-4 py-3 rounded-md shadow-lg z-[100000] border ${getAuthMessageClasses(theme, authMessage.type === 'success' ? 'success' : 'error')}`} role="alert">
                                 <strong className="font-bold">{authMessage.type === 'success' ? 'Başarılı!' : 'Bilgi'}</strong>
                                 <span className="block sm:inline ml-2">{authMessage.text}</span>
                                 <span className="absolute top-0 bottom-0 right-0 px-3 py-2" onClick={() => setAuthMessageState(null)}>
