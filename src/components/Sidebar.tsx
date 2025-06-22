@@ -149,13 +149,17 @@ const Sidebar: React.FC<SidebarProps> = ({
       {/* Mobile Overlay */}
       {!isCollapsed && (
         <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
           onClick={onToggleCollapse}
         />
       )}
       
       {/* Sidebar Content */}
-      <div className="relative z-50 flex flex-col h-full">
+      <div className={`relative z-50 flex flex-col h-full ${
+        theme === 'dark' 
+          ? 'bg-secondary-800' 
+          : 'bg-white'
+      }`}>
         {/* Header Section */}
         <div className={`relative p-4 border-b ${isCollapsed ? 'px-2' : 'px-4'} ${
           theme === 'dark' 
