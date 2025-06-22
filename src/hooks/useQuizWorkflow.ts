@@ -147,8 +147,13 @@ export const useQuizWorkflow = (
     navigate: NavigateHandler,
     setLoadingCB: (loading: boolean) => void
   ) => {
-    if (!appConfig || !currentUser) { // Added currentUser check
-        setWorkflowError("Uygulama yapılandırması yüklenemedi veya kullanıcı bulunamadı.");
+    if (!appConfig) {
+        setWorkflowError("Uygulama yapılandırması yüklenemedi.");
+        return;
+    }
+    // Kişiselleştirilmiş sınav için kullanıcı kontrolü
+    if (currentQuizMode === 'personalized' && !currentUser) {
+        setWorkflowError("Kişiselleştirilmiş sınav için giriş yapmanız gerekmektedir.");
         return;
     }
     setExtractedPdfText(text);
@@ -156,12 +161,14 @@ export const useQuizWorkflow = (
     setLoadingCB(true);
     navigate('identifying_subtopics');
 
-    const selectedCourse = currentSelectedCourseId ? allCoursesFromDB.find(c => c.id === currentSelectedCourseId && c.userId === currentUser.uid) : undefined;
+    const selectedCourse = currentSelectedCourseId && currentUser 
+      ? allCoursesFromDB.find(c => c.id === currentSelectedCourseId && c.userId === currentUser.uid) 
+      : undefined;
 
     try {
       const { newSubtopics } = await identifySubtopicsFromText(text, pdfName);
 
-      if (currentQuizMode === 'personalized' && (currentPersonalizedQuizType === 'new_topics' || currentPersonalizedQuizType === 'comprehensive') && pdfName && selectedCourse) {
+      if (currentQuizMode === 'personalized' && (currentPersonalizedQuizType === 'new_topics' || currentPersonalizedQuizType === 'comprehensive') && pdfName && selectedCourse && currentUser) {
         const objectivesToUpdateInDB: LearningObjective[] = [];
         const existingObjectivesMapForThisPdfCourse = new Map(
           learningObjectivesFromDB
@@ -220,8 +227,13 @@ export const useQuizWorkflow = (
     navigate: NavigateHandler,
     setLoadingCB: (loading: boolean) => void
     ) => {
-    if (!appConfig || !appSettings || !currentUser) { // Added currentUser check
-        setWorkflowError("Yapılandırma yüklenemedi veya kullanıcı bulunamadı.");
+    if (!appConfig || !appSettings) {
+        setWorkflowError("Yapılandırma yüklenemedi.");
+        return;
+    }
+    // Kişiselleştirilmiş sınav için kullanıcı kontrolü
+    if (currentQuizMode === 'personalized' && !currentUser) {
+        setWorkflowError("Kişiselleştirilmiş sınav için giriş yapmanız gerekmektedir.");
         return;
     }
     if (!extractedPdfText && !(currentQuizMode === 'personalized' && currentPersonalizedQuizType === 'weak_topics')) {
@@ -251,7 +263,7 @@ export const useQuizWorkflow = (
         extractedPdfText, questionsCount, appSettings.numOptionsPerQuestion,
         topicsForQuizGeneration.length > 0 ? topicsForQuizGeneration : undefined,
         currentQuizMode || 'quick', difficulty,
-        currentQuizMode === 'personalized' ? currentPersonalizedQuizType : undefined
+        currentQuizMode === 'personalized' ? (currentPersonalizedQuizType || undefined) : undefined
       );
       if (quizData.questions.length === 0) {
         setWorkflowError("Sınav oluşturulamadı. Model hiç soru üretemedi. Lütfen ayarlarınızı veya kaynak metni/konuları kontrol edin.");
@@ -269,14 +281,19 @@ export const useQuizWorkflow = (
   }, [appConfig, appSettings, currentUser, extractedPdfText, currentQuizMode, currentPersonalizedQuizType, selectedSubtopics, identifiedNewSubtopics, learningObjectivesFromDB, currentSelectedCourseId]);
 
   const handleQuizSubmitAndUpdateLOs = useCallback(async (answers: Record<string, number>) => { // Renamed to avoid clash, added answers
-    if (!currentUser) {
-        setWorkflowError("Bu işlem için kullanıcı girişi gereklidir.");
+    setCurrentUserAnswers(answers); // Store answers for QuizResult
+    
+    // Sadece kişiselleştirilmiş sınav için kullanıcı kontrolü ve LO güncelleme
+    if (currentQuizMode === 'personalized' && !currentUser) {
+        setWorkflowError("Kişiselleştirilmiş sınav için kullanıcı girişi gereklidir.");
         return;
     }
-    setCurrentUserAnswers(answers); // Store answers for QuizResult
-    const selectedCourse = currentSelectedCourseId ? allCoursesFromDB.find(c => c.id === currentSelectedCourseId && c.userId === currentUser.uid) : undefined;
+    
+    const selectedCourse = currentSelectedCourseId && currentUser 
+      ? allCoursesFromDB.find(c => c.id === currentSelectedCourseId && c.userId === currentUser.uid) 
+      : undefined;
 
-    if (currentQuizMode === 'personalized' && currentQuizQuestions && selectedCourse) {
+    if (currentQuizMode === 'personalized' && currentQuizQuestions && selectedCourse && currentUser) {
         const objectivesToUpdate: LearningObjective[] = [];
         const subtopicPerformance: Record<string, { correct: number, total: number }> = {};
         currentQuizQuestions.forEach(q => {

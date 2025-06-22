@@ -10,11 +10,14 @@ interface QuizResultProps {
   onRestart: () => void; 
   onSaveResult?: () => void; 
   onDeleteSpecificResult?: (quizId: string) => void; 
+  onLoginToSave?: () => void; // Yeni prop: giriş yapmaya yönlendirme
+  onFinish?: () => void; // Yeni prop: sınav bitiş yönlendirmesi (giriş yapan: Sınavlarım, yapmayan: Ana sayfa)
   isViewingSaved?: boolean; 
   pdfName?: string;
   savedAt?: number;
   quizId?: string; 
   theme?: string;
+  isUserLoggedIn?: boolean; // Kullanıcının giriş yapıp yapmadığını belirtir
 }
 
 const QuizResult: React.FC<QuizResultProps> = ({ 
@@ -23,11 +26,14 @@ const QuizResult: React.FC<QuizResultProps> = ({
   onRestart, 
   onSaveResult,
   onDeleteSpecificResult,
+  onLoginToSave,
+  onFinish,
   isViewingSaved = false,
   pdfName,
   savedAt,
   quizId,
   theme,
+  isUserLoggedIn = false,
 }) => {
   const [showExplanations, setShowExplanations] = useState<Record<string, boolean>>({});
 
@@ -75,6 +81,10 @@ const QuizResult: React.FC<QuizResultProps> = ({
   const restartButtonText = () => {
     if (onDeleteSpecificResult) return "Sınav Listesine Dön"; 
     if (isViewingSaved) return "Ana Sayfa"; 
+    // Sınav tamamlandığında: giriş yapan kullanıcı için "Sınavlarım", yapmayan için "Ana Sayfa"
+    if (!isViewingSaved) {
+      return isUserLoggedIn ? "Sınavlarıma Git" : "Ana Sayfa"; 
+    }
     return "Yeni Sınav Oluştur"; 
   }
 
@@ -231,16 +241,24 @@ const QuizResult: React.FC<QuizResultProps> = ({
 
       <div className="text-center space-y-3 md:space-y-0 md:flex md:justify-center md:gap-4">
         <button
-          onClick={onRestart}
+          onClick={() => {
+            // Eğer kayıtlı sınav görüntüleniyorsa veya özel bir yönlendirme fonksiyonu varsa onu kullan
+            if (isViewingSaved || !onFinish) {
+              onRestart();
+            } else {
+              // Sınav tamamlandığında: giriş yapan kullanıcı Sınavlarım'a, yapmayan Ana Sayfa'ya
+              onFinish();
+            }
+          }}
           className={`w-full md:w-auto px-6 sm:px-8 py-3 rounded-lg font-semibold shadow-lg text-base sm:text-lg focus:ring-2 focus:ring-opacity-50 touch-target ${getButtonClasses(theme, 'primary')}`}
         >
           <i className="fas fa-redo-alt mr-2"></i> 
           <span className="hidden sm:inline">{restartButtonText()}</span>
           <span className="sm:hidden">
-            {onDeleteSpecificResult ? "Sınav Listesi" : isViewingSaved ? "Ana Sayfa" : "Yeni Sınav"}
+            {onDeleteSpecificResult ? "Sınav Listesi" : isViewingSaved ? "Ana Sayfa" : (isUserLoggedIn ? "Sınavlarım" : "Ana Sayfa")}
           </span>
         </button>
-        {!isViewingSaved && onSaveResult && (
+        {!isViewingSaved && onSaveResult && isUserLoggedIn && (
           <button
             onClick={onSaveResult}
             className={`w-full md:w-auto px-6 sm:px-8 py-3 rounded-lg font-semibold shadow-lg text-base sm:text-lg focus:ring-2 focus:ring-opacity-50 touch-target ${getButtonClasses(theme, 'success')}`}
@@ -248,6 +266,16 @@ const QuizResult: React.FC<QuizResultProps> = ({
             <i className="fas fa-save mr-2"></i> 
             <span className="hidden sm:inline">Sonuçları Kaydet</span>
             <span className="sm:hidden">Kaydet</span>
+          </button>
+        )}
+        {!isViewingSaved && !isUserLoggedIn && onLoginToSave && (
+          <button
+            onClick={onLoginToSave}
+            className={`w-full md:w-auto px-6 sm:px-8 py-3 rounded-lg font-semibold shadow-lg text-base sm:text-lg focus:ring-2 focus:ring-opacity-50 touch-target ${getButtonClasses(theme, 'primary')}`}
+          >
+            <i className="fas fa-user-plus mr-2"></i> 
+            <span className="hidden sm:inline">Kayıt Et</span>
+            <span className="sm:hidden">Kayıt Et</span>
           </button>
         )}
          {isViewingSaved && onDeleteSpecificResult && quizId && (

@@ -12,7 +12,7 @@ type LoadConfigFn = () => Promise<AppConfig>;
 type GetConfigFn = () => AppConfig;
 
 export const useAppRouter = () => {
-  const [appState, setAppState] = useState<AppState>('auth_loading');
+  const [appState, setAppState] = useState<AppState>('dashboard_main');
   const [isLoading, setIsLoading] = useState<boolean>(false); // General loading for operations like PDF processing
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
@@ -40,14 +40,8 @@ export const useAppRouter = () => {
     const unsubscribe = onAuthStateChangedListener((user) => {
       setCurrentUser(user);
       setAuthLoading(false);
-      // Navigation logic based on auth state and current app state
-      if (!user && !['login', 'signup', 'forgot_password', 'error', 'auth_loading'].includes(appStateRef.current)) {
-         setAppState('login');
-      } else if (user && (appStateRef.current === 'login' || appStateRef.current === 'signup' || appStateRef.current === 'auth_loading')) {
-         setAppState('dashboard_main');
-      } else if (!user && appStateRef.current === 'auth_loading') {
-         setAppState('login');
-      }
+      // Authentication değiştiğinde otomatik yönlendirme yapma
+      // Kullanıcı manuel olarak login/signup sayfasına gitmedikçe ana sayfada kalsın
     });
     return unsubscribe;
   }, []);
@@ -111,11 +105,8 @@ export const useAppRouter = () => {
     setAuthMessage(null);
     setIsLoading(false);
     if (navigate) {
-        if (currentUser) {
-            navigateTo('dashboard_main');
-        } else {
-            navigateTo('login');
-        }
+        // Kullanıcı giriş yapmış ya da yapmamış olsun ana sayfaya git
+        navigateTo('dashboard_main');
     }
   }, [navigateTo, currentUser]);
 
@@ -131,6 +122,7 @@ export const useAppRouter = () => {
         setError("Uygulama yapılandırması henüz hazır değil.");
         return;
     }
+    // Sadece kişiselleştirilmiş sınav için oturum açma kontrolü
     if (mode === 'personalized' && !currentUser) {
         setError("Kişiselleştirilmiş sınavlar için giriş yapmanız gerekmektedir.");
         navigateTo('login');

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useMemo, useCallback} from 'react';
 import { loadAppConfig, getConfig } from './services/configService';
 
@@ -185,6 +184,11 @@ const App: React.FC = () => {
     routerResetAppToDashboard, resetQuizWorkflowState, resetPersistentDataSelectionState, currentUser, setRouterError,
     setRouterLoading, setAuthMessageState
   ]);
+
+  // Kullanıcı hızlı sınav sonucunu kaydetmek için giriş yapmaya yönlendirilir
+  const handleLoginToSaveQuizResult = useCallback(() => {
+    navigateTo('login');
+  }, [navigateTo]);
   
   const handleDeleteSpecificSavedResult = useCallback(async(quizId: string) => {
     if (!currentUser) {
@@ -239,6 +243,17 @@ const App: React.FC = () => {
     }
   };
 
+  // Sınav tamamlandığında kullanıcının giriş durumuna göre yönlendirme
+  const handleFinishQuiz = useCallback(() => {
+    if (currentUser) {
+      // Giriş yapan kullanıcı Sınavlarım sayfasına
+      navigateTo('viewing_quiz_list');
+    } else {
+      // Giriş yapmayan kullanıcı Ana Sayfa'ya
+      routerResetAppToDashboard(resetQuizWorkflowState, resetPersistentDataSelectionState);
+    }
+  }, [currentUser, navigateTo, routerResetAppToDashboard, resetQuizWorkflowState, resetPersistentDataSelectionState]);
+
   const renderContent = () => {
     if (authLoading || configLoading || (!appSettings && appState !== 'error')) {
       return <div className="flex items-center justify-center h-screen"><LoadingSpinner text="Uygulama yükleniyor..." /></div>;
@@ -272,13 +287,10 @@ const App: React.FC = () => {
                                                 />;
     }
     
-    // If not an auth page but no current user, redirect to login (should be handled by useAppRouter's effect too)
-    if (!currentUser && !['login', 'signup', 'forgot_password', 'auth_loading', 'error'].includes(appState)) {
-        navigateTo('login');
-        return <div className="flex items-center justify-center h-screen"><LoadingSpinner text="Giriş sayfasına yönlendiriliyor..." /></div>;
-    }
-
-    // Common UI for authenticated users (Sidebar + Main Content)
+    // Artık giriş yapmayan kullanıcılar da ana sayfaya erişebilir
+    // Sadece auth sayfalarında (login, signup, forgot_password) kontrol yap
+    
+    // Common UI for all users (Sidebar + Main Content)
     // Show spinner if any critical data is loading for the main app view
     if (settingsLoading || persistentDataLoading || (!appConfig && !errorMessage)) {
         return (
@@ -296,6 +308,7 @@ const App: React.FC = () => {
                     onNavigateToSettings={() => navigateTo('viewing_settings')}
                     currentUser={currentUser}
                     onNavigateToProfile={() => navigateTo('profile')}
+                    onNavigateToLogin={() => navigateTo('login')}
                     onLogout={handleLogout}
                     theme={theme}
                 />}
@@ -500,7 +513,11 @@ const App: React.FC = () => {
                             questions={currentQuizQuestions}
                             userAnswers={currentUserAnswers}
                             onRestart={() => routerResetAppToDashboard(resetQuizWorkflowState, resetPersistentDataSelectionState)}
-                            onSaveResult={handleSaveAndExitQuizResults}
+                            onFinish={handleFinishQuiz}
+                            onSaveResult={currentUser ? handleSaveAndExitQuizResults : undefined}
+                            onLoginToSave={!currentUser ? handleLoginToSaveQuizResult : undefined}
+                            isUserLoggedIn={!!currentUser}
+                            theme={theme}
                         />;
         }
         break;
@@ -525,11 +542,14 @@ const App: React.FC = () => {
                             questions={selectedQuizForViewing.questions}
                             userAnswers={selectedQuizForViewing.userAnswers}
                             onRestart={() => routerResetAppToDashboard(resetQuizWorkflowState, resetPersistentDataSelectionState)}
+                            onFinish={handleFinishQuiz}
                             isViewingSaved={true}
                             pdfName={selectedQuizForViewing.pdfName}
                             savedAt={selectedQuizForViewing.savedAt}
                             quizId={selectedQuizForViewing.id}
                             onDeleteSpecificResult={handleDeleteSpecificSavedResult}
+                            isUserLoggedIn={!!currentUser}
+                            theme={theme}
                           />;
         }
         break;
@@ -617,7 +637,7 @@ const App: React.FC = () => {
         {authFeedbackMessage}
         
         {/* Mobile Menu Button */}
-        {currentUser && !['login', 'signup', 'forgot_password', 'auth_loading'].includes(appState) && (
+        {!['login', 'signup', 'forgot_password', 'auth_loading'].includes(appState) && (
           <MobileMenuButton
             isOpen={!isSidebarCollapsed}
             onClick={toggleSidebar}
@@ -625,7 +645,7 @@ const App: React.FC = () => {
           />
         )}
         
-        {currentUser && !['login', 'signup', 'forgot_password', 'auth_loading'].includes(appState) && (
+        {!['login', 'signup', 'forgot_password', 'auth_loading'].includes(appState) && (
             <Sidebar
                 appState={appState}
                 isCollapsed={isSidebarCollapsed}
@@ -639,16 +659,17 @@ const App: React.FC = () => {
                 onNavigateToSettings={() => navigateTo('viewing_settings')}
                 currentUser={currentUser}
                 onNavigateToProfile={() => navigateTo('profile')}
+                onNavigateToLogin={() => navigateTo('login')}
                 onLogout={handleLogout}
                 theme={theme}
             />
         )}
         <main className={`flex-grow overflow-y-auto transition-all duration-300 ease-in-out ${
-          currentUser && !['login', 'signup', 'forgot_password', 'auth_loading'].includes(appState)
+          !['login', 'signup', 'forgot_password', 'auth_loading'].includes(appState)
             ? `ml-0 lg:ml-${isSidebarCollapsed ? '20' : '72'}`
             : 'ml-0'
         } ${
-          currentUser && !['login', 'signup', 'forgot_password', 'auth_loading'].includes(appState)
+          !['login', 'signup', 'forgot_password', 'auth_loading'].includes(appState)
             ? 'pt-16 lg:pt-0' 
             : ''
         }`}>

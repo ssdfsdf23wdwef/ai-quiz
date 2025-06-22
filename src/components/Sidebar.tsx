@@ -89,6 +89,7 @@ interface SidebarProps {
   onNavigateToSettings: () => void;
   currentUser: User | null; // Added currentUser
   onNavigateToProfile: () => void; // Added for profile
+  onNavigateToLogin: () => void; // Added for login
   onLogout: () => void; // Added for logout
   theme?: string; // Added theme prop
 }
@@ -106,17 +107,28 @@ const Sidebar: React.FC<SidebarProps> = ({
   onNavigateToSettings,
   currentUser,
   onNavigateToProfile,
+  onNavigateToLogin,
   onLogout,
   theme,
 }) => {
 
+  const handleNavItemClick = (item: NavItemConfig) => {
+    if (item.requiresAuth && !currentUser) {
+      // Giriş gerektiren bir butona tıklandı ama kullanıcı giriş yapmamış
+      onNavigateToLogin();
+    } else if (item.onClick) {
+      // Normal tıklama işlemi
+      item.onClick();
+    }
+  };
+
   const navItems: NavItemConfig[] = [
-    { icon: 'fas fa-home', text: 'Ana Sayfa', appStateLink: 'dashboard_main', onClick: onNavigateToDashboard, requiresAuth: true },
+    { icon: 'fas fa-home', text: 'Ana Sayfa', appStateLink: 'dashboard_main', onClick: onNavigateToDashboard },
     { icon: 'fas fa-layer-group', text: 'Derslerim', appStateLink: 'viewing_courses_list', onClick: onNavigateToCourses, requiresAuth: true },
     { icon: 'fas fa-clipboard-list', text: 'Sınavlarım',  appStateLink: ['viewing_quiz_list', 'viewing_specific_saved_result'], onClick: onNavigateToQuizList, requiresAuth: true },
     { icon: 'fas fa-bullseye', text: 'Öğrenme Hedeflerim', appStateLink: ['viewing_learning_objectives', 'viewing_course_learning_objectives'], onClick: onNavigateToLearningObjectives, requiresAuth: true },
     { icon: 'fas fa-chart-line', text: 'Performans Analizi', appStateLink: 'viewing_performance_analysis', onClick: onNavigateToPerformanceAnalysis, requiresAuth: true },
-    { icon: 'fas fa-trophy', text: 'Başarılarım', appStateLink: 'viewing_achievements', onClick: undefined, requiresAuth: true },
+    { icon: 'fas fa-trophy', text: 'Başarılarım', appStateLink: 'viewing_achievements', onClick: onNavigateToAchievements, requiresAuth: true },
   ];
 
   const getInitials = (name?: string | null, email?: string | null): string => {
@@ -212,7 +224,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       
       {/* Navigation Section */}
       <nav className="flex-grow flex flex-col px-3 py-4 space-y-1 overflow-y-auto custom-scrollbar-sidebar">
-        {navItems.filter(item => !item.requiresAuth || currentUser).map(item => {
+        {navItems.map(item => {
           const isActive = Array.isArray(item.appStateLink) 
                             ? item.appStateLink.includes(appState) 
                             : appState === item.appStateLink;
@@ -222,7 +234,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               icon={item.icon}
               text={item.text}
               isActive={isActive}
-              onClick={item.onClick}
+              onClick={() => handleNavItemClick(item)}
               isCollapsed={isCollapsed}
               showBadge={true}
               theme={theme}
@@ -281,12 +293,23 @@ const Sidebar: React.FC<SidebarProps> = ({
               showBadge={false}
               theme={theme}
             />
+            
+            {/* Logout Item */}
+            <SidebarItem
+              icon="fas fa-sign-out-alt"
+              text="Çıkış Yap"
+              onClick={onLogout}
+              isCollapsed={isCollapsed}
+              isBottom={true}
+              showBadge={false}
+              theme={theme}
+            />
           </>
         ) : (
           <SidebarItem
             icon="fas fa-sign-in-alt"
             text="Giriş Yap / Kayıt Ol"
-            onClick={onNavigateToProfile}
+            onClick={onNavigateToLogin}
             isCollapsed={isCollapsed}
             isBottom={true}
             showBadge={false}
