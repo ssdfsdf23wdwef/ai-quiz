@@ -10,16 +10,17 @@ interface EmptyStateProps {
     iconClass?: string;
     gradientClasses?: string;
   };
+  theme?: string;
 }
 
-const EmptyState: React.FC<EmptyStateProps> = ({ iconClass, title, message, actionButton }) => {
+const EmptyState: React.FC<EmptyStateProps> = ({ iconClass, title, message, actionButton, theme }) => {
   return (
-    <div className="flex flex-col items-center justify-center text-center p-8 md:p-12 h-full bg-white dark:bg-secondary-800 rounded-lg shadow-xl ring-1 ring-gray-200 dark:ring-secondary-700/50">
-      <div className="p-5 bg-primary-100 dark:bg-primary-500/10 rounded-full mb-6">
-        <i className={`${iconClass} text-5xl md:text-6xl text-primary-500 dark:text-primary-400`}></i>
+    <div className={`flex flex-col items-center justify-center text-center p-8 md:p-12 h-full rounded-lg shadow-xl ring-1 ${theme === 'dark' ? 'bg-secondary-800 ring-secondary-700/50' : 'bg-white ring-gray-200'}`}>
+      <div className={`p-5 rounded-full mb-6 ${theme === 'dark' ? 'bg-primary-500/10' : 'bg-primary-100'}`}>
+        <i className={`${iconClass} text-5xl md:text-6xl ${theme === 'dark' ? 'text-primary-400' : 'text-primary-500'}`}></i>
       </div>
-      <h2 className="text-xl md:text-2xl font-semibold text-gray-800 dark:text-white mb-2">{title}</h2>
-      <p className="text-gray-600 dark:text-gray-400 max-w-md mb-8">{message}</p>
+      <h2 className={`text-xl md:text-2xl font-semibold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>{title}</h2>
+      <p className={`max-w-md mb-8 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>{message}</p>
       {actionButton && (
         <button
           onClick={actionButton.onClick}

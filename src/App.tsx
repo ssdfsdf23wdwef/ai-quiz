@@ -266,6 +266,7 @@ const App: React.FC = () => {
                                                     navigateTo={(state) => navigateTo(state)}
                                                     setAuthLoading={setAuthLoadingState}
                                                     setAuthMessage={setAuthMessageState}
+                                                    theme={theme}
                                                 />;
     }
     

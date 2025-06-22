@@ -5,9 +5,10 @@ interface ForgotPasswordPageProps {
   navigateTo: (state: 'login') => void;
   setAuthLoading: (loading: boolean) => void;
   setAuthMessage: (message: {type: 'success' | 'error', text:string} | null) => void;
+  theme?: string;
 }
 
-const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({ navigateTo, setAuthLoading, setAuthMessage }) => {
+const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({ navigateTo, setAuthLoading, setAuthMessage, theme }) => {
   const [email, setEmail] = useState('');
 
   const handlePasswordReset = async (e: React.FormEvent) => {
@@ -32,18 +33,18 @@ const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({ navigateTo, set
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-secondary-900 px-4 py-12">
-      <div className="w-full max-w-md p-8 bg-white dark:bg-secondary-800 rounded-xl shadow-2xl space-y-8">
+    <div className={`min-h-screen flex items-center justify-center px-4 py-12 ${theme === 'dark' ? 'bg-secondary-900' : 'bg-gray-100'}`}>
+      <div className={`w-full max-w-md p-8 rounded-xl shadow-2xl space-y-8 ${theme === 'dark' ? 'bg-secondary-800' : 'bg-white'}`}>
         <div>
           <div className="flex justify-center mb-4">
              <div className="p-3 bg-gradient-to-tr from-purple-600 to-blue-500 rounded-lg">
                 <i className="fas fa-brain text-4xl text-white"></i>
             </div>
           </div>
-          <h2 className="text-center text-3xl font-extrabold text-gray-900 dark:text-white">
+          <h2 className={`text-center text-3xl font-extrabold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
             Şifrenizi mi Unuttunuz?
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
+          <p className={`mt-2 text-center text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
             Şifrenizi sıfırlamak için kayıtlı e-posta adresinizi girin.
           </p>
         </div>

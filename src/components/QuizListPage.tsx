@@ -73,12 +73,13 @@ const QuizListPage: React.FC<QuizListPageProps> = ({ savedQuizzes, onViewQuiz, o
         </div>
       </div>
 
-      <div className="flex-grow overflow-y-auto bg-white dark:bg-secondary-800 rounded-lg shadow-xl ring-1 ring-gray-200 dark:ring-secondary-700/50">
+      <div className={`flex-grow overflow-y-auto rounded-lg shadow-xl ring-1 ${theme === 'dark' ? 'bg-secondary-800 ring-secondary-700/50' : 'bg-white ring-gray-200'}`}>
         {filteredQuizzes.length === 0 ? (
            <EmptyState
             iconClass="fas fa-folder-open"
             title="Henüz Kaydedilmiş Sınav Yok"
             message="Oluşturduğunuz sınavların sonuçları burada listelenir. Hemen yeni bir tane oluşturun!"
+            theme={theme}
             actionButton={onAddNewPersonalizedQuiz ? {
               text: "Yeni Kişisel Sınav Oluştur",
               onClick: onAddNewPersonalizedQuiz,
@@ -93,7 +94,7 @@ const QuizListPage: React.FC<QuizListPageProps> = ({ savedQuizzes, onViewQuiz, o
           }
           />
         ) : (
-          <table className="w-full min-w-full divide-y divide-gray-200 dark:divide-secondary-700">
+          <table className={`w-full min-w-full divide-y ${theme === 'dark' ? 'divide-secondary-700' : 'divide-gray-200'}`}>
             <thead className="bg-gray-50 dark:bg-secondary-700/50 sticky top-0 z-10">
               <tr>
                 <th scope="col" className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Sinav</th>

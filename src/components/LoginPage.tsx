@@ -49,12 +49,12 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, navigateTo, setAu
                 <i className="fas fa-brain text-4xl text-white"></i>
             </div>
           </div>
-          <h2 className="text-center text-3xl font-extrabold text-gray-900 dark:text-white">
+          <h2 className={`text-center text-3xl font-extrabold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
             QuizMaster'a Giriş Yapın
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
+          <p className={`mt-2 text-center text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
             Hesabınız yok mu?{' '}
-            <button onClick={() => navigateTo('signup')} className="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300">
+            <button onClick={() => navigateTo('signup')} className={`font-medium ${theme === 'dark' ? 'text-primary-400 hover:text-primary-300' : 'text-primary-600 hover:text-primary-500'}`}>
               Kayıt Olun
             </button>
           </p>
@@ -69,7 +69,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, navigateTo, setAu
                 type="email"
                 autoComplete="email"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 dark:border-secondary-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-secondary-700 rounded-t-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-400 dark:focus:border-primary-400 focus:z-10 sm:text-sm"
+                className={`appearance-none rounded-none relative block w-full px-3 py-3 border rounded-t-md focus:outline-none focus:z-10 sm:text-sm ${theme === 'dark' ? 'border-secondary-600 placeholder-gray-400 text-white bg-secondary-700 focus:ring-primary-400 focus:border-primary-400' : 'border-gray-300 placeholder-gray-500 text-gray-900 bg-white focus:ring-primary-500 focus:border-primary-500'}`}
                 placeholder="E-posta Adresi"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}

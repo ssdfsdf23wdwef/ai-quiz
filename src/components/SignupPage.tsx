@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { signUpUser } from '../services/authService';
-import { useAppRouter } from '../hooks/useAppRouter';
 import { getThemeClasses } from '../utils/themeUtils';
 
 interface SignupPageProps {
@@ -128,7 +127,7 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSignupSuccess, navigateTo, se
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:focus:ring-offset-secondary-800"
+              className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 ${theme === 'dark' ? 'bg-primary-500 hover:bg-primary-600 focus:ring-primary-500 focus:ring-offset-secondary-800' : 'bg-primary-600 hover:bg-primary-700 focus:ring-primary-500'}`}
             >
               Kayıt Ol
             </button>

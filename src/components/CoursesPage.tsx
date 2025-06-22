@@ -120,6 +120,7 @@ const CoursesPage: React.FC<CoursesPageProps> = ({
             iconClass="fas fa-layer-group"
             title="Henüz Ders Oluşturulmadı"
             message="Kişiselleştirilmiş sınavlar ve öğrenme hedefleri için dersler oluşturarak öğrenme deneyiminizi organize edin."
+            theme={theme}
             actionButton={{
               text: "Yeni Ders Oluştur",
               onClick: () => setIsAddingCourse(true),
