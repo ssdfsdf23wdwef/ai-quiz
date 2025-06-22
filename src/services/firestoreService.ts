@@ -149,6 +149,58 @@ export const getLearningObjectiveById = async (id: string, userId: string): Prom
   return undefined;
 };
 
+export const deleteLearningObjective = async (id: string, userId: string): Promise<boolean> => {
+  try {
+    const docRef = doc(firestore, LEARNING_OBJECTIVES_COLLECTION, id);
+    
+    // First verify the objective belongs to the user
+    const docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) {
+      return false;
+    }
+    
+    const data = docSnap.data();
+    if (data.userId !== userId) {
+      throw new Error('Bu hedefi silme yetkiniz yok.');
+    }
+    
+    await deleteDoc(docRef);
+    return true;
+  } catch (error) {
+    console.error('Error deleting learning objective:', error);
+    throw error;
+  }
+};
+
+export const deleteLearningObjectivesBatch = async (ids: string[], userId: string): Promise<boolean> => {
+  try {
+    if (ids.length === 0) return true;
+    
+    const batch = writeBatch(firestore);
+    
+    // Verify each objective belongs to the user before adding to batch
+    for (const id of ids) {
+      const docRef = doc(firestore, LEARNING_OBJECTIVES_COLLECTION, id);
+      const docSnap = await getDoc(docRef);
+      
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        if (data.userId === userId) {
+          batch.delete(docRef);
+        } else {
+          throw new Error(`Hedef "${id}" için silme yetkiniz yok.`);
+        }
+      }
+    }
+    
+    await batch.commit();
+    return true;
+  } catch (error) {
+    console.error('Error deleting learning objectives in batch:', error);
+    throw error;
+  }
+};
+
 // Course Functions
 export const addCourseToDB = async (courseData: Omit<Course, 'id' | 'createdAt' | 'userId'>, userId: string): Promise<Course | null> => {
   const docRef = await addDoc(collection(firestore, COURSES_COLLECTION), {

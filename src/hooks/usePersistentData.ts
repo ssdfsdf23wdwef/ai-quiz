@@ -1,9 +1,8 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { User, QuizQuestion, SavedQuizData, LearningObjective, Achievement, Course, AppConfig, PersonalizedQuizType, LearningObjectiveStatus, QuizDifficulty } from '../types';
 import {
   addQuizToDB, getAllQuizzesFromDB, deleteQuizFromDB,
-  addOrUpdateLearningObjectives, getAllLearningObjectives, // Corrected import
+  addOrUpdateLearningObjectives, getAllLearningObjectives, deleteLearningObjective, deleteLearningObjectivesBatch,
   addCourseToDB, getAllCoursesFromDB, deleteCourseFromDB,
   updateMultipleQuizzesInDB
 } from '../services/firestoreService';
@@ -244,13 +243,46 @@ export const usePersistentData = (
     setCurrentViewingCourseForLO(null);
   }, []);
 
+  const deleteLearningObjectives = useCallback(async (objectiveIds: string[]): Promise<boolean> => {
+    if (!currentUser) {
+      handleError("Öğrenme hedeflerini silmek için giriş yapmalısınız.");
+      return false;
+    }
+    
+    if (objectiveIds.length === 0) return true;
+    
+    setIsLoadingData(true);
+    try {
+      if (objectiveIds.length === 1) {
+        await deleteLearningObjective(objectiveIds[0], currentUser.uid);
+      } else {
+        await deleteLearningObjectivesBatch(objectiveIds, currentUser.uid);
+      }
+      
+      // Refresh the objectives list
+      const updatedObjectives = await getAllLearningObjectives(currentUser.uid);
+      setLearningObjectives(updatedObjectives);
+      return true;
+    } catch (error) {
+      console.error("Öğrenme hedefleri silinirken hata:", error);
+      handleError(error as Error, true);
+      return false;
+    } finally {
+      setIsLoadingData(false);
+    }
+  }, [currentUser, handleError]);
+
+  const deleteSingleLearningObjective = useCallback(async (objectiveId: string): Promise<boolean> => {
+    return deleteLearningObjectives([objectiveId]);
+  }, [deleteLearningObjectives]);
+
   return {
     allSavedQuizzes,
     learningObjectives,
     allCourses,
     achievements,
     selectedQuizForViewing,
-    currentViewingCourseO: currentViewingCourseForLO, // Corrected typo
+    currentViewingCourseForLO,
     isLoadingData,
     loadInitialData,
     addCourse,
@@ -259,6 +291,8 @@ export const usePersistentData = (
     viewQuizFromList: setSelectedQuizForViewing, 
     deleteQuizFromList,
     addOrUpdateLOs, 
+    deleteLearningObjectives,
+    deleteSingleLearningObjective,
     updateMultipleQuizzes,
     resetPersistentDataSelectionState,
     setSelectedQuizForViewingState: setSelectedQuizForViewing, 

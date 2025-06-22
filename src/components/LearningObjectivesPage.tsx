@@ -4,13 +4,26 @@ import EmptyState from './EmptyState';
 
 interface LearningObjectivesPageProps {
   objectives: LearningObjective[];
+  allCourses?: Course[];
   filterByCourse?: Course | null; 
   onBack?: () => void;
+  onDeleteObjectives?: (objectiveIds: string[]) => Promise<boolean>;
   theme: 'light' | 'dark';
 }
 
-const LearningObjectivesPage: React.FC<LearningObjectivesPageProps> = ({ objectives, filterByCourse, onBack, theme }) => {
+const LearningObjectivesPage: React.FC<LearningObjectivesPageProps> = ({ 
+  objectives, 
+  allCourses = [],
+  filterByCourse, 
+  onBack, 
+  onDeleteObjectives,
+  theme 
+}) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedStatusFilter, setSelectedStatusFilter] = useState<LearningObjectiveStatus | 'all'>('all');
+  const [selectedCourseFilter, setSelectedCourseFilter] = useState<string | 'all'>('all');
+  const [selectedObjectives, setSelectedObjectives] = useState<string[]>([]);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const getStatusColor = (status: LearningObjectiveStatus) => {
     switch (status) {
@@ -51,10 +64,18 @@ const LearningObjectivesPage: React.FC<LearningObjectivesPageProps> = ({ objecti
   const filteredObjectives = useMemo(() => {
     return (objectives || [])
     .filter(obj => {
-        const courseMatch = !filterByCourse || (filterByCourse && obj.courseId === filterByCourse.id);
-        if (!courseMatch) {
-            return false;
-        }
+        // Course filter (existing filterByCourse takes precedence)
+        const courseMatch = filterByCourse 
+          ? obj.courseId === filterByCourse.id
+          : selectedCourseFilter === 'all' || obj.courseId === selectedCourseFilter;
+        
+        if (!courseMatch) return false;
+        
+        // Status filter
+        const statusMatch = selectedStatusFilter === 'all' || obj.status === selectedStatusFilter;
+        if (!statusMatch) return false;
+        
+        // Search term filter
         if (searchTerm) {
             const term = searchTerm.toLowerCase();
             const nameMatch = obj.name.toLowerCase().includes(term);
@@ -66,7 +87,7 @@ const LearningObjectivesPage: React.FC<LearningObjectivesPageProps> = ({ objecti
         return true; 
     })
     .sort((a, b) => b.updatedAt - a.updatedAt);
-  }, [objectives, filterByCourse, searchTerm]);
+  }, [objectives, filterByCourse, selectedCourseFilter, selectedStatusFilter, searchTerm]);
 
 
   const formatDate = (timestamp: number) => {
@@ -87,6 +108,66 @@ const LearningObjectivesPage: React.FC<LearningObjectivesPageProps> = ({ objecti
   const backButtonText = filterByCourse ? "Dersler Sayfasına Dön" : "Ana Sayfaya Dön";
   const backButtonIcon = filterByCourse ? "fas fa-layer-group" : "fas fa-arrow-left";
 
+
+  const handleSelectObjective = (objectiveId: string, isSelected: boolean) => {
+    setSelectedObjectives(prev => 
+      isSelected 
+        ? [...prev, objectiveId]
+        : prev.filter(id => id !== objectiveId)
+    );
+  };
+
+  const handleSelectAll = () => {
+    if (selectedObjectives.length === filteredObjectives.length) {
+      setSelectedObjectives([]);
+    } else {
+      setSelectedObjectives(filteredObjectives.map(obj => obj.id));
+    }
+  };
+
+  const handleDeleteSelected = async () => {
+    if (!onDeleteObjectives || selectedObjectives.length === 0) return;
+    
+    const confirmMessage = selectedObjectives.length === 1 
+      ? 'Bu öğrenme hedefini silmek istediğinizden emin misiniz?'
+      : `${selectedObjectives.length} öğrenme hedefini silmek istediğinizden emin misiniz?`;
+    
+    if (!window.confirm(confirmMessage)) return;
+    
+    setIsDeleting(true);
+    try {
+      const success = await onDeleteObjectives(selectedObjectives);
+      if (success) {
+        setSelectedObjectives([]);
+      }
+    } catch (error) {
+      console.error('Silme işleminde hata:', error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const getStatusOptions = (): { value: LearningObjectiveStatus | 'all', label: string }[] => [
+    { value: 'all', label: 'Tüm Durumlar' },
+    { value: 'pending', label: 'Beklemede' },
+    { value: 'success', label: 'Başarılı' },
+    { value: 'failure', label: 'Başarısız' },
+    { value: 'intermediate', label: 'Orta Seviye' },
+  ];
+
+  const getCourseOptions = () => {
+    const options = [{ value: 'all', label: 'Tüm Dersler' }];
+    if (!filterByCourse) {
+      // If not filtering by a specific course, show all available courses
+      const uniqueCourses = allCourses.filter(course => 
+        objectives.some(obj => obj.courseId === course.id)
+      );
+      uniqueCourses.forEach(course => {
+        options.push({ value: course.id, label: course.name });
+      });
+    }
+    return options;
+  };
 
   return (
     <div className={`w-full h-full flex flex-col p-0 ${theme === 'dark' ? 'text-gray-200' : 'text-gray-800'}`}>
@@ -110,23 +191,93 @@ const LearningObjectivesPage: React.FC<LearningObjectivesPageProps> = ({ objecti
         )}
       </div>
 
-      <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-1">
-        <div className="relative flex-grow sm:max-w-xs md:max-w-sm">
-          <input
-            type="text"
-            placeholder="Hedef, PDF veya ders adı ara..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className={`w-full p-3 pl-10 border rounded-lg focus:ring-primary-500 focus:border-primary-500 ${
-              theme === 'dark' 
-                ? 'bg-secondary-800 border-secondary-700 text-gray-200 placeholder-gray-500' 
-                : 'bg-white border-gray-300 text-gray-800 placeholder-gray-400'
-            }`}
-            aria-label="Hedef arama"
-          />
-          <i className={`fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 ${
-            theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-          }`}></i>
+      <div className="mb-6 space-y-4 px-1">
+        {/* Search Bar */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div className="relative flex-grow lg:max-w-md">
+            <input
+              type="text"
+              placeholder="Hedef, PDF veya ders adı ara..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className={`w-full p-3 pl-10 border rounded-lg focus:ring-primary-500 focus:border-primary-500 ${
+                theme === 'dark' 
+                  ? 'bg-secondary-800 border-secondary-700 text-gray-200 placeholder-gray-500' 
+                  : 'bg-white border-gray-300 text-gray-800 placeholder-gray-400'
+              }`}
+              aria-label="Hedef arama"
+            />
+            <i className={`fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 ${
+              theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
+            }`}></i>
+          </div>
+
+          {/* Delete Selected Button */}
+          {onDeleteObjectives && selectedObjectives.length > 0 && (
+            <button
+              onClick={handleDeleteSelected}
+              disabled={isDeleting}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center whitespace-nowrap ${
+                isDeleting
+                  ? 'opacity-50 cursor-not-allowed'
+                  : theme === 'dark'
+                    ? 'bg-red-600 hover:bg-red-700 text-white'
+                    : 'bg-red-500 hover:bg-red-600 text-white'
+              }`}
+            >
+              <i className={`fas ${isDeleting ? 'fa-spinner fa-spin' : 'fa-trash'} mr-2`}></i>
+              {isDeleting ? 'Siliniyor...' : `Seçilenleri Sil (${selectedObjectives.length})`}
+            </button>
+          )}
+        </div>
+
+        {/* Filters */}
+        <div className="flex flex-col sm:flex-row gap-4">
+          {/* Status Filter */}
+          <div className="flex-1">
+            <label className={`block text-sm font-medium mb-1 ${
+              theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+            }`}>
+              Durum Filtresi
+            </label>
+            <select
+              value={selectedStatusFilter}
+              onChange={(e) => setSelectedStatusFilter(e.target.value as LearningObjectiveStatus | 'all')}
+              className={`w-full p-2 border rounded-md focus:ring-primary-500 focus:border-primary-500 ${
+                theme === 'dark' 
+                  ? 'bg-secondary-800 border-secondary-700 text-gray-200' 
+                  : 'bg-white border-gray-300 text-gray-800'
+              }`}
+            >
+              {getStatusOptions().map(option => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Course Filter (only show if not already filtering by a specific course) */}
+          {!filterByCourse && (
+            <div className="flex-1">
+              <label className={`block text-sm font-medium mb-1 ${
+                theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+              }`}>
+                Ders Filtresi
+              </label>
+              <select
+                value={selectedCourseFilter}
+                onChange={(e) => setSelectedCourseFilter(e.target.value)}
+                className={`w-full p-2 border rounded-md focus:ring-primary-500 focus:border-primary-500 ${
+                  theme === 'dark' 
+                    ? 'bg-secondary-800 border-secondary-700 text-gray-200' 
+                    : 'bg-white border-gray-300 text-gray-800'
+                }`}
+              >
+                {getCourseOptions().map(option => (
+                  <option key={option.value} value={option.value}>{option.label}</option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
       </div>
 
@@ -155,6 +306,21 @@ const LearningObjectivesPage: React.FC<LearningObjectivesPageProps> = ({ objecti
           <table className={`w-full min-w-full divide-y ${theme === 'dark' ? 'divide-secondary-700' : 'divide-gray-200'}`}>
             <thead className={`sticky top-0 z-10 ${theme === 'dark' ? 'bg-secondary-700/50' : 'bg-gray-50'}`}>
               <tr>
+                {onDeleteObjectives && (
+                  <th scope="col" className="px-6 py-3.5 text-left">
+                    <input
+                      type="checkbox"
+                      checked={filteredObjectives.length > 0 && selectedObjectives.length === filteredObjectives.length}
+                      onChange={handleSelectAll}
+                      className={`rounded border focus:ring-primary-500 ${
+                        theme === 'dark'
+                          ? 'bg-secondary-800 border-secondary-600 text-primary-500'
+                          : 'bg-white border-gray-300 text-primary-500'
+                      }`}
+                      aria-label="Tümünü seç"
+                    />
+                  </th>
+                )}
                 <th scope="col" className={`px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider ${
                   theme === 'dark' ? 'text-gray-300' : 'text-gray-500'
                 }`}>Hedef Adı</th>
@@ -170,13 +336,33 @@ const LearningObjectivesPage: React.FC<LearningObjectivesPageProps> = ({ objecti
                 <th scope="col" className={`px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider ${
                   theme === 'dark' ? 'text-gray-300' : 'text-gray-500'
                 }`}>Son Güncelleme</th>
+                {onDeleteObjectives && (
+                  <th scope="col" className={`px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider ${
+                    theme === 'dark' ? 'text-gray-300' : 'text-gray-500'
+                  }`}>İşlemler</th>
+                )}
               </tr>
             </thead>
             <tbody className={`divide-y ${theme === 'dark' ? 'divide-secondary-700' : 'divide-gray-200'}`}>
               {filteredObjectives.map((obj) => (
                 <tr key={obj.id} className={`transition-colors duration-150 ${
                   theme === 'dark' ? 'hover:bg-secondary-700/30' : 'hover:bg-gray-50'
-                }`}>
+                } ${selectedObjectives.includes(obj.id) ? (theme === 'dark' ? 'bg-secondary-700/20' : 'bg-blue-50') : ''}`}>
+                  {onDeleteObjectives && (
+                    <td className="px-6 py-4">
+                      <input
+                        type="checkbox"
+                        checked={selectedObjectives.includes(obj.id)}
+                        onChange={(e) => handleSelectObjective(obj.id, e.target.checked)}
+                        className={`rounded border focus:ring-primary-500 ${
+                          theme === 'dark'
+                            ? 'bg-secondary-800 border-secondary-600 text-primary-500'
+                            : 'bg-white border-gray-300 text-primary-500'
+                        }`}
+                        aria-label={`${obj.name} seç`}
+                      />
+                    </td>
+                  )}
                   <td className="px-6 py-4 whitespace-normal break-words">
                     <div className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{obj.name}</div>
                   </td>
@@ -198,6 +384,25 @@ const LearningObjectivesPage: React.FC<LearningObjectivesPageProps> = ({ objecti
                   <td className={`px-6 py-4 whitespace-nowrap text-sm ${
                     theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
                   }`}>{formatDate(obj.updatedAt)}</td>
+                  {onDeleteObjectives && (
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <button
+                        onClick={() => {
+                          if (window.confirm('Bu öğrenme hedefini silmek istediğinizden emin misiniz?')) {
+                            onDeleteObjectives([obj.id]);
+                          }
+                        }}
+                        className={`text-sm font-medium transition-colors ${
+                          theme === 'dark'
+                            ? 'text-red-400 hover:text-red-300'
+                            : 'text-red-600 hover:text-red-900'
+                        }`}
+                        aria-label={`${obj.name} sil`}
+                      >
+                        <i className="fas fa-trash"></i>
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

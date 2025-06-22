@@ -51,7 +51,7 @@ const App: React.FC = () => {
     currentViewingCourseForLO,
     isLoadingData: persistentDataLoading,
     addCourse, deleteCourse, saveQuizResult, deleteQuizFromList,
-    addOrUpdateLOs, resetPersistentDataSelectionState,
+    addOrUpdateLOs, deleteLearningObjectives, resetPersistentDataSelectionState,
     setSelectedQuizForViewingState, setCurrentViewingCourseForLOState,
   } = usePersistentData(currentUser, setRouterError, appConfig);
 
@@ -536,8 +536,10 @@ const App: React.FC = () => {
       case 'viewing_course_learning_objectives':
         pageContent = <LearningObjectivesPage 
                           objectives={learningObjectives} 
+                          allCourses={allCourses}
                           filterByCourse={appState === 'viewing_course_learning_objectives' ? currentViewingCourseForLO : null}
                           onBack={appState === 'viewing_course_learning_objectives' ? () => navigateTo('viewing_courses_list') : () => routerResetAppToDashboard(resetQuizWorkflowState, resetPersistentDataSelectionState)}
+                          onDeleteObjectives={deleteLearningObjectives}
                           theme={theme || 'light'}
                       />;
         break;
