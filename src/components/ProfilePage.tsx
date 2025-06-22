@@ -136,11 +136,17 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ currentUser, onLogout, onBack
     
 
           {/* Actions */}
-          <div className="pt-6 border-t border-gray-200 dark:border-secondary-700">
+          <div className={`pt-6 border-t ${
+            theme === 'dark' ? 'border-secondary-700' : 'border-gray-200'
+          }`}>
             <div className="flex flex-col sm:flex-row gap-4">
               <button
                 disabled
-                className="flex-1 inline-flex items-center justify-center px-6 py-3 bg-gray-100 dark:bg-secondary-700 text-gray-400 dark:text-gray-500 rounded-lg font-medium cursor-not-allowed"
+                className={`flex-1 inline-flex items-center justify-center px-6 py-3 rounded-lg font-medium cursor-not-allowed ${
+                  theme === 'dark' 
+                    ? 'bg-secondary-700 text-gray-500' 
+                    : 'bg-gray-100 text-gray-400'
+                }`}
               >
                 <i className="fas fa-edit mr-2"></i>
                 Profili Düzenle (Yakında)

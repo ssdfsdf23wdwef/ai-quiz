@@ -8,20 +8,42 @@ interface PerformanceAnalysisPageProps {
   allCourses: Course[];
   learningObjectives: LearningObjective[];
   onBack?: () => void;
+  theme: 'light' | 'dark';
 }
 
-const StatCard: React.FC<{ title: string; value: string | number; icon: string; iconColorClass?: string, iconBgClass?: string, subValue?: string }> = React.memo(({ title, value, icon, iconColorClass = 'text-primary-600 dark:text-primary-400', iconBgClass = 'bg-primary-100 dark:bg-primary-500/10', subValue }) => (
-  <div className="bg-white dark:bg-secondary-800 p-5 rounded-xl shadow-lg flex items-center space-x-4 ring-1 ring-gray-200 dark:ring-secondary-700/50 min-h-[100px] hover:shadow-xl hover:ring-primary-200 dark:hover:ring-primary-700/50 transition-all duration-300 group">
-    <div className={`p-3.5 rounded-lg ${iconBgClass} ${iconColorClass} self-start mt-1 group-hover:scale-110 transition-transform duration-300`}>
-      <i className={`${icon} text-3xl`}></i>
+const StatCard: React.FC<{ title: string; value: string | number; icon: string; iconColorClass?: string, iconBgClass?: string, subValue?: string, theme: 'light' | 'dark' }> = React.memo(({ title, value, icon, iconColorClass, iconBgClass, subValue, theme }) => {
+  const defaultIconColorClass = theme === 'dark' ? 'text-primary-400' : 'text-primary-600';
+  const defaultIconBgClass = theme === 'dark' ? 'bg-primary-500/10' : 'bg-primary-100';
+  
+  return (
+    <div className={`p-5 rounded-xl shadow-lg flex items-center space-x-4 ring-1 min-h-[100px] hover:shadow-xl transition-all duration-300 group ${
+      theme === 'dark' 
+        ? 'bg-secondary-800 ring-secondary-700/50 hover:ring-primary-700/50' 
+        : 'bg-white ring-gray-200 hover:ring-primary-200'
+    }`}>
+      <div className={`p-3.5 rounded-lg ${iconBgClass || defaultIconBgClass} ${iconColorClass || defaultIconColorClass} self-start mt-1 group-hover:scale-110 transition-transform duration-300`}>
+        <i className={`${icon} text-3xl`}></i>
+      </div>
+      <div className="flex-grow">
+        <p className={`text-sm transition-colors ${
+          theme === 'dark' 
+            ? 'text-gray-400 group-hover:text-gray-300' 
+            : 'text-gray-500 group-hover:text-gray-600'
+        }`}>{title}</p>
+        <p className={`text-2xl font-bold transition-colors ${
+          theme === 'dark' 
+            ? 'text-white group-hover:text-primary-400' 
+            : 'text-gray-900 group-hover:text-primary-600'
+        }`}>{value}</p>
+        {subValue && <p className={`text-xs mt-0.5 transition-colors ${
+          theme === 'dark' 
+            ? 'text-gray-400 group-hover:text-gray-300' 
+            : 'text-gray-500 group-hover:text-gray-600'
+        }`}>{subValue}</p>}
+      </div>
     </div>
-    <div className="flex-grow">
-      <p className="text-sm text-gray-500 dark:text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors">{title}</p>
-      <p className="text-2xl font-bold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">{value}</p>
-      {subValue && <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors">{subValue}</p>}
-    </div>
-  </div>
-));
+  );
+});
 
 const PieSegment: React.FC<{ percentage: number; color: string; label: string; title: string }> = ({ percentage, color, label, title }) => (
   <div 
@@ -38,7 +60,8 @@ const PerformanceAnalysisPage: React.FC<PerformanceAnalysisPageProps> = ({
     savedQuizzes, 
     allCourses, 
     learningObjectives, 
-    onBack 
+    onBack,
+    theme
 }) => {
   const [selectedCourseId, setSelectedCourseId] = useState<string>('all');
   const [selectedQuizTypeFilter, setSelectedQuizTypeFilter] = useState<string>('all');
@@ -299,16 +322,20 @@ const PerformanceAnalysisPage: React.FC<PerformanceAnalysisPageProps> = ({
   };
   
   return (
-    <div className="w-full h-full flex flex-col p-0 text-gray-800 dark:text-gray-200">
+    <div className={`w-full h-full flex flex-col p-0 ${theme === 'dark' ? 'text-gray-200' : 'text-gray-800'}`}>
       <div className="mb-6 px-1 flex flex-col sm:flex-row sm:justify-between sm:items-center">
         <div className="mb-3 sm:mb-0">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">Performans Analizi</h1>
-          <p className="text-gray-500 dark:text-gray-400">Sınav performansınızı ve öğrenme ilerlemenizi takip edin.</p>
+          <h1 className={`text-3xl font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Performans Analizi</h1>
+          <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Sınav performansınızı ve öğrenme ilerlemenizi takip edin.</p>
         </div>
         {onBack && (
           <button
             onClick={onBack}
-            className="px-4 py-2 bg-gray-200 dark:bg-secondary-700 hover:bg-gray-300 dark:hover:bg-secondary-600 text-gray-700 dark:text-gray-200 rounded-lg transition-colors flex items-center self-start sm:self-center"
+            className={`px-4 py-2 rounded-lg transition-colors flex items-center self-start sm:self-center ${
+              theme === 'dark' 
+                ? 'bg-secondary-700 hover:bg-secondary-600 text-gray-200' 
+                : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+            }`}
             aria-label="Ana Sayfaya Dön"
           >
             <i className="fas fa-arrow-left mr-2"></i> Ana Sayfa
@@ -317,22 +344,30 @@ const PerformanceAnalysisPage: React.FC<PerformanceAnalysisPageProps> = ({
       </div>
 
       {/* Filters Card */}
-      <section className="mb-6 bg-white dark:bg-secondary-800 p-4 sm:p-5 rounded-xl shadow-lg ring-1 ring-gray-200 dark:ring-secondary-700/50">
-        <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center">
-          <i className="fas fa-filter mr-2 text-primary-600 dark:text-primary-400"></i>
+      <section className={`mb-6 p-4 sm:p-5 rounded-xl shadow-lg ring-1 ${
+        theme === 'dark' 
+          ? 'bg-secondary-800 ring-secondary-700/50' 
+          : 'bg-white ring-gray-200'
+      }`}>
+        <h2 className={`text-lg font-semibold mb-4 flex items-center ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>
+          <i className={`fas fa-filter mr-2 ${theme === 'dark' ? 'text-primary-400' : 'text-primary-600'}`}></i>
           Filtreler
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           <div>
-            <label htmlFor="courseFilter" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              <i className="fas fa-book mr-1.5 text-primary-600 dark:text-primary-400"></i>
+            <label htmlFor="courseFilter" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+              <i className={`fas fa-book mr-1.5 ${theme === 'dark' ? 'text-primary-400' : 'text-primary-600'}`}></i>
               Ders Seçin
             </label>
             <select
               id="courseFilter"
               value={selectedCourseId}
               onChange={(e) => setSelectedCourseId(e.target.value)}
-              className="w-full p-2.5 bg-gray-50 dark:bg-secondary-700 border border-gray-300 dark:border-secondary-600 rounded-lg text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+              className={`w-full p-2.5 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors ${
+                theme === 'dark' 
+                  ? 'bg-secondary-700 border-secondary-600 text-gray-200' 
+                  : 'bg-gray-50 border-gray-300 text-gray-800'
+              }`}
             >
               <option value="all">Tüm Dersler</option>
               {allCourses.map(course => (
@@ -341,15 +376,19 @@ const PerformanceAnalysisPage: React.FC<PerformanceAnalysisPageProps> = ({
             </select>
           </div>
           <div>
-            <label htmlFor="quizTypeFilter" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              <i className="fas fa-graduation-cap mr-1.5 text-primary-600 dark:text-primary-400"></i>
+            <label htmlFor="quizTypeFilter" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+              <i className={`fas fa-graduation-cap mr-1.5 ${theme === 'dark' ? 'text-primary-400' : 'text-primary-600'}`}></i>
               Sınav Türü Seçin
             </label>
             <select
               id="quizTypeFilter"
               value={selectedQuizTypeFilter}
               onChange={(e) => setSelectedQuizTypeFilter(e.target.value)}
-              className="w-full p-2.5 bg-gray-50 dark:bg-secondary-700 border border-gray-300 dark:border-secondary-600 rounded-lg text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+              className={`w-full p-2.5 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors ${
+                theme === 'dark' 
+                  ? 'bg-secondary-700 border-secondary-600 text-gray-200' 
+                  : 'bg-gray-50 border-gray-300 text-gray-800'
+              }`}
             >
               {quizTypeFilterOptions.map(opt => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -357,15 +396,19 @@ const PerformanceAnalysisPage: React.FC<PerformanceAnalysisPageProps> = ({
             </select>
           </div>
           <div>
-            <label htmlFor="timeFilter" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              <i className="fas fa-clock mr-1.5 text-primary-600 dark:text-primary-400"></i>
+            <label htmlFor="timeFilter" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+              <i className={`fas fa-clock mr-1.5 ${theme === 'dark' ? 'text-primary-400' : 'text-primary-600'}`}></i>
               Zaman Aralığı
             </label>
             <select
               id="timeFilter"
               value={selectedTimeFilter}
               onChange={(e) => setSelectedTimeFilter(e.target.value)}
-              className="w-full p-2.5 bg-gray-50 dark:bg-secondary-700 border border-gray-300 dark:border-secondary-600 rounded-lg text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+              className={`w-full p-2.5 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors ${
+                theme === 'dark' 
+                  ? 'bg-secondary-700 border-secondary-600 text-gray-200' 
+                  : 'bg-gray-50 border-gray-300 text-gray-800'
+              }`}
             >
               {timeFilterOptions.map(opt => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -375,28 +418,34 @@ const PerformanceAnalysisPage: React.FC<PerformanceAnalysisPageProps> = ({
         </div>
         
         {/* Filter Summary */}
-        <div className="mt-4 pt-3 border-t border-gray-200 dark:border-secondary-600">
+        <div className={`mt-4 pt-3 border-t ${theme === 'dark' ? 'border-secondary-600' : 'border-gray-200'}`}>
           <div className="flex flex-wrap gap-2 items-center">
             {selectedCourseId !== 'all' && (
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300">
+              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                theme === 'dark' ? 'bg-primary-900 text-primary-300' : 'bg-primary-100 text-primary-800'
+              }`}>
                 <i className="fas fa-book mr-1"></i>
                 {allCourses.find(c => c.id === selectedCourseId)?.name || 'Ders'}
               </span>
             )}
             {selectedQuizTypeFilter !== 'all' && (
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                theme === 'dark' ? 'bg-blue-900 text-blue-300' : 'bg-blue-100 text-blue-800'
+              }`}>
                 <i className="fas fa-graduation-cap mr-1"></i>
                 {quizTypeFilterOptions.find(opt => opt.value === selectedQuizTypeFilter)?.label || 'Sınav Türü'}
               </span>
             )}
             {selectedTimeFilter !== 'all' && (
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
+              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                theme === 'dark' ? 'bg-green-900 text-green-300' : 'bg-green-100 text-green-800'
+              }`}>
                 <i className={`${timeFilterOptions.find(opt => opt.value === selectedTimeFilter)?.icon || 'fas fa-clock'} mr-1`}></i>
                 {timeFilterOptions.find(opt => opt.value === selectedTimeFilter)?.label || 'Zaman'}
               </span>
             )}
             {selectedCourseId === 'all' && selectedQuizTypeFilter === 'all' && selectedTimeFilter === 'all' && (
-              <span className="text-gray-500 dark:text-gray-400"></span>
+              <span className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}></span>
             )}
           </div>
         </div>
@@ -412,19 +461,21 @@ const PerformanceAnalysisPage: React.FC<PerformanceAnalysisPageProps> = ({
             onClick: onBack, 
             iconClass: "fas fa-home",
           } : undefined}
+          theme={theme}
         />
       ) : filteredQuizzes.length === 0 && savedQuizzes.length > 0 ? (
          <EmptyState
           iconClass="fas fa-filter"
           title="Filtre Sonucu Boş"
           message="Seçtiğiniz filtre kriterlerine uygun sınav bulunamadı. Lütfen filtrelerinizi değiştirerek tekrar deneyin."
+          theme={theme}
         />
       ) : (
         <div className="flex-grow overflow-y-auto space-y-8 custom-scrollbar pr-1 pb-4">
           {/* Overall Stats */}
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 px-1 flex items-center">
-              <i className="fas fa-chart-line mr-2 text-primary-600 dark:text-primary-400"></i>
+            <h2 className={`text-xl font-semibold mb-4 px-1 flex items-center ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              <i className={`fas fa-chart-line mr-2 ${theme === 'dark' ? 'text-primary-400' : 'text-primary-600'}`}></i>
               Genel Filtrelenmiş İstatistikler
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -432,70 +483,82 @@ const PerformanceAnalysisPage: React.FC<PerformanceAnalysisPageProps> = ({
                 title="Toplam Sınav" 
                 value={overallStats.totalQuizzes} 
                 icon="fas fa-graduation-cap" 
-                iconColorClass="text-primary-600 dark:text-primary-400" 
-                iconBgClass="bg-primary-100 dark:bg-primary-500/10"
+                iconColorClass={theme === 'dark' ? 'text-primary-400' : 'text-primary-600'}
+                iconBgClass={theme === 'dark' ? 'bg-primary-500/10' : 'bg-primary-100'}
+                theme={theme}
               />
               <StatCard 
                 title="Ortalama Skor" 
                 value={`${overallStats.averageScore}%`} 
                 icon="fas fa-percentage" 
-                iconColorClass="text-blue-600 dark:text-blue-400" 
-                iconBgClass="bg-blue-100 dark:bg-blue-500/10"
+                iconColorClass={theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}
+                iconBgClass={theme === 'dark' ? 'bg-blue-500/10' : 'bg-blue-100'}
+                theme={theme}
               />
               <StatCard 
                 title="En Yüksek Skor" 
                 value={`${overallStats.highestScore}%`} 
                 icon="fas fa-arrow-trend-up" 
-                iconColorClass="text-green-600 dark:text-green-400" 
-                iconBgClass="bg-green-100 dark:bg-green-500/10" 
+                iconColorClass={theme === 'dark' ? 'text-green-400' : 'text-green-600'}
+                iconBgClass={theme === 'dark' ? 'bg-green-500/10' : 'bg-green-100'}
+                theme={theme}
               />
               <StatCard 
                 title="En Düşük Skor" 
                 value={`${overallStats.lowestScore}%`} 
                 icon="fas fa-arrow-trend-down" 
-                iconColorClass="text-red-600 dark:text-red-400" 
-                iconBgClass="bg-red-100 dark:bg-red-500/10" 
+                iconColorClass={theme === 'dark' ? 'text-red-400' : 'text-red-600'}
+                iconBgClass={theme === 'dark' ? 'bg-red-500/10' : 'bg-red-100'}
+                theme={theme}
               />
               <StatCard 
                 title="Toplam Soru" 
                 value={overallStats.totalQuestionsAnswered} 
                 icon="fas fa-question-circle" 
-                iconColorClass="text-indigo-600 dark:text-indigo-400" 
-                iconBgClass="bg-indigo-100 dark:bg-indigo-500/10"
+                iconColorClass={theme === 'dark' ? 'text-indigo-400' : 'text-indigo-600'}
+                iconBgClass={theme === 'dark' ? 'bg-indigo-500/10' : 'bg-indigo-100'}
                 subValue={`${overallStats.totalCorrectAnswers} doğru`}
+                theme={theme}
               />
               <StatCard 
                 title="Doğruluk Oranı" 
                 value={overallStats.totalQuestionsAnswered > 0 ? 
                   `${Math.round((overallStats.totalCorrectAnswers / overallStats.totalQuestionsAnswered) * 100)}%` : '0%'} 
                 icon="fas fa-bullseye" 
-                iconColorClass="text-purple-600 dark:text-purple-400" 
-                iconBgClass="bg-purple-100 dark:bg-purple-500/10"
+                iconColorClass={theme === 'dark' ? 'text-purple-400' : 'text-purple-600'}
+                iconBgClass={theme === 'dark' ? 'bg-purple-500/10' : 'bg-purple-100'}
                 subValue={`${overallStats.totalCorrectAnswers}/${overallStats.totalQuestionsAnswered}`}
+                theme={theme}
               />
               <StatCard 
                 title="Başarılı Sınav" 
                 value={overallStats.passedQuizzes} 
                 icon="fas fa-check-circle" 
-                iconColorClass="text-emerald-600 dark:text-emerald-400" 
-                iconBgClass="bg-emerald-100 dark:bg-emerald-500/10"
+                iconColorClass={theme === 'dark' ? 'text-emerald-400' : 'text-emerald-600'}
+                iconBgClass={theme === 'dark' ? 'bg-emerald-500/10' : 'bg-emerald-100'}
                 subValue={`≥60% (${overallStats.totalQuizzes > 0 ? Math.round((overallStats.passedQuizzes / overallStats.totalQuizzes) * 100) : 0}%)`}
+                theme={theme}
               />
               <StatCard 
                 title="Başarısız Sınav" 
                 value={overallStats.failedQuizzes} 
                 icon="fas fa-times-circle" 
-                iconColorClass="text-orange-600 dark:text-orange-400" 
-                iconBgClass="bg-orange-100 dark:bg-orange-500/10"
+                iconColorClass={theme === 'dark' ? 'text-orange-400' : 'text-orange-600'}
+                iconBgClass={theme === 'dark' ? 'bg-orange-500/10' : 'bg-orange-100'}
                 subValue={`<60% (${overallStats.totalQuizzes > 0 ? Math.round((overallStats.failedQuizzes / overallStats.totalQuizzes) * 100) : 0}%)`}
+                theme={theme}
               />
             </div>
           </section>
 
           {/* Quiz Type Detailed Stats */}
-          <section className="bg-white dark:bg-secondary-800 p-5 sm:p-6 rounded-xl shadow-lg ring-1 ring-gray-200 dark:ring-secondary-700/50">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-5 flex items-center">
-              <i className="fas fa-layer-group mr-2 text-primary-600 dark:text-primary-400"></i>
+          <section className={`p-5 sm:p-6 rounded-xl shadow-lg ring-1 ${
+            theme === 'dark' 
+              ? 'bg-secondary-800 ring-secondary-700/50' 
+              : 'bg-white ring-gray-200'
+          }`}>
+            <h2 className={`text-xl font-semibold mb-5 flex items-center ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              <i className={`fas fa-layer-group mr-2 ${theme === 'dark' ? 'text-primary-400' : 'text-primary-600'}`}></i>
               Sınav Türü Detayları (Filtrelenmiş)
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
@@ -505,8 +568,9 @@ const PerformanceAnalysisPage: React.FC<PerformanceAnalysisPageProps> = ({
                     value={quizTypeStats.quick.count} 
                     subValue={`Ort. Skor: ${quizTypeStats.quick.averageScore}%`}
                     icon="fas fa-bolt" 
-                    iconColorClass="text-cyan-600 dark:text-cyan-400" 
-                    iconBgClass="bg-cyan-100 dark:bg-cyan-500/10"
+                    iconColorClass={theme === 'dark' ? 'text-cyan-400' : 'text-cyan-600'}
+                    iconBgClass={theme === 'dark' ? 'bg-cyan-500/10' : 'bg-cyan-100'}
+                    theme={theme}
                 />
               )}
               {quizTypeStats.totalPersonalized > 0 && (
@@ -515,8 +579,9 @@ const PerformanceAnalysisPage: React.FC<PerformanceAnalysisPageProps> = ({
                     value={quizTypeStats.totalPersonalized} 
                     subValue={`Ort. Skor: ${quizTypeStats.averagePersonalizedScore}%`}
                     icon="fas fa-user-cog" 
-                    iconColorClass="text-purple-600 dark:text-purple-400" 
-                    iconBgClass="bg-purple-100 dark:bg-purple-500/10"
+                    iconColorClass={theme === 'dark' ? 'text-purple-400' : 'text-purple-600'}
+                    iconBgClass={theme === 'dark' ? 'bg-purple-500/10' : 'bg-purple-100'}
+                    theme={theme}
                 />
               )}
               {Object.entries(personalizedQuizTypeLabels).map(([typeKey, label]) => {
@@ -530,8 +595,21 @@ const PerformanceAnalysisPage: React.FC<PerformanceAnalysisPageProps> = ({
                               value={stats.count} 
                               subValue={`Ort. Skor: ${stats.averageScore}%`}
                               icon={typeKey === 'comprehensive' ? 'fas fa-book-reader' : typeKey === 'new_topics' ? 'fas fa-lightbulb' : 'fas fa-crosshairs'}
-                              iconColorClass={typeKey === 'comprehensive' ? 'text-purple-500 dark:text-purple-300' : typeKey === 'new_topics' ? 'text-pink-500 dark:text-pink-300' : 'text-fuchsia-500 dark:text-fuchsia-300'}
-                              iconBgClass={typeKey === 'comprehensive' ? 'bg-purple-100 dark:bg-purple-500/15' : typeKey === 'new_topics' ? 'bg-pink-100 dark:bg-pink-500/15' : 'bg-fuchsia-100 dark:bg-fuchsia-500/15'}
+                              iconColorClass={
+                                typeKey === 'comprehensive' 
+                                  ? (theme === 'dark' ? 'text-purple-300' : 'text-purple-500')
+                                  : typeKey === 'new_topics' 
+                                    ? (theme === 'dark' ? 'text-pink-300' : 'text-pink-500')
+                                    : (theme === 'dark' ? 'text-fuchsia-300' : 'text-fuchsia-500')
+                              }
+                              iconBgClass={
+                                typeKey === 'comprehensive' 
+                                  ? (theme === 'dark' ? 'bg-purple-500/15' : 'bg-purple-100')
+                                  : typeKey === 'new_topics' 
+                                    ? (theme === 'dark' ? 'bg-pink-500/15' : 'bg-pink-100')
+                                    : (theme === 'dark' ? 'bg-fuchsia-500/15' : 'bg-fuchsia-100')
+                              }
+                              theme={theme}
                           />
                       );
                   }
@@ -542,20 +620,28 @@ const PerformanceAnalysisPage: React.FC<PerformanceAnalysisPageProps> = ({
 
           {/* Learning Objectives Stats */}
            { (selectedCourseId !== 'all' || learningObjectiveStats.totalLOs > 0) && (
-            <section className="bg-white dark:bg-secondary-800 p-5 sm:p-6 rounded-xl shadow-lg ring-1 ring-gray-200 dark:ring-secondary-700/50">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-5 flex items-center">
-                  <i className="fas fa-target mr-2 text-primary-600 dark:text-primary-400"></i>
+            <section className={`p-5 sm:p-6 rounded-xl shadow-lg ring-1 ${
+              theme === 'dark' 
+                ? 'bg-secondary-800 ring-secondary-700/50' 
+                : 'bg-white ring-gray-200'
+            }`}>
+                <h2 className={`text-xl font-semibold mb-5 flex items-center ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                  <i className={`fas fa-target mr-2 ${theme === 'dark' ? 'text-primary-400' : 'text-primary-600'}`}></i>
                   Öğrenme Hedefleri Analizi {selectedCourseId !== 'all' && allCourses.find(c=>c.id === selectedCourseId) ? `(${allCourses.find(c=>c.id === selectedCourseId)?.name})` : '(Tüm Dersler)'}
                 </h2>
                 {learningObjectiveStats.totalLOs > 0 ? (
                 <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
                     <div className="w-full md:w-1/2">
-                        <p className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-1">Toplam Hedef: <span className="font-bold text-primary-600 dark:text-primary-400">{learningObjectiveStats.totalLOs}</span></p>
+                        <p className={`text-lg font-medium mb-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                          Toplam Hedef: <span className={`font-bold ${theme === 'dark' ? 'text-primary-400' : 'text-primary-600'}`}>{learningObjectiveStats.totalLOs}</span>
+                        </p>
                         <ul className="space-y-1.5 text-sm">
                         {(Object.keys(learningObjectiveStats.counts) as LearningObjectiveStatus[]).map(status => (
-                            <li key={status} className="flex justify-between items-center p-2 bg-gray-50 dark:bg-secondary-700/50 rounded-md">
-                            <span className="text-gray-700 dark:text-gray-300">{getStatusText(status)}:</span>
-                            <span className="font-semibold text-gray-800 dark:text-white">
+                            <li key={status} className={`flex justify-between items-center p-2 rounded-md ${
+                              theme === 'dark' ? 'bg-secondary-700/50' : 'bg-gray-50'
+                            }`}>
+                            <span className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>{getStatusText(status)}:</span>
+                            <span className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>
                                 {learningObjectiveStats.counts[status]} ({learningObjectiveStats.percentages[status].toFixed(1)}%)
                             </span>
                             </li>
@@ -579,42 +665,48 @@ const PerformanceAnalysisPage: React.FC<PerformanceAnalysisPageProps> = ({
                     </div>
                 </div>
                 ) : (
-                <p className="text-gray-500 dark:text-gray-400">Bu ders için henüz öğrenme hedefi bulunmuyor veya hiç kişiselleştirilmiş sınav oluşturulmamış.</p>
+                <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Bu ders için henüz öğrenme hedefi bulunmuyor veya hiç kişiselleştirilmiş sınav oluşturulmamış.</p>
                 )}
             </section>
             )}
 
 
           {/* Score Timeline Chart */}
-          <section className="bg-white dark:bg-secondary-800 p-5 sm:p-6 rounded-xl shadow-lg ring-1 ring-gray-200 dark:ring-secondary-700/50">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6 flex items-center">
-              <i className="fas fa-chart-area mr-2 text-primary-600 dark:text-primary-400"></i>
+          <section className={`p-5 sm:p-6 rounded-xl shadow-lg ring-1 ${
+            theme === 'dark' 
+              ? 'bg-secondary-800 ring-secondary-700/50' 
+              : 'bg-white ring-gray-200'
+          }`}>
+            <h2 className={`text-xl font-semibold mb-6 flex items-center ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              <i className={`fas fa-chart-area mr-2 ${theme === 'dark' ? 'text-primary-400' : 'text-primary-600'}`}></i>
               Sınav Skorları Zaman Çizelgesi (Filtrelenmiş)
             </h2>
             {sortedQuizzesForChart.length > 0 ? (
               <div className="space-y-4">
                 {/* Chart Info */}
-                <div className="bg-gray-50 dark:bg-secondary-700/30 p-3 rounded-lg">
-                  <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
+                <div className={`p-3 rounded-lg ${theme === 'dark' ? 'bg-secondary-700/30' : 'bg-gray-50'}`}>
+                  <div className={`flex flex-wrap items-center gap-3 text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
                     <span className="flex items-center">
-                      <i className="fas fa-info-circle mr-1.5 text-primary-600 dark:text-primary-400"></i>
+                      <i className={`fas fa-info-circle mr-1.5 ${theme === 'dark' ? 'text-primary-400' : 'text-primary-600'}`}></i>
                       <strong>{sortedQuizzesForChart.length}</strong> sınav gösteriliyor
                     </span>
                     {selectedTimeFilter !== 'all' && (
                       <span className="flex items-center">
-                        <i className="fas fa-clock mr-1.5 text-green-600 dark:text-green-400"></i>
+                        <i className={`fas fa-clock mr-1.5 ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`}></i>
                         {timeFilterOptions.find(opt => opt.value === selectedTimeFilter)?.label}
                       </span>
                     )}
                     <span className="flex items-center">
-                      <i className="fas fa-calendar-alt mr-1.5 text-blue-600 dark:text-blue-400"></i>
+                      <i className={`fas fa-calendar-alt mr-1.5 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}></i>
                       {formatDate(Math.min(...sortedQuizzesForChart.map(q => q.savedAt)))} - {formatDate(Math.max(...sortedQuizzesForChart.map(q => q.savedAt)))}
                     </span>
                   </div>
                 </div>
                 
                 {/* Chart */}
-                <div className="flex items-end space-x-1.5 h-72 bg-gray-100 dark:bg-secondary-700/30 p-4 rounded-lg overflow-x-auto custom-scrollbar-chart">
+                <div className={`flex items-end space-x-1.5 h-72 p-4 rounded-lg overflow-x-auto custom-scrollbar-chart ${
+                  theme === 'dark' ? 'bg-secondary-700/30' : 'bg-gray-100'
+                }`}>
                   {sortedQuizzesForChart.map((quiz) => {
                     const percentage = quiz.totalQuestions > 0 ? (quiz.score / quiz.totalQuestions) * 100 : 0;
                     const barHeight = Math.max(5, percentage); 
@@ -627,7 +719,11 @@ const PerformanceAnalysisPage: React.FC<PerformanceAnalysisPageProps> = ({
                           style={{ height: `${barHeight}%` }}
                           aria-label={`Sınav skoru: ${Math.round(percentage)}%`}
                         ></div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1.5 whitespace-nowrap group-hover:font-semibold group-hover:text-primary-600 dark:group-hover:text-primary-300 transition-colors">
+                        <div className={`text-xs mt-1.5 whitespace-nowrap group-hover:font-semibold transition-colors ${
+                          theme === 'dark' 
+                            ? 'text-gray-400 group-hover:text-primary-300' 
+                            : 'text-gray-500 group-hover:text-primary-600'
+                        }`}>
                           {formatDate(quiz.savedAt)}
                         </div>
                       </div>
@@ -637,10 +733,10 @@ const PerformanceAnalysisPage: React.FC<PerformanceAnalysisPageProps> = ({
               </div>
             ) : (
               <div className="text-center py-12">
-                <i className="fas fa-chart-line text-4xl text-gray-400 dark:text-gray-600 mb-4"></i>
-                <p className="text-gray-500 dark:text-gray-400 text-lg">Zaman çizelgesi için filtrelenmiş veri yok.</p>
+                <i className={`fas fa-chart-line text-4xl mb-4 ${theme === 'dark' ? 'text-gray-600' : 'text-gray-400'}`}></i>
+                <p className={`text-lg ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Zaman çizelgesi için filtrelenmiş veri yok.</p>
                 {selectedTimeFilter !== 'all' && (
-                  <p className="text-gray-400 dark:text-gray-500 text-sm mt-2">
+                  <p className={`text-sm mt-2 ${theme === 'dark' ? 'text-gray-500' : 'text-gray-400'}`}>
                     Daha geniş bir zaman aralığı seçmeyi deneyin.
                   </p>
                 )}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Course, LearningObjective } from '../types';
 import EmptyState from './EmptyState';
+import { getThemeClasses } from '../utils/themeUtils';
 
 interface CoursesPageProps {
   courses: Course[];
@@ -66,27 +67,45 @@ const CoursesPage: React.FC<CoursesPageProps> = ({
       </div>
 
       {isAddingCourse ? (
-        <div className="mb-6 p-6 bg-white dark:bg-secondary-800 rounded-lg shadow-xl ring-1 ring-gray-200 dark:ring-secondary-700/50 transition-all duration-300 ease-in-out">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Yeni Ders Oluştur</h2>
+        <div className={`mb-6 p-6 rounded-lg shadow-xl ring-1 transition-all duration-300 ease-in-out ${
+          theme === 'dark' 
+            ? 'bg-secondary-800 ring-secondary-700/50' 
+            : 'bg-white ring-gray-200'
+        }`}>
+          <h2 className={`text-xl font-semibold mb-4 ${
+            theme === 'dark' ? 'text-white' : 'text-gray-900'
+          }`}>Yeni Ders Oluştur</h2>
           <div className="flex items-center space-x-3">
             <input
               type="text"
               value={newCourseName}
               onChange={(e) => setNewCourseName(e.target.value)}
               placeholder="Ders adı (örn: Matematik 101)"
-              className="flex-grow p-3 bg-gray-50 dark:bg-secondary-700 border border-gray-300 dark:border-secondary-600 rounded-lg text-gray-800 dark:text-gray-200 focus:ring-primary-500 focus:border-primary-500 placeholder-gray-400 dark:placeholder-gray-500"
+              className={`flex-grow p-3 border rounded-lg focus:ring-primary-500 focus:border-primary-500 ${
+                theme === 'dark' 
+                  ? 'bg-secondary-700 border-secondary-600 text-gray-200 placeholder-gray-500' 
+                  : 'bg-gray-50 border-gray-300 text-gray-800 placeholder-gray-400'
+              }`}
               aria-label="Yeni ders adı"
             />
             <button
               onClick={handleAddNewCourse}
               disabled={!newCourseName.trim()}
-              className="px-5 py-3 bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white rounded-lg disabled:opacity-50 flex items-center font-medium"
+              className={`px-5 py-3 text-white rounded-lg disabled:opacity-50 flex items-center font-medium ${
+                theme === 'dark' 
+                  ? 'bg-green-600 hover:bg-green-700' 
+                  : 'bg-green-500 hover:bg-green-600'
+              }`}
             >
               <i className="fas fa-plus mr-2"></i> Oluştur
             </button>
             <button
               onClick={() => { setIsAddingCourse(false); setNewCourseName(''); }}
-              className="px-5 py-3 bg-gray-300 hover:bg-gray-400 dark:bg-secondary-600 dark:hover:bg-secondary-500 text-gray-700 dark:text-gray-300 rounded-lg flex items-center font-medium"
+              className={`px-5 py-3 rounded-lg flex items-center font-medium ${
+                theme === 'dark' 
+                  ? 'bg-secondary-600 hover:bg-secondary-500 text-gray-300' 
+                  : 'bg-gray-300 hover:bg-gray-400 text-gray-700'
+              }`}
             >
               <i className="fas fa-times mr-2"></i> İptal
             </button>
@@ -100,10 +119,16 @@ const CoursesPage: React.FC<CoursesPageProps> = ({
               placeholder="Ders ara..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full p-3 pl-10 bg-white dark:bg-secondary-800 border border-gray-300 dark:border-secondary-700 rounded-lg text-gray-800 dark:text-gray-200 focus:ring-primary-500 focus:border-primary-500 placeholder-gray-400 dark:placeholder-gray-500"
+              className={`w-full p-3 pl-10 border rounded-lg focus:ring-primary-500 focus:border-primary-500 ${
+                theme === 'dark' 
+                  ? 'bg-secondary-800 border-secondary-700 text-gray-200 placeholder-gray-500' 
+                  : 'bg-white border-gray-300 text-gray-800 placeholder-gray-400'
+              }`}
               aria-label="Ders arama"
             />
-            <i className="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500"></i>
+            <i className={`fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 ${
+              theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
+            }`}></i>
           </div>
           <button
             onClick={() => setIsAddingCourse(true)}
@@ -135,7 +160,11 @@ const CoursesPage: React.FC<CoursesPageProps> = ({
               return (
               <div 
                 key={course.id} 
-                className="bg-white dark:bg-secondary-800 p-5 rounded-xl shadow-lg hover:shadow-2xl ring-1 ring-gray-200 dark:ring-secondary-700/50 flex flex-col justify-between cursor-pointer transition-all duration-200 ease-in-out hover:ring-primary-500 hover:scale-[1.02]"
+                className={`p-5 rounded-xl shadow-lg hover:shadow-2xl ring-1 flex flex-col justify-between cursor-pointer transition-all duration-200 ease-in-out hover:ring-primary-500 hover:scale-[1.02] ${
+                  theme === 'dark' 
+                    ? 'bg-secondary-800 ring-secondary-700/50' 
+                    : 'bg-white ring-gray-200'
+                }`}
                 onClick={() => onViewCourseLOs(course)}
                 role="button"
                 tabIndex={0}
@@ -144,24 +173,42 @@ const CoursesPage: React.FC<CoursesPageProps> = ({
               >
                 <div>
                   <div className="flex justify-between items-start mb-2">
-                    <i className="fas fa-chalkboard-teacher text-3xl text-primary-500 dark:text-primary-400 opacity-80"></i>
+                    <i className={`fas fa-chalkboard-teacher text-3xl opacity-80 ${
+                      theme === 'dark' ? 'text-primary-400' : 'text-primary-500'
+                    }`}></i>
                     <button
                       onClick={(e) => { e.stopPropagation(); onDeleteCourse(course.id);}}
-                      className="text-red-500/70 hover:text-red-400 p-1.5 rounded-md hover:bg-red-100 dark:hover:bg-red-500/10 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+                      className={`text-red-500/70 hover:text-red-400 p-1.5 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 ${
+                        theme === 'dark' ? 'hover:bg-red-500/10' : 'hover:bg-red-100'
+                      }`}
                       aria-label={`'${course.name}' dersini sil`}
                       title="Dersi Sil"
                     >
                       <i className="fas fa-trash-alt text-base"></i>
                     </button>
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1.5 truncate" title={course.name}>{course.name}</h3>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">Oluşturulma: {formatDate(course.createdAt)}</p>
+                  <h3 className={`text-lg font-semibold mb-1.5 truncate ${
+                    theme === 'dark' ? 'text-white' : 'text-gray-900'
+                  }`} title={course.name}>{course.name}</h3>
+                  <p className={`text-xs mb-3 ${
+                    theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                  }`}>Oluşturulma: {formatDate(course.createdAt)}</p>
                 </div>
-                <div className="mt-3 pt-3 border-t border-gray-200 dark:border-secondary-700 flex justify-between items-center text-sm">
-                  <span className="text-gray-600 dark:text-gray-300 flex items-center">
-                    <i className="fas fa-bullseye mr-2 text-blue-500 dark:text-blue-400"></i> {loCount} Öğrenme Hedefi
+                <div className={`mt-3 pt-3 border-t flex justify-between items-center text-sm ${
+                  theme === 'dark' ? 'border-secondary-700' : 'border-gray-200'
+                }`}>
+                  <span className={`flex items-center ${
+                    theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                  }`}>
+                    <i className={`fas fa-bullseye mr-2 ${
+                      theme === 'dark' ? 'text-blue-400' : 'text-blue-500'
+                    }`}></i> {loCount} Öğrenme Hedefi
                   </span>
-                   <span className="text-primary-600 dark:text-primary-400 group-hover:text-primary-500 dark:group-hover:text-primary-300 text-xs font-medium">
+                   <span className={`text-xs font-medium ${
+                     theme === 'dark' 
+                       ? 'text-primary-400 group-hover:text-primary-300' 
+                       : 'text-primary-600 group-hover:text-primary-500'
+                   }`}>
                      Detaylar <i className="fas fa-arrow-right ml-1 text-xs"></i>
                    </span>
                 </div>

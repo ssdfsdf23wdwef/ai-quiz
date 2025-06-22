@@ -57,7 +57,11 @@ const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({ navigateTo, set
               type="email"
               autoComplete="email"
               required
-              className="appearance-none rounded-md relative block w-full px-3 py-3 border border-gray-300 dark:border-secondary-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-secondary-700 focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-400 dark:focus:border-primary-400 focus:z-10 sm:text-sm"
+              className={`appearance-none rounded-md relative block w-full px-3 py-3 border text-sm focus:outline-none focus:z-10 ${
+                theme === 'dark' 
+                  ? 'border-secondary-600 placeholder-gray-400 text-white bg-secondary-700 focus:ring-primary-400 focus:border-primary-400' 
+                  : 'border-gray-300 placeholder-gray-500 text-gray-900 bg-white focus:ring-primary-500 focus:border-primary-500'
+              }`}
               placeholder="E-posta Adresi"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -66,14 +70,22 @@ const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({ navigateTo, set
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:focus:ring-offset-secondary-800"
+              className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                theme === 'dark' 
+                  ? 'bg-primary-500 hover:bg-primary-600 focus:ring-primary-500 focus:ring-offset-secondary-800' 
+                  : 'bg-primary-600 hover:bg-primary-700 focus:ring-primary-500'
+              }`}
             >
               Sıfırlama Bağlantısı Gönder
             </button>
           </div>
         </form>
         <div className="text-sm text-center">
-          <button onClick={() => navigateTo('login')} className="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300">
+          <button onClick={() => navigateTo('login')} className={`font-medium ${
+            theme === 'dark' 
+              ? 'text-primary-400 hover:text-primary-300' 
+              : 'text-primary-600 hover:text-primary-500'
+          }`}>
             Giriş sayfasına dön
           </button>
         </div>

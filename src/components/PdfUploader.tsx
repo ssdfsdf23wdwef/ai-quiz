@@ -1,7 +1,6 @@
 import React from 'react';
 import { useState, useCallback } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
-import LoadingSpinner from './LoadingSpinner';
 import UploadIcon from './icons/UploadIcon';
 import { getConfig } from '../services/configService'; // Import config service
 
@@ -14,12 +13,14 @@ interface PdfUploaderProps {
   onPdfTextExtracted: (text: string, pdfName: string) => void;
   onProcessingStateChange: (isProcessing: boolean) => void;
   onError: (errorMessage: string) => void;
+  theme?: string;
 }
 
 const PdfUploader: React.FC<PdfUploaderProps> = ({ 
   onPdfTextExtracted, 
   onProcessingStateChange, 
   onError,
+  theme,
 }) => {
   const [fileName, setFileName] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
@@ -84,15 +85,31 @@ const PdfUploader: React.FC<PdfUploaderProps> = ({
     <div className="w-full text-center">
       <label
         htmlFor="pdf-upload"
-        className="cursor-pointer flex flex-col items-center justify-center p-8 border-2 border-dashed border-gray-300 dark:border-secondary-600 rounded-lg hover:border-primary-500 dark:hover:border-primary-500 transition-colors bg-gray-50 dark:bg-secondary-700/50 hover:bg-gray-100 dark:hover:bg-secondary-700/80"
+        className={`cursor-pointer flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-lg transition-colors ${
+          theme === 'dark' 
+            ? 'border-secondary-600 hover:border-primary-500 bg-secondary-700/50 hover:bg-secondary-700/80' 
+            : 'border-gray-300 hover:border-primary-500 bg-gray-50 hover:bg-gray-100'
+        }`}
       >
-        <UploadIcon className="w-16 h-16 text-primary-500 dark:text-primary-400 mb-4" />
-        <span className="text-xl font-semibold text-gray-700 dark:text-gray-100">PDF Dosyanızı Seçin</span>
-        <span className="text-sm text-gray-500 dark:text-gray-400 mt-1">Sınav oluşturmak için bir PDF yükleyin</span>
+        <UploadIcon className={`w-16 h-16 mb-4 ${
+          theme === 'dark' ? 'text-primary-400' : 'text-primary-500'
+        }`} />
+        <span className={`text-xl font-semibold ${
+          theme === 'dark' ? 'text-gray-100' : 'text-gray-700'
+        }`}>PDF Dosyanızı Seçin</span>
+        <span className={`text-sm mt-1 ${
+          theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+        }`}>Sınav oluşturmak için bir PDF yükleyin</span>
         {fileName && !isProcessing && ( 
-          <p className="mt-2 text-sm text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-700/30 px-2 py-1 rounded">Yüklendi: {fileName}</p>
+          <p className={`mt-2 text-sm px-2 py-1 rounded ${
+            theme === 'dark' 
+              ? 'text-green-400 bg-green-700/30' 
+              : 'text-green-600 bg-green-100'
+          }`}>Yüklendi: {fileName}</p>
         )}
-        {isProcessing && fileName && <p className="mt-2 text-sm text-blue-600 dark:text-blue-400">Yükleniyor: {fileName}</p>}
+        {isProcessing && fileName && <p className={`mt-2 text-sm ${
+          theme === 'dark' ? 'text-blue-400' : 'text-blue-600'
+        }`}>Yükleniyor: {fileName}</p>}
         <input
           id="pdf-upload"
           type="file"

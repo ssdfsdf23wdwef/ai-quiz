@@ -369,6 +369,7 @@ const App: React.FC = () => {
                                         handlePersonalizedQuizTypeSelected(type, navigateTo, setRouterLoading);
                                     }}
                                     onBack={handleBackNavigation}
+                                    theme={theme}
                                   />;
                     creationStageKey = 'personalized_quiz_type_selection';
                 } else if (currentPersonalizedQuizType === 'weak_topics') {
@@ -387,7 +388,8 @@ const App: React.FC = () => {
                      childContent = <PdfUploader 
                                         onPdfTextExtracted={(text, name) => handlePdfTextExtracted(text, name, navigateTo, setRouterLoading)}
                                         onProcessingStateChange={handlePdfProcessingStateChange}
-                                        onError={(msg) => setRouterError(msg)} 
+                                        onError={(msg) => setRouterError(msg)}
+                                        theme={theme}
                                     />;
                     creationStageKey = 'file_upload';
                 }
@@ -395,7 +397,8 @@ const App: React.FC = () => {
                  childContent = <PdfUploader 
                                     onPdfTextExtracted={(text, name) => handlePdfTextExtracted(text, name, navigateTo, setRouterLoading)}
                                     onProcessingStateChange={handlePdfProcessingStateChange}
-                                    onError={(msg) => setRouterError(msg)} 
+                                    onError={(msg) => setRouterError(msg)}
+                                    theme={theme}
                                 />;
                 creationStageKey = 'file_upload';
             }
@@ -425,6 +428,7 @@ const App: React.FC = () => {
                                     handlePersonalizedQuizTypeSelected(type, navigateTo, setRouterLoading);
                                 }}
                                 onBack={handleBackNavigation}
+                                theme={theme}
                               />;
         } else if (appState === 'selecting_subtopics') {
           childContent = <SubtopicSelector

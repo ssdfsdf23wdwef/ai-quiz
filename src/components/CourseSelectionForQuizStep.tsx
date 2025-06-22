@@ -89,8 +89,13 @@ const CourseSelectionForQuizStep: React.FC<CourseSelectionForQuizStepProps> = ({
 
       <button
         onClick={handleToggleNewCourseInput}
-        className={`w-full flex items-center justify-center p-3.5 mb-4 border-2 border-dashed rounded-lg transition-colors
-                    ${showNewCourseInput ? 'border-primary-500 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-500/10' : 'border-gray-400 dark:border-secondary-500 text-gray-500 dark:text-gray-400 hover:border-primary-500 dark:hover:border-primary-400 hover:text-primary-600 dark:hover:text-primary-400'}`}
+        className={`w-full flex items-center justify-center p-3.5 mb-4 border-2 border-dashed rounded-lg transition-colors ${
+          showNewCourseInput 
+            ? `border-primary-500 ${theme === 'dark' ? 'text-primary-400 bg-primary-500/10' : 'text-primary-600 bg-primary-50'}` 
+            : `${theme === 'dark' 
+                ? 'border-secondary-500 text-gray-400 hover:border-primary-400 hover:text-primary-400' 
+                : 'border-gray-400 text-gray-500 hover:border-primary-500 hover:text-primary-600'}`
+        }`}
       >
         <i className={`fas ${showNewCourseInput ? 'fa-minus-circle' : 'fa-plus-circle'} mr-2.5`}></i>
         {showNewCourseInput && courses.length > 0 ? 'Veya Yeni Ders Oluştur' : 'Yeni Ders Oluştur'}
@@ -104,7 +109,11 @@ const CourseSelectionForQuizStep: React.FC<CourseSelectionForQuizStepProps> = ({
             value={newCourseNameInput}
             onChange={handleNewCourseNameChange}
             placeholder="Yeni ders adını yazın (örn: İleri Cebir)"
-            className="w-full p-3.5 bg-gray-50 dark:bg-secondary-700 border border-gray-300 dark:border-secondary-600 rounded-lg text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 placeholder-gray-400 dark:placeholder-gray-500 text-base"
+            className={`w-full p-3.5 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-base ${
+              theme === 'dark' 
+                ? 'bg-secondary-700 border-secondary-600 text-gray-200 placeholder-gray-500' 
+                : 'bg-gray-50 border-gray-300 text-gray-800 placeholder-gray-400'
+            }`}
             aria-label="Yeni ders adı"
           />
         </div>
@@ -113,7 +122,11 @@ const CourseSelectionForQuizStep: React.FC<CourseSelectionForQuizStepProps> = ({
       <div className="flex justify-between items-center mt-10">
         <button
           onClick={onCancel}
-          className="px-7 py-3 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white transition-colors text-base flex items-center"
+          className={`px-7 py-3 transition-colors text-base flex items-center ${
+            theme === 'dark' 
+              ? 'text-gray-300 hover:text-white' 
+              : 'text-gray-600 hover:text-gray-800'
+          }`}
           aria-label="Geri dön"
         >
           <i className="fas fa-arrow-left mr-2"></i> Geri
@@ -121,7 +134,11 @@ const CourseSelectionForQuizStep: React.FC<CourseSelectionForQuizStepProps> = ({
         <button
           onClick={handleSubmit}
           disabled={!canSubmit}
-          className="px-7 py-3 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white rounded-lg font-semibold shadow-md disabled:opacity-60 disabled:cursor-not-allowed text-base flex items-center"
+          className={`px-7 py-3 text-white rounded-lg font-semibold shadow-md disabled:opacity-60 disabled:cursor-not-allowed text-base flex items-center ${
+            theme === 'dark' 
+              ? 'bg-blue-600 hover:bg-blue-700' 
+              : 'bg-blue-500 hover:bg-blue-600'
+          }`}
           aria-label="Devam et"
         >
           Devam Et <i className="fas fa-arrow-right ml-2"></i>
