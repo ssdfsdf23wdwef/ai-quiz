@@ -82,34 +82,46 @@ const PdfUploader: React.FC<PdfUploaderProps> = ({
   }, [onPdfTextExtracted, onProcessingStateChange, onError, appConfig.maxPdfTextLength]);
   
   return (
-    <div className="w-full text-center">
+    <div className="w-full">
       <label
         htmlFor="pdf-upload"
-        className={`cursor-pointer flex flex-col items-center justify-center p-6 sm:p-8 border-2 border-dashed rounded-lg transition-colors touch-target ${
+        className={`cursor-pointer flex flex-col items-center justify-center p-4 sm:p-6 border-2 border-dashed rounded-xl transition-all duration-200 hover:scale-[1.01] touch-target ${
           theme === 'dark' 
-            ? 'border-secondary-600 hover:border-primary-500 bg-secondary-700/50 hover:bg-secondary-700/80' 
+            ? 'border-secondary-600 hover:border-primary-500 bg-secondary-800/50 hover:bg-secondary-700/60' 
             : 'border-gray-300 hover:border-primary-500 bg-gray-50 hover:bg-gray-100'
-        }`}
+        } ${isProcessing ? 'pointer-events-none opacity-75' : ''}`}
       >
-        <UploadIcon className={`w-12 h-12 sm:w-16 sm:h-16 mb-3 sm:mb-4 ${
-          theme === 'dark' ? 'text-primary-400' : 'text-primary-500'
-        }`} />
-        <span className={`text-lg sm:text-xl font-semibold ${
-          theme === 'dark' ? 'text-gray-100' : 'text-gray-700'
-        }`}>PDF Dosyanızı Seçin</span>
-        <span className={`text-xs sm:text-sm mt-1 px-2 ${
+        <div className={`p-3 rounded-full mb-3 ${
+          theme === 'dark' 
+            ? 'bg-primary-500/20 text-primary-400' 
+            : 'bg-primary-100 text-primary-600'
+        }`}>
+          <UploadIcon className="w-8 h-8" />
+        </div>
+        
+        <span className={`text-base sm:text-lg font-semibold mb-1 ${
+          theme === 'dark' ? 'text-gray-100' : 'text-gray-800'
+        }`}>
+          {isProcessing ? 'İşleniyor...' : 'PDF Dosyanızı Seçin'}
+        </span>
+        
+        <span className={`text-xs sm:text-sm text-center px-2 ${
           theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-        }`}>Sınav oluşturmak için bir PDF yükleyin</span>
-        {fileName && !isProcessing && ( 
-          <p className={`mt-2 text-xs sm:text-sm px-2 py-1 rounded max-w-full truncate ${
-            theme === 'dark' 
-              ? 'text-green-400 bg-green-700/30' 
-              : 'text-green-600 bg-green-100'
-          }`} title={fileName}>Yüklendi: {fileName}</p>
+        }`}>
+          {isProcessing ? 'PDF dosyanız analiz ediliyor' : 'Tıklayın veya dosyayı sürükleyin'}
+        </span>
+        
+        {fileName && (
+          <div className={`mt-3 px-3 py-1.5 rounded-lg text-xs font-medium max-w-full truncate ${
+            isProcessing 
+              ? (theme === 'dark' ? 'text-blue-300 bg-blue-500/20' : 'text-blue-600 bg-blue-100')
+              : (theme === 'dark' ? 'text-green-300 bg-green-500/20' : 'text-green-600 bg-green-100')
+          }`} title={fileName}>
+            <i className={`fas ${isProcessing ? 'fa-spinner fa-spin' : 'fa-check'} mr-1`}></i>
+            {fileName}
+          </div>
         )}
-        {isProcessing && fileName && <p className={`mt-2 text-xs sm:text-sm max-w-full truncate ${
-          theme === 'dark' ? 'text-blue-400' : 'text-blue-600'
-        }`} title={fileName}>Yükleniyor: {fileName}</p>}
+        
         <input
           id="pdf-upload"
           type="file"

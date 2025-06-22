@@ -134,21 +134,21 @@ const QuizCreationLayout: React.FC<QuizCreationLayoutProps> = ({
   const layoutSubtitle = quizMode === 'personalized' ? "Size özel sınav oluşturma süreci" : "Anında sınav oluşturma süreci";
 
   return (
-    <div className="flex flex-col md:flex-row gap-6 md:gap-8 w-full h-full">
+    <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 w-full h-full">
       {/* Left Stepper Column */}
-      <div className={`w-full md:w-1/3 lg:w-1/4 p-6 rounded-xl shadow-lg flex flex-col ${
+      <div className={`w-full lg:w-1/3 xl:w-1/4 p-4 sm:p-5 rounded-xl shadow-lg flex flex-col ${
         theme === 'dark' ? 'bg-secondary-800' : 'bg-white'
       }`}>
-        <div className="flex items-center mb-6">
-          <div className={`p-3 rounded-lg mr-4 ${
+        <div className="flex items-center mb-4 sm:mb-5">
+          <div className={`p-2.5 rounded-lg mr-3 ${
             theme === 'dark' ? 'bg-primary-500/20' : 'bg-primary-100'
           }`}>
-            <i className={`fas ${quizMode === 'personalized' ? 'fa-user-graduate' : 'fa-bolt'} text-2xl ${
+            <i className={`fas ${quizMode === 'personalized' ? 'fa-user-graduate' : 'fa-bolt'} text-lg ${
               theme === 'dark' ? 'text-primary-400' : 'text-primary-600'
             }`}></i>
           </div>
           <div>
-            <h2 className={`text-xl font-semibold ${
+            <h2 className={`text-lg sm:text-xl font-semibold ${
               theme === 'dark' ? 'text-white' : 'text-gray-800'
             }`}>{layoutTitle}</h2>
             <p className={`text-xs ${
@@ -157,7 +157,7 @@ const QuizCreationLayout: React.FC<QuizCreationLayoutProps> = ({
           </div>
         </div>
 
-        <nav className="space-y-3 flex-grow">
+        <nav className="space-y-2 flex-grow">
           {activeStepsConfig.map((step, index) => {
             const isActive = step.key === effectiveCurrentStageKey;
             const isCompleted = index < currentActiveStepIndex;
@@ -189,7 +189,7 @@ const QuizCreationLayout: React.FC<QuizCreationLayoutProps> = ({
             return (
               <div
                 key={step.key}
-                className={`p-4 rounded-lg transition-all duration-200 ease-in-out ${
+                className={`p-3 rounded-lg transition-all duration-200 ease-in-out ${
                   isActive 
                     ? (theme === 'dark' ? 'bg-blue-600 shadow-md' : 'bg-blue-500 shadow-md')
                     : (isCompleted || isFileuploadSkippedAndCompleted)
@@ -198,14 +198,14 @@ const QuizCreationLayout: React.FC<QuizCreationLayoutProps> = ({
                 }`}
               >
                 <div className="flex items-center">
-                  <div className={`p-2 rounded-md mr-3 ${
+                  <div className={`p-1.5 rounded-md mr-3 flex items-center justify-center ${
                     isActive 
                       ? (theme === 'dark' ? 'bg-blue-500' : 'bg-blue-400')
                       : (isCompleted || isFileuploadSkippedAndCompleted) 
                         ? (theme === 'dark' ? 'bg-green-500/30' : 'bg-green-100')
                         : (theme === 'dark' ? 'bg-secondary-600' : 'bg-gray-200')
                   }`}>
-                    <i className={`${step.icon} w-5 h-5 ${
+                    <i className={`${step.icon} text-sm ${
                       isActive 
                         ? 'text-white'
                         : (isCompleted || isFileuploadSkippedAndCompleted) 
@@ -216,16 +216,16 @@ const QuizCreationLayout: React.FC<QuizCreationLayoutProps> = ({
                     }`}></i>
                   </div>
                   <div className="flex-grow">
-                    <h3 className={`font-medium ${
+                    <h3 className={`text-sm font-medium ${
                       isActive 
                         ? 'text-white' 
                         : (theme === 'dark' ? 'text-gray-200' : 'text-gray-800')
                     }`}>{step.title}</h3>
                     <p className={`text-xs ${statusColor}`}>{statusText}</p>
                   </div>
-                  {isActive && displayStepKeyForStatus !== 'generating' && <i className="fas fa-arrow-right text-white ml-auto"></i>}
-                  {isActive && displayStepKeyForStatus === 'generating' && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin ml-auto"></div>}
-                  {(isCompleted || isFileuploadSkippedAndCompleted) && !isActive && <i className={`fas ${isFileuploadSkippedAndCompleted ? 'fa-minus-circle' : 'fa-check-circle'} ${
+                  {isActive && displayStepKeyForStatus !== 'generating' && <i className="fas fa-arrow-right text-white ml-auto text-sm"></i>}
+                  {isActive && displayStepKeyForStatus === 'generating' && <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin ml-auto"></div>}
+                  {(isCompleted || isFileuploadSkippedAndCompleted) && !isActive && <i className={`fas text-sm ${isFileuploadSkippedAndCompleted ? 'fa-minus-circle' : 'fa-check-circle'} ${
                     isFileuploadSkippedAndCompleted 
                       ? (theme === 'dark' ? 'text-gray-500' : 'text-gray-400')
                       : (theme === 'dark' ? 'text-green-400' : 'text-green-500')
@@ -236,15 +236,15 @@ const QuizCreationLayout: React.FC<QuizCreationLayoutProps> = ({
           })}
         </nav>
 
-        <div className="mt-auto pt-6">
+        <div className="mt-auto pt-4">
           <p className={`text-xs mb-1 text-right ${
             theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-          }`}>{progress}% Tamamlandı</p>
-          <div className={`w-full rounded-full h-2.5 ${
+          }`}>{Math.round(progress)}% Tamamlandı</p>
+          <div className={`w-full rounded-full h-2 ${
             theme === 'dark' ? 'bg-secondary-700' : 'bg-gray-200'
           }`}>
             <div
-              className="bg-blue-500 h-2.5 rounded-full transition-all duration-500 ease-out"
+              className="bg-blue-500 h-2 rounded-full transition-all duration-500 ease-out"
               style={{ width: `${progress}%` }}
             ></div>
           </div>
@@ -252,28 +252,28 @@ const QuizCreationLayout: React.FC<QuizCreationLayoutProps> = ({
       </div>
 
       {/* Right Content Column */}
-      <div className={`w-full md:w-2/3 lg:w-3/4 p-6 sm:p-8 rounded-xl shadow-lg flex flex-col ${
+      <div className={`w-full lg:w-2/3 xl:w-3/4 p-4 sm:p-6 rounded-xl shadow-lg flex flex-col ${
         theme === 'dark' ? 'bg-secondary-800' : 'bg-white'
       }`}>
         <div className="flex justify-between items-center mb-1">
-            <h2 className={`text-2xl font-semibold ${
+            <h2 className={`text-lg sm:text-xl font-semibold ${
               theme === 'dark' ? 'text-white' : 'text-gray-800'
             }`}>{stageDescription}</h2>
             {onBack && currentStageKey !== 'generating' && ( 
                  <button 
                     onClick={onBack}
-                    className={`text-sm transition-colors flex items-center ${
+                    className={`text-xs sm:text-sm transition-colors flex items-center ${
                       theme === 'dark' 
                         ? 'text-gray-400 hover:text-white' 
                         : 'text-gray-500 hover:text-gray-700'
                     }`}
                     aria-label="Geri dön"
                 >
-                    <i className="fas fa-arrow-left mr-2"></i> Geri
+                    <i className="fas fa-arrow-left mr-1 text-xs"></i> Geri
                 </button>
             )}
         </div>
-        <p className={`text-sm mb-6 ${
+        <p className={`text-xs sm:text-sm mb-4 ${
           theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
         }`}>{stageSubDescription}</p>
         
