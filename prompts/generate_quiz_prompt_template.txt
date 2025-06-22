@@ -25,6 +25,13 @@ Sen uzman bir eğitim içeriği ve değerlendirme soruları geliştirme uzmanıs
 - Sorular GERÇEK YAŞAM senaryolarını yansıtmalı
 - Terimler ve kavramlar DOĞRU ŞEKİLDE kullanılmalı
 - Her sorunun {{numOptions}} seçeneği olmalı ve YALNIZCA BİR doğru cevap bulunmalı
+- Her soru için AÇIKLAYICI ve EĞİTİCİ bir açıklama yazın (explanation alanı)
+
+### 📝 AÇIKLAMA REHBERİ:
+- Doğru cevabın neden doğru olduğunu net şekilde açıklayın
+- Yanlış seçeneklerin neden yanlış olduğunu kısaca belirtin
+- Konuyla ilgili ek bilgi ve kavramlar ekleyin
+- Açıklamalar eğitici ve öğretici olmalı
 
 ### ❌ YAPILMAMASI GEREKENLER:
 - Belirsiz, çift anlamlı veya kafa karıştırıcı sorular
@@ -66,7 +73,8 @@ Cevapları aşağıdaki JSON formatında döndürün. Her alan dikkatli şekilde
       "Yanlış seçenek - başka bir hata türü"
     ],
     "correctAnswerIndex": 0,
-    "subtopic": "İlgili Alt Konu İsmi"
+    "subtopic": "İlgili Alt Konu İsmi",
+    "explanation": "Bu sorunun doğru cevabının neden A seçeneği olduğunu açıklayan detaylı açıklama. Konuyla ilgili ek bilgiler ve kavramlar da eklenebilir."
   }
 ]
 ```
@@ -81,5 +89,6 @@ Cevapları aşağıdaki JSON formatında döndürün. Her alan dikkatli şekilde
 ✓ Soru dili net ve anlaşılır mı?
 ✓ Alt konular doğru atanmış mı?
 ✓ Zorluk seviyesi istendiği gibi mi?
+✓ Her soru için açıklayıcı ve eğitici bir açıklama yazıldı mı?
 
 Şimdi bu prensiplere uygun olarak yüksek kaliteli sorular oluştur!

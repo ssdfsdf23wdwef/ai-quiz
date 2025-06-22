@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { QuizQuestion } from '../types';
 import CheckCircleIcon from './icons/CheckCircleIcon';
 import XCircleIcon from './icons/XCircleIcon';
@@ -29,6 +29,14 @@ const QuizResult: React.FC<QuizResultProps> = ({
   quizId,
   theme,
 }) => {
+  const [showExplanations, setShowExplanations] = useState<Record<string, boolean>>({});
+
+  const toggleExplanation = (questionId: string) => {
+    setShowExplanations(prev => ({
+      ...prev,
+      [questionId]: !prev[questionId]
+    }));
+  };
   const calculateScore = () => {
     let correctAnswers = 0;
     questions.forEach(q => {
@@ -98,7 +106,27 @@ const QuizResult: React.FC<QuizResultProps> = ({
           
           return (
             <div key={q.id} className={`p-4 border rounded-lg ${itemBgColor}`}>
-              <p className={`font-semibold mb-1 ${getTextClasses(theme, 'primary')}`}>Soru {index + 1}: {q.question}</p>
+              <div className="flex items-start justify-between mb-1">
+                <p className={`font-semibold ${getTextClasses(theme, 'primary')}`}>Soru {index + 1}: {q.question}</p>
+                {q.explanation && (
+                  <button
+                    onClick={() => toggleExplanation(q.id)}
+                    className={`ml-3 px-2 py-1 text-xs rounded-md transition-colors flex items-center gap-1 flex-shrink-0 ${
+                      showExplanations[q.id]
+                        ? (isDark 
+                            ? 'text-blue-300 bg-blue-500/20 hover:bg-blue-500/30' 
+                            : 'text-blue-700 bg-blue-100 hover:bg-blue-200')
+                        : (isDark 
+                            ? 'text-gray-400 bg-gray-500/20 hover:bg-gray-500/30' 
+                            : 'text-gray-600 bg-gray-100 hover:bg-gray-200')
+                    }`}
+                    title={showExplanations[q.id] ? 'Açıklamayı Gizle' : 'Açıklamayı Göster'}
+                  >
+                    <i className={`fas ${showExplanations[q.id] ? 'fa-eye-slash' : 'fa-lightbulb'}`}></i>
+                    <span className="hidden sm:inline">{showExplanations[q.id] ? 'Gizle' : 'Açıklama'}</span>
+                  </button>
+                )}
+              </div>
               {q.subtopic && (
                 <p className={`text-xs mb-2 italic ${theme === 'dark' ? 'text-primary-400' : 'text-primary-600'}`}>
                   Alt Konu: {q.subtopic}
@@ -145,6 +173,33 @@ const QuizResult: React.FC<QuizResultProps> = ({
                   <li className={`mt-1 text-xs italic ${theme === 'dark' ? 'text-yellow-400' : 'text-yellow-600'}`}>Bu soru cevaplanmadı.</li>
                 )}
               </ul>
+              
+              {/* Açıklama Alanı */}
+              {q.explanation && showExplanations[q.id] && (
+                <div className={`mt-3 p-3 rounded-md border ${
+                  isDark 
+                    ? 'bg-blue-500/10 border-blue-500/30 text-blue-200' 
+                    : 'bg-blue-50 border-blue-200 text-blue-800'
+                }`}>
+                  <div className="flex items-start gap-2">
+                    <i className={`fas fa-lightbulb mt-1 flex-shrink-0 ${
+                      isDark ? 'text-blue-400' : 'text-blue-600'
+                    }`}></i>
+                    <div>
+                      <h4 className={`font-medium text-sm mb-1 ${
+                        isDark ? 'text-blue-300' : 'text-blue-700'
+                      }`}>
+                        Açıklama:
+                      </h4>
+                      <p className={`text-sm leading-relaxed ${
+                        isDark ? 'text-blue-200' : 'text-blue-800'
+                      }`}>
+                        {q.explanation}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           );
         })}

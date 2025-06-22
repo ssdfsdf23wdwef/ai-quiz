@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { QuizQuestion } from '../types';
 import jsPDF from 'jspdf';
@@ -25,6 +24,7 @@ const QuizView: React.FC<QuizViewProps> = ({
 }) => {
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [remainingTime, setRemainingTime] = useState<number>(totalTimeInSeconds);
+  const [showExplanations, setShowExplanations] = useState<Record<string, boolean>>({});
   const timerRef = useRef<number | null>(null);
   const fontDataRef = useRef<string | null>(null);
   
@@ -266,6 +266,13 @@ const QuizView: React.FC<QuizViewProps> = ({
     return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const toggleExplanation = (questionId: string) => {
+    setShowExplanations(prev => ({
+      ...prev,
+      [questionId]: !prev[questionId]
+    }));
+  };
+
   if (!questions || questions.length === 0) {
     return (
       <div className={`flex flex-col items-center justify-center h-full p-8 text-center ${themeClasses.text.muted}`}>
@@ -357,13 +364,34 @@ const QuizView: React.FC<QuizViewProps> = ({
                 : 'bg-white ring-gray-200'
             }`}>
               <div className="flex items-start justify-between mb-3.5">
-                <h2 className={`text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full ${
-                  isDark 
-                    ? 'text-blue-400 bg-blue-500/10' 
-                    : 'text-blue-600 bg-blue-100'
-                }`}>
-                  Soru {index + 1} / {totalQuestions}
-                </h2>
+                <div className="flex items-center gap-3">
+                  <h2 className={`text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full ${
+                    isDark 
+                      ? 'text-blue-400 bg-blue-500/10' 
+                      : 'text-blue-600 bg-blue-100'
+                  }`}>
+                    Soru {index + 1} / {totalQuestions}
+                  </h2>
+                  {question.explanation && (
+                    <button
+                      onClick={() => toggleExplanation(question.id)}
+                      className={`text-xs font-medium px-2.5 py-1 rounded-full transition-colors flex items-center gap-1 ${
+                        showExplanations[question.id]
+                          ? (isDark 
+                              ? 'text-green-400 bg-green-500/20 hover:bg-green-500/30' 
+                              : 'text-green-700 bg-green-100 hover:bg-green-200')
+                          : (isDark 
+                              ? 'text-gray-400 bg-gray-500/20 hover:bg-gray-500/30' 
+                              : 'text-gray-600 bg-gray-100 hover:bg-gray-200')
+                      }`}
+                      title={showExplanations[question.id] ? 'Açıklamayı Gizle' : 'Açıklamayı Göster'}
+                      aria-label={`Soru ${index + 1} açıklaması ${showExplanations[question.id] ? 'gizle' : 'göster'}`}
+                    >
+                      <i className={`fas ${showExplanations[question.id] ? 'fa-eye-slash' : 'fa-lightbulb'}`}></i>
+                      <span>{showExplanations[question.id] ? 'Gizle' : 'Açıklama'}</span>
+                    </button>
+                  )}
+                </div>
                 {question.subtopic && (
                   <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
                     isDark 
@@ -380,6 +408,33 @@ const QuizView: React.FC<QuizViewProps> = ({
               }`}>
                 {question.question}
               </p>
+
+              {/* Explanation Section */}
+              {question.explanation && showExplanations[question.id] && (
+                <div className={`mb-5 p-4 rounded-lg border-l-4 ${
+                  isDark 
+                    ? 'bg-blue-500/10 border-blue-400 text-blue-200' 
+                    : 'bg-blue-50 border-blue-400 text-blue-800'
+                }`}>
+                  <div className="flex items-start gap-2">
+                    <i className={`fas fa-info-circle mt-0.5 ${
+                      isDark ? 'text-blue-400' : 'text-blue-600'
+                    }`}></i>
+                    <div>
+                      <h3 className={`font-semibold text-sm mb-2 ${
+                        isDark ? 'text-blue-300' : 'text-blue-700'
+                      }`}>
+                        Açıklama:
+                      </h3>
+                      <p className={`text-sm leading-relaxed ${
+                        isDark ? 'text-blue-200' : 'text-blue-700'
+                      }`}>
+                        {question.explanation}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <div role="radiogroup" aria-labelledby={`${questionId}-text`} className="space-y-3">
                 {question.options.map((option, optIndex) => {
@@ -445,6 +500,28 @@ const QuizView: React.FC<QuizViewProps> = ({
                   );
                 })}
               </div>
+
+              {/* Explanation Toggle */}
+              <div className="mt-4">
+                <button
+                  onClick={() => toggleExplanation(question.id)}
+                  className={`text-sm font-medium flex items-center transition-colors ${
+                    showExplanations[question.id] ? 'text-blue-600' : 'text-gray-500 hover:text-blue-500'
+                  }`}
+                  aria-expanded={showExplanations[question.id]}
+                  aria-controls={`explanation-${question.id}`}
+                >
+                  <i className={`fas fa-${showExplanations[question.id] ? 'minus' : 'plus'} mr-2`}></i>
+                  Açıklamaları {showExplanations[question.id] ? 'Gizle' : 'Göster'}
+                </button>
+              </div>
+
+              {/* Explanation Text */}
+              {showExplanations[question.id] && question.explanation && (
+                <div id={`explanation-${question.id}`} className="mt-3 text-sm text-gray-700 dark:text-gray-300">
+                  {question.explanation}
+                </div>
+              )}
             </section>
           );
         })}

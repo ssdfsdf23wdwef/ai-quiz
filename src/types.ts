@@ -19,6 +19,7 @@ export interface QuizQuestion {
   correctAnswerIndex: number;
   userAnswerIndex?: number;
   subtopic?: string;
+  explanation?: string; // Sorunun açıklaması/çözümü
 }
 
 export type LearningObjectiveStatus = 'pending' | 'success' | 'failure' | 'intermediate';
