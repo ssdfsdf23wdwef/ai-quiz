@@ -291,144 +291,156 @@ const QuizView: React.FC<QuizViewProps> = ({
 
   return (
     <div className={`w-full h-full flex flex-col ${themeClasses.bg.secondary} ${themeClasses.text.secondary}`}>
-      {/* Header */}
-      <header className={`p-3 sm:p-5 border-b sticky top-0 z-20 shadow-sm ${themeClasses.border.primary} ${themeClasses.bg.primary}`}>
-        <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center">
-                <button
-                    onClick={handleCancelQuiz}
-                    className={`flex items-center text-base sm:text-lg transition-colors touch-target ${themeClasses.text.secondary} hover:${themeClasses.text.primary.replace('text-', 'hover:text-')}`}
-                    title="Sınavdan Çık"
-                    aria-label="Sınavdan çık ve ana sayfaya dön"
-                >
-                    <i className="fas fa-chevron-left mr-1.5 sm:mr-2 text-lg sm:text-xl"></i> 
-                    <span className="font-medium hidden sm:inline">Sınav</span>
-                </button>
-            </div>
+      {/* Compact Header */}
+      <header className={`p-3 sm:p-4 border-b sticky top-0 z-20 backdrop-blur-sm ${themeClasses.border.primary} ${themeClasses.bg.primary}/95`}>
+        <div className="flex items-center justify-between mb-2 sm:mb-3">
+          <div className="flex items-center">
+            <button
+              onClick={handleCancelQuiz}
+              className={`flex items-center text-sm sm:text-base transition-colors touch-target rounded-lg px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-700 ${themeClasses.text.secondary}`}
+              title="Sınavdan Çık"
+              aria-label="Sınavdan çık ve ana sayfaya dön"
+            >
+              <i className="fas fa-times mr-1.5 text-base"></i> 
+              <span className="font-medium">Çıkış</span>
+            </button>
+          </div>
           
-            <div className="flex items-center space-x-2 sm:space-x-4">
-                <button
-                    onClick={handleDownloadPdf}
-                    className={`px-2 sm:px-3 py-1.5 rounded-md transition-colors text-xs sm:text-sm font-medium flex items-center shadow-sm touch-target ${themeClasses.bg.button.secondary} ${themeClasses.text.secondary}`}
-                    title="Sınavı PDF Olarak İndir"
-                    aria-label="Sınavı PDF olarak indir"
-                >
-                    <i className={`fas fa-file-pdf mr-1 sm:mr-2 ${theme === 'dark' ? 'text-red-400' : 'text-red-500'}`}></i>
-                    <span className="hidden sm:inline">PDF İndir</span>
-                </button>
-                {isTimerEnabled && (
-                    <div className={`text-xs sm:text-sm font-medium p-1.5 px-2 sm:px-3 rounded-md flex items-center shadow-sm ${
-                      remainingTime <= 60 
-                        ? (theme === 'dark' 
-                            ? 'bg-red-500/20 text-red-300 ring-1 ring-red-500/50' 
-                            : 'bg-red-100 text-red-600 ring-1 ring-red-300')
-                        : (theme === 'dark' 
-                            ? 'bg-secondary-700 text-gray-300' 
-                            : 'bg-gray-100 text-gray-700')
-                    }`}>
-                        <i className="far fa-clock mr-1 sm:mr-2"></i>
-                        <span className="text-xs sm:text-sm">{formatTime(remainingTime)}</span>
-                    </div>
-                )}
-                <div className={`text-xs sm:text-sm font-medium p-1.5 px-2 sm:px-3 rounded-md shadow-sm whitespace-nowrap ${
-                  theme === 'dark' 
-                    ? 'text-gray-400 bg-secondary-700' 
-                    : 'text-gray-500 bg-gray-100'
-                }`}>
-                <span className="hidden sm:inline">{answeredCount} / {totalQuestions} yanıtlandı</span>
-                <span className="sm:hidden">{answeredCount}/{totalQuestions}</span>
-                </div>
-            </div>
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={handleDownloadPdf}
+              className={`px-2 sm:px-3 py-1.5 rounded-lg transition-all text-xs sm:text-sm font-medium flex items-center shadow-sm touch-target hover:shadow-md ${themeClasses.bg.button.secondary} ${themeClasses.text.secondary}`}
+              title="PDF İndir"
+              aria-label="Sınavı PDF olarak indir"
+            >
+              <i className={`fas fa-download mr-1 sm:mr-2 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-500'}`}></i>
+              <span className="hidden sm:inline">PDF</span>
+            </button>
+            
+            {isTimerEnabled && (
+              <div className={`text-xs sm:text-sm font-mono font-bold p-1.5 px-2 sm:px-3 rounded-lg flex items-center shadow-sm ${
+                remainingTime <= 60 
+                  ? 'bg-red-500 text-white animate-pulse' 
+                  : (theme === 'dark' ? 'bg-blue-600 text-white' : 'bg-blue-500 text-white')
+              }`}>
+                <i className="far fa-clock mr-1 sm:mr-2"></i>
+                <span>{formatTime(remainingTime)}</span>
+              </div>
+            )}
+          </div>
         </div>
-        <div className={`w-full rounded-full h-1.5 ${theme === 'dark' ? 'bg-secondary-700' : 'bg-gray-200'}`}>
-          <div
-            className="bg-blue-500 h-1.5 rounded-full transition-all duration-300 ease-out"
-            style={{ width: `${progressPercentage}%` }}
-            role="progressbar"
-            aria-valuenow={progressPercentage}
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-label={`${Math.round(progressPercentage)}% tamamlandı`}
-          ></div>
+        
+        {/* Progress Bar */}
+        <div className="mb-2">
+          <div className="flex items-center justify-between text-xs sm:text-sm mb-1">
+            <span className={`font-medium ${themeClasses.text.primary}`}>
+              İlerleme: {answeredCount}/{totalQuestions}
+            </span>
+            <span className={`font-medium ${themeClasses.text.secondary}`}>
+              %{Math.round(progressPercentage)}
+            </span>
+          </div>
+          <div className={`w-full rounded-full h-2 ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'}`}>
+            <div
+              className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full transition-all duration-500 ease-out shadow-sm"
+              style={{ width: `${progressPercentage}%` }}
+              role="progressbar"
+              aria-valuenow={progressPercentage}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label={`${Math.round(progressPercentage)}% tamamlandı`}
+            ></div>
+          </div>
         </div>
       </header>
 
       {/* Questions List */}
-      <main id="quiz-main-content" className="flex-grow overflow-y-auto p-3 sm:p-6 space-y-4 sm:space-y-6 min-h-0 relative">
+      <main className="flex-grow overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4 min-h-0">
         {questions.map((question, index) => {
           const questionId = `question-${question.id}`;
           const isDark = theme === 'dark';
+          const isAnswered = answers[question.id] !== undefined;
+          
           return (
-            <section key={question.id} aria-labelledby={`${questionId}-text`} className={`p-4 sm:p-6 rounded-xl shadow-lg ring-1 ${
-              isDark 
-                ? 'bg-secondary-800 ring-secondary-700/50' 
-                : 'bg-white ring-gray-200'
-            }`}>
-              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-3 sm:mb-3.5 gap-2 sm:gap-3">
-                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                  <h2 className={`text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full whitespace-nowrap ${
-                    isDark 
-                      ? 'text-blue-400 bg-blue-500/10' 
-                      : 'text-blue-600 bg-blue-100'
-                  }`}>
-                    Soru {index + 1} / {totalQuestions}
-                  </h2>
-                  {question.explanation && (
-                    <button
-                      onClick={() => toggleExplanation(question.id)}
-                      className={`text-xs font-medium px-2.5 py-1 rounded-full transition-colors flex items-center gap-1 touch-target ${
-                        showExplanations[question.id]
-                          ? (isDark 
-                              ? 'text-green-400 bg-green-500/20 hover:bg-green-500/30' 
-                              : 'text-green-700 bg-green-100 hover:bg-green-200')
-                          : (isDark 
-                              ? 'text-gray-400 bg-gray-500/20 hover:bg-gray-500/30' 
-                              : 'text-gray-600 bg-gray-100 hover:bg-gray-200')
-                      }`}
-                      title={showExplanations[question.id] ? 'Açıklamayı Gizle' : 'Açıklamayı Göster'}
-                      aria-label={`Soru ${index + 1} açıklaması ${showExplanations[question.id] ? 'gizle' : 'göster'}`}
-                    >
-                      <i className={`fas ${showExplanations[question.id] ? 'fa-eye-slash' : 'fa-lightbulb'}`}></i>
-                      <span className="hidden sm:inline">{showExplanations[question.id] ? 'Gizle' : 'Açıklama'}</span>
-                    </button>
-                  )}
+            <section 
+              key={question.id} 
+              aria-labelledby={`${questionId}-text`} 
+              className={`relative rounded-xl border transition-all duration-200 ${
+                isAnswered
+                  ? (isDark 
+                      ? 'bg-green-900/20 border-green-500/50 shadow-md' 
+                      : 'bg-green-50 border-green-200 shadow-md')
+                  : (isDark 
+                      ? 'bg-gray-800/50 border-gray-700 hover:border-gray-600' 
+                      : 'bg-white border-gray-200 hover:border-gray-300')
+              } hover:shadow-lg`}
+            >
+              {/* Question Header */}
+              <div className="p-3 sm:p-4 border-b border-gray-200 dark:border-gray-700">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <span className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold ${
+                      isAnswered
+                        ? 'bg-green-500 text-white'
+                        : (isDark ? 'bg-blue-600 text-white' : 'bg-blue-500 text-white')
+                    }`}>
+                      {isAnswered ? <i className="fas fa-check"></i> : index + 1}
+                    </span>
+                    <span className={`text-xs font-medium ${themeClasses.text.secondary}`}>
+                      Soru {index + 1} / {totalQuestions}
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    {question.subtopic && (
+                      <span className={`text-xs px-2 py-1 rounded-full ${
+                        isDark ? 'bg-purple-600/20 text-purple-300' : 'bg-purple-100 text-purple-700'
+                      }`}>
+                        <i className="fas fa-tag mr-1"></i>
+                        {question.subtopic}
+                      </span>
+                    )}
+                    
+                    {question.explanation && (
+                      <button
+                        onClick={() => toggleExplanation(question.id)}
+                        className={`text-xs px-2 py-1 rounded-full transition-all touch-target ${
+                          showExplanations[question.id]
+                            ? (isDark ? 'bg-yellow-600/20 text-yellow-300' : 'bg-yellow-100 text-yellow-700')
+                            : (isDark ? 'bg-gray-600/20 text-gray-400' : 'bg-gray-100 text-gray-600')
+                        } hover:scale-105`}
+                        title={showExplanations[question.id] ? 'Açıklamayı Gizle' : 'Açıklamayı Göster'}
+                      >
+                        <i className={`fas ${showExplanations[question.id] ? 'fa-eye-slash' : 'fa-lightbulb'} mr-1`}></i>
+                        {showExplanations[question.id] ? 'Gizle' : 'İpucu'}
+                      </button>
+                    )}
+                  </div>
                 </div>
-                {question.subtopic && (
-                  <span className={`text-xs font-medium px-2.5 py-1 rounded-full self-start sm:self-auto ${
-                    isDark 
-                      ? 'text-purple-400 bg-purple-500/10' 
-                      : 'text-purple-600 bg-purple-100'
-                  }`}>
-                    <i className="fas fa-tags mr-1 sm:mr-1.5 opacity-70"></i>
-                    <span className="truncate max-w-[150px] sm:max-w-none">{question.subtopic}</span>
-                  </span>
-                )}
+                
+                <h2 id={`${questionId}-text`} className={`text-sm sm:text-base font-medium leading-relaxed ${
+                  isDark ? 'text-gray-100' : 'text-gray-800'
+                }`}>
+                  {question.question}
+                </h2>
               </div>
-
-              <p id={`${questionId}-text`} className={`text-sm sm:text-base lg:text-lg font-medium mb-4 sm:mb-5 leading-relaxed ${
-                isDark ? 'text-gray-100' : 'text-gray-800'
-              }`}>
-                {question.question}
-              </p>
 
               {/* Explanation Section */}
               {question.explanation && showExplanations[question.id] && (
-                <div className={`mb-5 p-4 rounded-lg border-l-4 ${
-                  isDark 
-                    ? 'bg-blue-500/10 border-blue-400 text-blue-200' 
-                    : 'bg-blue-50 border-blue-400 text-blue-800'
+                <div className={`p-3 sm:p-4 border-b border-gray-200 dark:border-gray-700 ${
+                  isDark ? 'bg-blue-900/20' : 'bg-blue-50'
                 }`}>
                   <div className="flex items-start gap-2">
-                    <i className={`fas fa-info-circle mt-0.5 ${
+                    <i className={`fas fa-info-circle mt-0.5 text-sm ${
                       isDark ? 'text-blue-400' : 'text-blue-600'
                     }`}></i>
                     <div>
-                      <h3 className={`font-semibold text-sm mb-2 ${
+                      <h3 className={`font-medium text-xs mb-1 ${
                         isDark ? 'text-blue-300' : 'text-blue-700'
                       }`}>
                         Açıklama:
                       </h3>
-                      <p className={`text-sm leading-relaxed ${
+                      <p className={`text-xs sm:text-sm leading-relaxed ${
                         isDark ? 'text-blue-200' : 'text-blue-700'
                       }`}>
                         {question.explanation}
@@ -438,90 +450,84 @@ const QuizView: React.FC<QuizViewProps> = ({
                 </div>
               )}
 
-              <div role="radiogroup" aria-labelledby={`${questionId}-text`} className="space-y-2.5 sm:space-y-3">
-                {question.options.map((option, optIndex) => {
-                  const isSelected = answers[question.id] === optIndex;
-                  const optionInputId = `${question.id}-option-${optIndex}`;
-                  
-                  const getOptionClasses = () => {
-                    let optionClasses = 'flex items-center p-3 sm:p-3.5 border-2 rounded-lg cursor-pointer transition-all duration-150 ease-in-out transform hover:scale-[1.01] touch-target ';
+              {/* Options */}
+              <div className="p-3 sm:p-4">
+                <div role="radiogroup" aria-labelledby={`${questionId}-text`} className="space-y-2">
+                  {question.options.map((option, optIndex) => {
+                    const isSelected = answers[question.id] === optIndex;
+                    const optionInputId = `${question.id}-option-${optIndex}`;
+                    const optionLabel = String.fromCharCode(65 + optIndex); // A, B, C, D
                     
-                    if (isSelected) {
-                      optionClasses += isDark 
-                        ? 'bg-blue-600 border-blue-500 text-white shadow-md' 
-                        : 'bg-blue-500 border-blue-500 text-white shadow-md';
-                    } else {
-                      optionClasses += isDark 
-                        ? 'bg-secondary-700/80 border-secondary-600 hover:border-blue-500/70 text-gray-300' 
-                        : 'bg-gray-50 border-gray-300 hover:border-blue-400 text-gray-700';
-                    }
-                    
-                    return optionClasses;
-                  };
-                  
-                  const getFocusClasses = () => {
-                    const baseClasses = 'focus-within:ring-2 focus-within:ring-offset-2 ';
-                    const offsetClasses = isDark 
-                      ? 'focus-within:ring-offset-secondary-800' 
-                      : 'focus-within:ring-offset-white';
-                    const ringClasses = isDark 
-                      ? 'focus-within:ring-blue-400' 
-                      : 'focus-within:ring-blue-500';
-                    
-                    return baseClasses + offsetClasses + ' ' + ringClasses;
-                  };
-                  
-                  return (
-                    <label
-                      key={optionInputId}
-                      htmlFor={optionInputId}
-                      className={`${getOptionClasses()} ${getFocusClasses()}`}
-                    >
-                      <span className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full border-2 flex-shrink-0 mr-3 flex items-center justify-center transition-colors ${
-                        isSelected 
-                          ? 'border-blue-300 bg-blue-400' 
-                          : (isDark 
-                              ? 'border-gray-500 group-hover:border-blue-400' 
-                              : 'border-gray-400 group-hover:border-blue-400')
-                      }`}>
-                        {isSelected && <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-white rounded-full"></div>}
-                      </span>
-                      <input
-                        type="radio"
-                        id={optionInputId}
-                        name={`question-${question.id}`} 
-                        value={optIndex}
-                        checked={isSelected}
-                        onChange={() => handleOptionChange(question.id, optIndex)}
-                        className="sr-only"
-                        aria-label={`Seçenek ${optIndex + 1}: ${option}`}
-                      />
-                      <span className="text-sm sm:text-base flex-grow min-w-0 break-words leading-relaxed">{option}</span>
-                       {isSelected && <i className="fas fa-check-circle ml-auto text-blue-200 text-base sm:text-lg"></i>}
-                    </label>
-                  );
-                })}
+                    return (
+                      <label
+                        key={optionInputId}
+                        htmlFor={optionInputId}
+                        className={`group flex items-center p-3 rounded-lg border-2 cursor-pointer transition-all duration-200 touch-target ${
+                          isSelected 
+                            ? (isDark 
+                                ? 'bg-blue-600 border-blue-500 text-white shadow-lg transform scale-[1.02]' 
+                                : 'bg-blue-500 border-blue-500 text-white shadow-lg transform scale-[1.02]')
+                            : (isDark 
+                                ? 'bg-gray-700/50 border-gray-600 hover:border-blue-400 text-gray-300 hover:bg-gray-700' 
+                                : 'bg-gray-50 border-gray-300 hover:border-blue-400 text-gray-700 hover:bg-gray-100')
+                        } hover:shadow-md focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-opacity-50`}
+                      >
+                        <div className={`flex items-center justify-center w-6 h-6 rounded-full border-2 mr-3 text-xs font-bold ${
+                          isSelected 
+                            ? 'border-blue-200 bg-blue-400 text-white' 
+                            : (isDark ? 'border-gray-500 text-gray-400' : 'border-gray-400 text-gray-600')
+                        }`}>
+                          {isSelected ? <i className="fas fa-check"></i> : optionLabel}
+                        </div>
+                        
+                        <input
+                          type="radio"
+                          id={optionInputId}
+                          name={`question-${question.id}`} 
+                          value={optIndex}
+                          checked={isSelected}
+                          onChange={() => handleOptionChange(question.id, optIndex)}
+                          className="sr-only"
+                          aria-label={`Seçenek ${optionLabel}: ${option}`}
+                        />
+                        
+                        <span className="text-xs sm:text-sm flex-grow min-w-0 break-words leading-relaxed">
+                          {option}
+                        </span>
+                        
+                        {isSelected && (
+                          <i className="fas fa-check-circle ml-2 text-blue-200"></i>
+                        )}
+                      </label>
+                    );
+                  })}
+                </div>
               </div>
-
-              
             </section>
           );
         })}
 
-        <div className={`mt-6 sm:mt-8 mb-4 pt-4 border-t ${theme === 'dark' ? 'border-secondary-700/50' : 'border-gray-200'}`}>
-            <button
-                onClick={() => handleSubmit(false)}
-                disabled={totalQuestions === 0} 
-                className={`w-full px-4 sm:px-6 py-3 sm:py-3.5 text-white rounded-lg font-semibold shadow-lg focus:outline-none focus:ring-2 focus:ring-opacity-70 text-sm sm:text-base flex items-center justify-center disabled:opacity-60 disabled:cursor-not-allowed touch-target ${
-                  theme === 'dark' 
-                    ? 'bg-green-600 hover:bg-green-700 focus:ring-green-500' 
-                    : 'bg-green-500 hover:bg-green-600 focus:ring-green-500'
-                }`}
-                aria-label="Sınavı Bitir ve Sonuçları Gör"
-            >
-                <span>Sınavı Bitir</span>
-                <i className="fas fa-check-circle ml-2 text-base sm:text-lg"></i>
-            </button>
+        {/* Submit Button */}
+        <div className="sticky bottom-0 pt-4 pb-2">
+          <button
+            onClick={() => handleSubmit(false)}
+            disabled={totalQuestions === 0} 
+            className={`w-full px-4 py-3 sm:py-4 text-white rounded-xl font-bold shadow-xl focus:outline-none focus:ring-4 focus:ring-opacity-50 text-sm sm:text-base flex items-center justify-center disabled:opacity-60 disabled:cursor-not-allowed touch-target transition-all duration-200 ${
+              answeredCount === totalQuestions
+                ? (theme === 'dark' 
+                    ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 focus:ring-green-500 shadow-green-500/25' 
+                    : 'bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 focus:ring-green-500 shadow-green-500/25')
+                : (theme === 'dark' 
+                    ? 'bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 focus:ring-orange-500 shadow-orange-500/25' 
+                    : 'bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 focus:ring-orange-500 shadow-orange-500/25')
+            } hover:shadow-2xl hover:transform hover:-translate-y-0.5`}
+            aria-label="Sınavı Bitir ve Sonuçları Gör"
+          >
+            <span className="mr-2">
+              {answeredCount === totalQuestions ? 'Sınavı Bitir' : `Eksik Sorularla Bitir (${totalQuestions - answeredCount} soru boş)`}
+            </span>
+            <i className={`fas ${answeredCount === totalQuestions ? 'fa-check-circle' : 'fa-exclamation-triangle'} text-base sm:text-lg`}></i>
+          </button>
         </div>
       </main>
     </div>
