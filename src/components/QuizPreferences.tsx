@@ -146,9 +146,9 @@ const QuizPreferences: React.FC<QuizPreferencesProps> = ({
 
 
   return (
-    <div className={`w-full max-w-2xl mx-auto p-6 space-y-8 ${theme === 'dark' ? 'text-gray-200' : 'text-gray-700'}`}>
+    <div className={`w-full max-w-2xl mx-auto p-4 space-y-4 ${theme === 'dark' ? 'text-gray-200' : 'text-gray-700'}`}>
       {/* Header Section */}
-      <div className="text-center space-y-3">
+      <div className="text-center space-y-2">
         <div className="flex items-center justify-center space-x-3">
           <div className={`p-3 rounded-full ${theme === 'dark' ? 'bg-primary-500/20' : 'bg-primary-100'}`}>
             <i className={`fas fa-cog text-xl ${theme === 'dark' ? 'text-primary-400' : 'text-primary-600'}`}></i>
@@ -157,7 +157,7 @@ const QuizPreferences: React.FC<QuizPreferencesProps> = ({
             Sınav Tercihleri
           </h2>
         </div>
-        <div className={`p-4 rounded-lg border-l-4 ${
+        <div className={`p-3 rounded-lg border-l-4 ${
           theme === 'dark' 
             ? 'bg-secondary-800/50 border-primary-500 text-gray-300' 
             : 'bg-blue-50 border-blue-400 text-gray-700'
@@ -170,14 +170,14 @@ const QuizPreferences: React.FC<QuizPreferencesProps> = ({
       </div>
 
       {/* Settings Cards */}
-      <div className="space-y-6">
+      <div className="space-y-4">
         {/* Question Count Card */}
-        <div className={`quiz-card p-6 rounded-xl border transition-all duration-300 hover:shadow-lg ${
+        <div className={`quiz-card p-4 rounded-xl border transition-all duration-300 hover:shadow-lg ${
           theme === 'dark' 
             ? 'bg-secondary-800/50 border-secondary-600 hover:border-primary-500/50' 
             : 'bg-white border-gray-200 hover:border-primary-300 shadow-sm'
         }`}>
-          <div className="flex items-center space-x-3 mb-4">
+          <div className="flex items-center space-x-3 mb-3">
             <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-blue-500/20' : 'bg-blue-100'}`}>
               <i className={`fas fa-list-ol ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}></i>
             </div>
@@ -191,7 +191,7 @@ const QuizPreferences: React.FC<QuizPreferencesProps> = ({
             </div>
           </div>
           
-          <div className="space-y-4">
+          <div className="space-y-3">
             <div className="flex items-center justify-between">
               <span className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                 Seçilen Soru Sayısı
@@ -206,7 +206,7 @@ const QuizPreferences: React.FC<QuizPreferencesProps> = ({
             </div>
             
             {currentSliderOptions.length > 0 ? (
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <div className="relative">
                   <input
                     id="num-questions-slider"
@@ -274,12 +274,12 @@ const QuizPreferences: React.FC<QuizPreferencesProps> = ({
         </div>
 
         {/* Difficulty Card */}
-        <div className={`quiz-card p-6 rounded-xl border transition-all duration-300 hover:shadow-lg ${
+        <div className={`quiz-card p-4 rounded-xl border transition-all duration-300 hover:shadow-lg ${
           theme === 'dark' 
             ? 'bg-secondary-800/50 border-secondary-600 hover:border-primary-500/50' 
             : 'bg-white border-gray-200 hover:border-primary-300 shadow-sm'
         }`}>
-          <div className="flex items-center space-x-3 mb-4">
+          <div className="flex items-center space-x-3 mb-3">
             <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-purple-500/20' : 'bg-purple-100'}`}>
               <i className={`fas fa-chart-line ${theme === 'dark' ? 'text-purple-400' : 'text-purple-600'}`}></i>
             </div>
@@ -298,7 +298,7 @@ const QuizPreferences: React.FC<QuizPreferencesProps> = ({
               <button
                 key={level}
                 onClick={() => setDifficulty(level)}
-                className={`p-4 rounded-lg border-2 transition-all duration-200 text-center ${
+                className={`p-3 rounded-lg border-2 transition-all duration-200 text-center ${
                   difficulty === level
                     ? theme === 'dark'
                       ? 'border-primary-500 bg-primary-500/20 text-primary-300'
@@ -324,12 +324,12 @@ const QuizPreferences: React.FC<QuizPreferencesProps> = ({
         </div>
 
         {/* Timer Card */}
-        <div className={`quiz-card p-6 rounded-xl border transition-all duration-300 hover:shadow-lg ${
+        <div className={`quiz-card p-4 rounded-xl border transition-all duration-300 hover:shadow-lg ${
           theme === 'dark' 
             ? 'bg-secondary-800/50 border-secondary-600 hover:border-primary-500/50' 
             : 'bg-white border-gray-200 hover:border-primary-300 shadow-sm'
         }`}>
-          <div className="flex items-center space-x-3 mb-4">
+          <div className="flex items-center space-x-3 mb-3">
             <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-orange-500/20' : 'bg-orange-100'}`}>
               <i className={`fas fa-clock ${theme === 'dark' ? 'text-orange-400' : 'text-orange-600'}`}></i>
             </div>
@@ -380,10 +380,10 @@ const QuizPreferences: React.FC<QuizPreferencesProps> = ({
       </div>
 
       {/* Action Buttons */}
-      <div className={`flex justify-between items-center pt-6 border-t ${theme === 'dark' ? 'border-secondary-700' : 'border-gray-200'}`}>
+      <div className={`flex justify-between items-center pt-4 border-t ${theme === 'dark' ? 'border-secondary-700' : 'border-gray-200'}`}>
         <button
           onClick={onBack}
-          className={`px-6 py-3 rounded-lg border transition-all duration-200 flex items-center space-x-2 ${
+          className={`px-5 py-2 rounded-lg border transition-all duration-200 flex items-center space-x-2 ${
             theme === 'dark' 
               ? 'border-secondary-600 text-gray-300 hover:text-white hover:border-secondary-500 hover:bg-secondary-700/50' 
               : 'border-gray-300 text-gray-600 hover:text-gray-800 hover:border-gray-400 hover:bg-gray-50'
@@ -397,7 +397,7 @@ const QuizPreferences: React.FC<QuizPreferencesProps> = ({
         <button
           onClick={handleSubmit}
           disabled={(currentSliderOptions.length === 0 || numQuestions < sliderMin || numQuestions > sliderMax) && currentSliderOptions.length > 0} 
-          className={`px-8 py-3 rounded-lg font-semibold shadow-lg transition-all duration-200 flex items-center space-x-2 transform hover:scale-105 ${
+          className={`px-6 py-2 rounded-lg font-semibold shadow-lg transition-all duration-200 flex items-center space-x-2 transform hover:scale-105 ${
             theme === 'dark' 
               ? 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 text-white' 
               : 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-400 hover:to-green-500 text-white'
