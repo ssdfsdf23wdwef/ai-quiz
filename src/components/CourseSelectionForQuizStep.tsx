@@ -67,7 +67,7 @@ const CourseSelectionForQuizStep: React.FC<CourseSelectionForQuizStepProps> = ({
 
   return (
     <div className="w-full max-w-lg mx-auto p-4 md:p-0">
-      <h2 className={`text-xl font-semibold mb-6 text-left ${theme === 'dark' ? 'text-gray-100' : 'text-gray-800'}`}>
+      <h2 className={`text-lg sm:text-xl font-semibold mb-4 sm:mb-6 text-left ${theme === 'dark' ? 'text-gray-100' : 'text-gray-800'}`}>
         Çalışmak istediğiniz dersi seçin
       </h2>
 
@@ -77,7 +77,7 @@ const CourseSelectionForQuizStep: React.FC<CourseSelectionForQuizStepProps> = ({
             id="existing-course-select"
             value={selectedCourseId}
             onChange={(e) => handleSelectCourse(e.target.value)}
-            className={`w-full p-3.5 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-base ${theme === 'dark' ? 'bg-secondary-700 border-secondary-600 text-gray-200 placeholder-gray-500' : 'bg-gray-50 border-gray-300 text-gray-800 placeholder-gray-400'}`}
+            className={`w-full p-3 sm:p-3.5 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-base touch-target ${theme === 'dark' ? 'bg-secondary-700 border-secondary-600 text-gray-200 placeholder-gray-500' : 'bg-gray-50 border-gray-300 text-gray-800 placeholder-gray-400'}`}
           >
             <option value="" disabled={selectedCourseId !== ""}>Mevcut bir ders seçin...</option>
             {courses.map(course => (
@@ -89,7 +89,7 @@ const CourseSelectionForQuizStep: React.FC<CourseSelectionForQuizStepProps> = ({
 
       <button
         onClick={handleToggleNewCourseInput}
-        className={`w-full flex items-center justify-center p-3.5 mb-4 border-2 border-dashed rounded-lg transition-colors ${
+        className={`w-full flex items-center justify-center p-3 sm:p-3.5 mb-4 border-2 border-dashed rounded-lg transition-colors touch-target ${
           showNewCourseInput 
             ? `border-primary-500 ${theme === 'dark' ? 'text-primary-400 bg-primary-500/10' : 'text-primary-600 bg-primary-50'}` 
             : `${theme === 'dark' 
@@ -97,19 +97,21 @@ const CourseSelectionForQuizStep: React.FC<CourseSelectionForQuizStepProps> = ({
                 : 'border-gray-400 text-gray-500 hover:border-primary-500 hover:text-primary-600'}`
         }`}
       >
-        <i className={`fas ${showNewCourseInput ? 'fa-minus-circle' : 'fa-plus-circle'} mr-2.5`}></i>
-        {showNewCourseInput && courses.length > 0 ? 'Veya Yeni Ders Oluştur' : 'Yeni Ders Oluştur'}
+        <i className={`fas ${showNewCourseInput ? 'fa-minus-circle' : 'fa-plus-circle'} mr-2 sm:mr-2.5`}></i>
+        <span className="text-sm sm:text-base">
+          {showNewCourseInput && courses.length > 0 ? 'Veya Yeni Ders Oluştur' : 'Yeni Ders Oluştur'}
+        </span>
       </button>
 
       {showNewCourseInput && (
-        <div className="mb-6">
+        <div className="mb-4 sm:mb-6">
           <input
             type="text"
             id="new-course-name"
             value={newCourseNameInput}
             onChange={handleNewCourseNameChange}
             placeholder="Yeni ders adını yazın (örn: İleri Cebir)"
-            className={`w-full p-3.5 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-base ${
+            className={`w-full p-3 sm:p-3.5 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-base touch-target ${
               theme === 'dark' 
                 ? 'bg-secondary-700 border-secondary-600 text-gray-200 placeholder-gray-500' 
                 : 'bg-gray-50 border-gray-300 text-gray-800 placeholder-gray-400'
@@ -119,10 +121,10 @@ const CourseSelectionForQuizStep: React.FC<CourseSelectionForQuizStepProps> = ({
         </div>
       )}
 
-      <div className="flex justify-between items-center mt-10">
+      <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center mt-8 sm:mt-10 gap-3 sm:gap-0">
         <button
           onClick={onCancel}
-          className={`px-7 py-3 transition-colors text-base flex items-center ${
+          className={`px-6 sm:px-7 py-3 transition-colors text-base flex items-center justify-center sm:justify-start touch-target ${
             theme === 'dark' 
               ? 'text-gray-300 hover:text-white' 
               : 'text-gray-600 hover:text-gray-800'
@@ -134,7 +136,7 @@ const CourseSelectionForQuizStep: React.FC<CourseSelectionForQuizStepProps> = ({
         <button
           onClick={handleSubmit}
           disabled={!canSubmit}
-          className={`px-7 py-3 text-white rounded-lg font-semibold shadow-md disabled:opacity-60 disabled:cursor-not-allowed text-base flex items-center ${
+          className={`px-6 sm:px-7 py-3 text-white rounded-lg font-semibold shadow-md disabled:opacity-60 disabled:cursor-not-allowed text-base flex items-center justify-center touch-target ${
             theme === 'dark' 
               ? 'bg-blue-600 hover:bg-blue-700' 
               : 'bg-blue-500 hover:bg-blue-600'

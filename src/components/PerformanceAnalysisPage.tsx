@@ -22,7 +22,7 @@ const StatCard: React.FC<{ title: string; value: string | number; icon: string; 
         : 'bg-white ring-gray-200 hover:ring-primary-200'
     }`}>
       <div className={`p-3.5 rounded-lg ${iconBgClass || defaultIconBgClass} ${iconColorClass || defaultIconColorClass} self-start mt-1 group-hover:scale-110 transition-transform duration-300`}>
-        <i className={`${icon} text-3xl`}></i>
+        <i className={`${icon} text-2xl sm:text-3xl`}></i>
       </div>
       <div className="flex-grow">
         <p className={`text-sm transition-colors ${
@@ -325,7 +325,7 @@ const PerformanceAnalysisPage: React.FC<PerformanceAnalysisPageProps> = ({
     <div className={`w-full h-full flex flex-col p-0 ${theme === 'dark' ? 'text-gray-200' : 'text-gray-800'}`}>
       <div className="mb-6 px-1 flex flex-col sm:flex-row sm:justify-between sm:items-center">
         <div className="mb-3 sm:mb-0">
-          <h1 className={`text-3xl font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Performans Analizi</h1>
+          <h1 className={`text-2xl sm:text-3xl font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Performans Analizi</h1>
           <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Sınav performansınızı ve öğrenme ilerlemenizi takip edin.</p>
         </div>
         {onBack && (

@@ -50,18 +50,20 @@ const CoursesPage: React.FC<CoursesPageProps> = ({
 
   return (
     <div className={`w-full h-full flex flex-col p-0 ${theme === 'dark' ? 'text-gray-200' : 'text-gray-800'}`}>
-      <div className="mb-6 px-1 flex justify-between items-center">
-        <div>
-          <h1 className={`text-3xl font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Derslerim</h1>
-          <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Oluşturduğunuz dersleri yönetin ve kişiselleştirilmiş sınavlar için kullanın.</p>
+      <div className="mb-4 sm:mb-6 px-1 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex-1">
+          <h1 className={`text-2xl sm:text-3xl font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Derslerim</h1>
+          <p className={`text-sm sm:text-base ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Oluşturduğunuz dersleri yönetin ve kişiselleştirilmiş sınavlar için kullanın.</p>
         </div>
         {onBack && !isAddingCourse && (
           <button
             onClick={onBack}
-            className={`px-4 py-2 rounded-lg transition-colors flex items-center ${theme === 'dark' ? 'bg-secondary-700 hover:bg-secondary-600 text-gray-200' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}`}
+            className={`px-3 sm:px-4 py-2 rounded-lg transition-colors flex items-center text-sm touch-target ${theme === 'dark' ? 'bg-secondary-700 hover:bg-secondary-600 text-gray-200' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}`}
             aria-label="Ana Sayfaya Dön"
           >
-            <i className="fas fa-arrow-left mr-2"></i> Ana Sayfa
+            <i className="fas fa-arrow-left mr-1 sm:mr-2"></i> 
+            <span className="hidden sm:inline">Ana Sayfa</span>
+            <span className="sm:hidden">Geri</span>
           </button>
         )}
       </div>
@@ -173,7 +175,7 @@ const CoursesPage: React.FC<CoursesPageProps> = ({
               >
                 <div>
                   <div className="flex justify-between items-start mb-2">
-                    <i className={`fas fa-chalkboard-teacher text-3xl opacity-80 ${
+                    <i className={`fas fa-chalkboard-teacher text-2xl sm:text-3xl opacity-80 ${
                       theme === 'dark' ? 'text-primary-400' : 'text-primary-500'
                     }`}></i>
                     <button

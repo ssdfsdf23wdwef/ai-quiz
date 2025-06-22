@@ -112,19 +112,21 @@ const SubtopicSelector: React.FC<SubtopicSelectorProps> = ({
 
 
   return (
-    <div className={`w-full max-w-2xl p-6 md:p-8 rounded-xl shadow-2xl ${themeClasses.bg.card} ${themeClasses.text.secondary}`}>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className={`text-2xl font-semibold ${themeClasses.text.primary}`}>{pageTitle}</h2>
+    <div className={`w-full max-w-2xl p-4 sm:p-6 md:p-8 rounded-xl shadow-2xl ${themeClasses.bg.card} ${themeClasses.text.secondary}`}>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-3 sm:gap-0">
+        <h2 className={`text-xl sm:text-2xl font-semibold ${themeClasses.text.primary}`}>{pageTitle}</h2>
         <button 
             onClick={onCancel} 
-            className={`text-sm transition-colors flex items-center ${themeClasses.text.muted} hover:${themeClasses.text.primary.replace('text-', 'hover:text-')}`}
+            className={`text-sm transition-colors flex items-center touch-target ${themeClasses.text.muted} hover:${themeClasses.text.primary.replace('text-', 'hover:text-')}`}
             title={cancelButtonText}
           >
-            <i className="fas fa-times mr-1.5"></i> {cancelButtonText}
+            <i className="fas fa-times mr-1.5"></i> 
+            <span className="hidden sm:inline">{cancelButtonText}</span>
+            <span className="sm:hidden">İptal</span>
         </button>
       </div>
       
-      <p className={`mb-6 text-sm ${themeClasses.text.tertiary}`}>
+      <p className={`mb-4 sm:mb-6 text-sm ${themeClasses.text.tertiary}`}>
         {selectionGuidance}
       </p>
 
@@ -137,10 +139,10 @@ const SubtopicSelector: React.FC<SubtopicSelectorProps> = ({
         </p>
       ) : (
         <>
-          <div className="mb-4 text-right">
+          <div className="mb-4 text-center sm:text-right">
             <button
               onClick={handleSelectAll}
-              className={`px-4 py-2 text-sm rounded-md transition-colors shadow-sm ${
+              className={`px-4 py-2 text-sm rounded-md transition-colors shadow-sm touch-target ${
                 theme === 'dark' 
                   ? 'bg-secondary-700 text-gray-200 hover:bg-secondary-600' 
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -149,7 +151,7 @@ const SubtopicSelector: React.FC<SubtopicSelectorProps> = ({
               {selected.length === allAvailableSubtopics.length ? 'Tüm Seçimi Kaldır' : 'Tümünü Seç'}
             </button>
           </div>
-          <div className="max-h-[28rem] overflow-y-auto pr-2 custom-scrollbar space-y-3">
+          <div className="max-h-[28rem] overflow-y-auto pr-2 custom-scrollbar space-y-3 mobile-scroll">
             {allAvailableSubtopics.map((subtopic, index) => {
                 const topicDetails = getTopicTypeDetails(subtopic);
                 const isSelected = selected.includes(subtopic);
@@ -231,11 +233,11 @@ const SubtopicSelector: React.FC<SubtopicSelectorProps> = ({
         </>
       )}
 
-      <div className={`flex justify-end items-center mt-8 pt-6 border-t ${theme === 'dark' ? 'border-secondary-700' : 'border-gray-300'}`}>
+      <div className={`flex justify-center sm:justify-end items-center mt-6 sm:mt-8 pt-4 sm:pt-6 border-t ${theme === 'dark' ? 'border-secondary-700' : 'border-gray-300'}`}>
         <button
           onClick={handleSubmit}
           disabled={isSubmitDisabled()} 
-          className={`px-8 py-3 text-white rounded-lg font-semibold shadow-lg focus:outline-none focus:ring-2 focus:ring-opacity-70 disabled:opacity-50 disabled:cursor-not-allowed ${
+          className={`px-6 sm:px-8 py-3 text-white rounded-lg font-semibold shadow-lg focus:outline-none focus:ring-2 focus:ring-opacity-70 disabled:opacity-50 disabled:cursor-not-allowed touch-target ${
             theme === 'dark' 
               ? 'bg-green-600 hover:bg-green-700 focus:ring-green-500' 
               : 'bg-green-500 hover:bg-green-600 focus:ring-green-500'

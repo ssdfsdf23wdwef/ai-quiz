@@ -298,6 +298,20 @@
     .mobile-shadow {
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
+    
+    /* Reduce animation complexity on mobile */
+    .feature-card,
+    .quiz-card {
+      will-change: auto;
+      transition: transform 0.15s ease-out;
+    }
+    
+    /* Improve text rendering on mobile */
+    body, .mobile-text {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
   }
 
   /* High DPI screen optimizations */

@@ -49,7 +49,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, navigateTo, setAu
                 <i className="fas fa-brain text-4xl text-white"></i>
             </div>
           </div>
-          <h2 className={`text-center text-3xl font-extrabold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+          <h2 className={`text-center text-2xl sm:text-3xl font-extrabold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
             QuizMaster'a Giriş Yapın
           </h2>
           <p className={`mt-2 text-center text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>

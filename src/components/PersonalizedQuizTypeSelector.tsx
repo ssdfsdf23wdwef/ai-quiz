@@ -81,35 +81,35 @@ const PersonalizedQuizTypeSelector: React.FC<PersonalizedQuizTypeSelectorProps> 
 
   return (
     <div className="w-full max-w-xl mx-auto p-4 md:p-0">
-      <h2 className={`text-xl font-semibold mb-6 text-left ${
+      <h2 className={`text-lg sm:text-xl font-semibold mb-4 sm:mb-6 text-left ${
         theme === 'dark' ? 'text-gray-100' : 'text-gray-800'
       }`}>
         Kişiselleştirilmiş Sınav Türünü Seçin
       </h2>
-      <p className={`text-sm mb-8 ${
+      <p className={`text-sm mb-6 sm:mb-8 ${
         theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
       }`}>
         Öğrenme hedeflerinize en uygun sınav türünü seçerek deneyiminizi kişiselleştirin.
       </p>
 
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         {quizTypes.map(({ type, title, description, icon, disabledText }) => {
           const isDisabled = !!disabledText;
           return (
             <label
               key={type}
               htmlFor={`quiz-type-${type}`}
-              className={`flex flex-col p-5 border-2 rounded-lg cursor-pointer transition-all duration-200 ease-in-out ${
+              className={`flex flex-col p-4 sm:p-5 border-2 rounded-lg cursor-pointer transition-all duration-200 ease-in-out touch-target ${
                 selectedType === type
                   ? `${theme === 'dark' ? 'bg-primary-600 border-primary-500' : 'bg-primary-500 border-primary-600'} text-white shadow-xl scale-[1.02]`
                   : isDisabled
                     ? `${theme === 'dark' ? 'bg-secondary-800 border-secondary-700 text-gray-500' : 'bg-gray-100 border-gray-300 text-gray-400'} opacity-60 cursor-not-allowed`
                     : `${theme === 'dark' ? 'bg-secondary-800 border-secondary-600 hover:border-primary-400 text-gray-200' : 'bg-white border-gray-300 hover:border-primary-500 text-gray-700'} hover:shadow-lg`
               }`}
-            title={isDisabled ? disabledText : title} // title'a disabledText'i ekledim, daha iyi erişilebilirlik
+            title={isDisabled ? disabledText : title}
             >
               <div className="flex items-center mb-2">
-                <div className={`p-2 rounded-md mr-3 text-lg ${
+                <div className={`p-2 rounded-md mr-3 text-base sm:text-lg flex-shrink-0 ${
                   selectedType === type 
                     ? (theme === 'dark' ? 'bg-primary-500' : 'bg-primary-400')
                     : isDisabled 
@@ -124,7 +124,7 @@ const PersonalizedQuizTypeSelector: React.FC<PersonalizedQuizTypeSelectorProps> 
                           : (theme === 'dark' ? 'text-primary-400' : 'text-primary-600')
                     }`}></i>
                 </div>
-                <h3 className={`font-semibold text-lg ${
+                <h3 className={`font-semibold text-base sm:text-lg flex-1 ${
                   selectedType === type 
                     ? 'text-white' 
                     : (theme === 'dark' ? 'text-white' : 'text-gray-800')
@@ -136,15 +136,15 @@ const PersonalizedQuizTypeSelector: React.FC<PersonalizedQuizTypeSelectorProps> 
                   value={type}
                   checked={selectedType === type}
                   onChange={() => !isDisabled && setSelectedType(type)}
-                  className={`ml-auto form-radio h-5 w-5 focus:ring-transparent focus:ring-offset-0 bg-transparent border-transparent ${
+                  className={`ml-3 form-radio h-5 w-5 focus:ring-transparent focus:ring-offset-0 bg-transparent border-transparent flex-shrink-0 ${
                     theme === 'dark' ? 'text-primary-200' : 'text-primary-300'
                   }`}
                   disabled={isDisabled}
                   style={selectedType === type ? { filter: 'brightness(2)'} : {}}
-                  aria-label={title} // Erişilebilirlik için label eklendi
+                  aria-label={title}
                 />
               </div>
-              <p className={`text-sm ${
+              <p className={`text-sm leading-relaxed ${
                 selectedType === type 
                   ? (theme === 'dark' ? 'text-primary-200' : 'text-primary-100')
                   : isDisabled 
@@ -153,7 +153,7 @@ const PersonalizedQuizTypeSelector: React.FC<PersonalizedQuizTypeSelectorProps> 
               }`}>
                 {description}
               </p>
-              {isDisabled && <p className={`mt-2 text-xs ${
+              {isDisabled && <p className={`mt-2 text-xs leading-relaxed ${
                 theme === 'dark' ? 'text-yellow-400' : 'text-yellow-600'
               }`}>{disabledText}</p>}
             </label>
@@ -161,10 +161,10 @@ const PersonalizedQuizTypeSelector: React.FC<PersonalizedQuizTypeSelectorProps> 
         })}
       </div>
 
-      <div className="flex justify-between items-center mt-10">
+      <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center mt-8 sm:mt-10 gap-3 sm:gap-0">
         <button
           onClick={onBack}
-          className={`px-7 py-3 transition-colors text-base flex items-center ${
+          className={`px-6 sm:px-7 py-3 transition-colors text-base flex items-center justify-center sm:justify-start touch-target ${
             theme === 'dark' 
               ? 'text-gray-300 hover:text-white' 
               : 'text-gray-600 hover:text-gray-800'
@@ -176,7 +176,7 @@ const PersonalizedQuizTypeSelector: React.FC<PersonalizedQuizTypeSelectorProps> 
         <button
           onClick={handleSubmit}
           disabled={!selectedType}
-          className={`px-7 py-3 text-white rounded-lg font-semibold shadow-md disabled:opacity-60 disabled:cursor-not-allowed text-base flex items-center ${
+          className={`px-6 sm:px-7 py-3 text-white rounded-lg font-semibold shadow-md disabled:opacity-60 disabled:cursor-not-allowed text-base flex items-center justify-center touch-target ${
             theme === 'dark' 
               ? 'bg-blue-600 hover:bg-blue-700' 
               : 'bg-blue-500 hover:bg-blue-600'
