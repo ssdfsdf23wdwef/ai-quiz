@@ -501,27 +501,7 @@ const QuizView: React.FC<QuizViewProps> = ({
                 })}
               </div>
 
-              {/* Explanation Toggle */}
-              <div className="mt-4">
-                <button
-                  onClick={() => toggleExplanation(question.id)}
-                  className={`text-sm font-medium flex items-center transition-colors ${
-                    showExplanations[question.id] ? 'text-blue-600' : 'text-gray-500 hover:text-blue-500'
-                  }`}
-                  aria-expanded={showExplanations[question.id]}
-                  aria-controls={`explanation-${question.id}`}
-                >
-                  <i className={`fas fa-${showExplanations[question.id] ? 'minus' : 'plus'} mr-2`}></i>
-                  Açıklamaları {showExplanations[question.id] ? 'Gizle' : 'Göster'}
-                </button>
-              </div>
-
-              {/* Explanation Text */}
-              {showExplanations[question.id] && question.explanation && (
-                <div id={`explanation-${question.id}`} className="mt-3 text-sm text-gray-700 dark:text-gray-300">
-                  {question.explanation}
-                </div>
-              )}
+              
             </section>
           );
         })}
