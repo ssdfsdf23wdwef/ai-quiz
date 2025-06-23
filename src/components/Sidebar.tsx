@@ -87,6 +87,7 @@ interface SidebarProps {
   onNavigateToAchievements: () => void;
   onNavigateToCourses: () => void;
   onNavigateToSettings: () => void;
+  onNavigateToBlog: () => void; // Added for blog
   currentUser: User | null; // Added currentUser
   onNavigateToProfile: () => void; // Added for profile
   onNavigateToLogin: () => void; // Added for login
@@ -105,6 +106,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   onNavigateToAchievements,
   onNavigateToCourses,
   onNavigateToSettings,
+  onNavigateToBlog,
   currentUser,
   onNavigateToProfile,
   onNavigateToLogin,
@@ -129,6 +131,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     { icon: 'fas fa-bullseye', text: 'Öğrenme Hedeflerim', appStateLink: ['viewing_learning_objectives', 'viewing_course_learning_objectives'], onClick: onNavigateToLearningObjectives, requiresAuth: true },
     { icon: 'fas fa-chart-line', text: 'Performans Analizi', appStateLink: 'viewing_performance_analysis', onClick: onNavigateToPerformanceAnalysis, requiresAuth: true },
     { icon: 'fas fa-trophy', text: 'Başarılarım', appStateLink: 'viewing_achievements', onClick: onNavigateToAchievements, requiresAuth: true },
+    { icon: 'fas fa-blog', text: 'Blog', appStateLink: 'blog', onClick: onNavigateToBlog },
   ];
 
   const getInitials = (name?: string | null, email?: string | null): string => {

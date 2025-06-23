@@ -25,6 +25,7 @@ import LoginPage from './components/LoginPage';
 import SignupPage from './components/SignupPage';
 import ForgotPasswordPage from './components/ForgotPasswordPage';
 import ProfilePage from './components/ProfilePage';
+import BlogPage from './components/BlogPage';
 
 import { useAppSettings } from './hooks/useAppSettings';
 import { usePersistentData } from './hooks/usePersistentData';
@@ -306,6 +307,7 @@ const App: React.FC = () => {
                     onNavigateToAchievements={() => navigateTo('viewing_achievements')}
                     onNavigateToCourses={() => navigateTo('viewing_courses_list')}
                     onNavigateToSettings={() => navigateTo('viewing_settings')}
+                    onNavigateToBlog={() => navigateTo('blog')}
                     currentUser={currentUser}
                     onNavigateToProfile={() => navigateTo('profile')}
                     onNavigateToLogin={() => navigateTo('login')}
@@ -606,6 +608,9 @@ const App: React.FC = () => {
                         theme={theme}
                       />;
         break;
+      case 'blog':
+        pageContent = <BlogPage />;
+        break;
       default:
         pageContent = <div className="text-center">Beklenmeyen durum: {appState}</div>;
     }
@@ -657,6 +662,7 @@ const App: React.FC = () => {
                 onNavigateToAchievements={() => navigateTo('viewing_achievements')}
                 onNavigateToCourses={() => navigateTo('viewing_courses_list')}
                 onNavigateToSettings={() => navigateTo('viewing_settings')}
+                onNavigateToBlog={() => navigateTo('blog')}
                 currentUser={currentUser}
                 onNavigateToProfile={() => navigateTo('profile')}
                 onNavigateToLogin={() => navigateTo('login')}

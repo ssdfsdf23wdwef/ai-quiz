@@ -1,53 +1,55 @@
-# AI Quiz App
+# AI Quiz - Yapay Zeka Quiz Platformu
 
-An intelligent quiz application built with React, TypeScript, and Google Gemini AI. This app allows users to create personalized quizzes from PDF documents, track their learning progress, and analyze performance.
+**AI Quiz** - Yapay zeka destekli kişiselleştirilmiş quiz platformu ile öğrenme deneyiminizi geliştirin! Google Gemini AI teknolojisi ile PDF belgelerinizden akıllı sınavlar oluşturun ve performansınızı analiz edin.
 
-## Features
+## 🎯 Ana Özellikler
 
-- 📄 **PDF Upload**: Upload PDF documents to generate quizzes
-- 🤖 **AI-Powered**: Uses Google Gemini AI for intelligent quiz generation
-- 📊 **Performance Analytics**: Track your learning progress and performance
-- 🎯 **Personalized Learning**: Customizable quiz preferences and difficulty levels
-- 🔥 **Firebase Integration**: User authentication and data storage
-- 📱 **Responsive Design**: Modern UI built with Tailwind CSS
+- 🤖 **AI Destekli Quiz Üretimi**: Google Gemini yapay zeka ile akıllı soru üretimi
+- � **PDF Desteği**: PDF belgelerinizden otomatik quiz oluşturma
+- 🎯 **Kişiselleştirilmiş Öğrenme**: Bilgi seviyenize göre optimize edilmiş sorular
+- 📊 **Performans Analizi**: Detaylı raporlar ve gelişim takibi
+- 🔥 **Firebase Entegrasyonu**: Güvenli kullanıcı kimlik doğrulama ve veri saklama
+- 📱 **Mobil Uyumlu**: Modern ve responsive tasarım
+- 🚀 **Hızlı ve Ücretsiz**: Anında kullanıma hazır, kayıt gerektirmez
 
-## Technologies Used
+## 🔧 Teknoloji Stack
 
 - **Frontend**: React 19, TypeScript, Tailwind CSS
 - **AI**: Google Gemini AI (@google/genai)
 - **Backend**: Firebase (Authentication, Firestore)
-- **PDF Processing**: PDF.js
-- **Build Tool**: Vite
-- **Deployment**: GitHub Pages with GitHub Actions
+- **PDF İşleme**: PDF.js (pdfjs-dist)
+- **Build**: Vite
+- **Deployment**: GitHub Pages
 
-## Live Demo
+## 🌐 Canlı Demo
 
-🌐 **[View Live Demo](https://ssdfsdf23wdwef.github.io/ai-quiz/)**
+� **[AI Quiz Platformunu Deneyin](https://ssdfsdf23wdwef.github.io/ai-quiz/)**
 
-## Prerequisites
+## 💻 Kurulum ve Geliştirme
 
-- Node.js (version 18 or higher)
-- npm or yarn
-- Google Gemini API key
-- Firebase project configuration
+### Gereksinimler
+- Node.js (18+ sürüm)
+- npm veya yarn
+- Google Gemini API anahtarı
+- Firebase proje konfigürasyonu
 
-## Installation
+### Adım Adım Kurulum
 
-1. **Clone the repository:**
+1. **Projeyi klonlayın:**
    ```bash
    git clone https://github.com/ssdfsdf23wdwef/ai-quiz.git
    cd ai-quiz
    ```
 
-2. **Install dependencies:**
+2. **Bağımlılıkları yükleyin:**
    ```bash
    npm install
    ```
 
-3. **Set up environment variables:**
-   Create a `.env.local` file in the root directory and add your API keys:
+3. **Ortam değişkenlerini ayarlayın:**
+   Kök dizinde `.env.local` dosyası oluşturun:
    ```env
-   VITE_GEMINI_API_KEY=your_gemini_api_key_here
+   VITE_GEMINI_API_KEY=gemini_api_anahtariniz
    VITE_FIREBASE_API_KEY=your_firebase_api_key
    VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
    VITE_FIREBASE_PROJECT_ID=your_project_id

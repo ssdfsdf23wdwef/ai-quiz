@@ -64,6 +64,7 @@ export type AppState =
   | 'signup'
   | 'forgot_password'
   | 'profile'
+  | 'blog'
   | 'auth_loading' 
   | 'error';
 
