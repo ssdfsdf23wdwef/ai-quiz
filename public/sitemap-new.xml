@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" 
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  
+  <!-- Ana Sayfa -->
+  <url>
+    <loc>https://quizain.me/</loc>
+    <lastmod>2025-06-23</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://quizain.me/og-image.svg</image:loc>
+      <image:title>QuizAI - Yapay Zeka Quiz Platformu</image:title>
+      <image:caption>Yapay zeka destekli kişiselleştirilmiş quiz platformu ile öğrenme deneyiminizi geliştirin</image:caption>
+    </image:image>
+  </url>
+  
+  <!-- Blog Sayfası -->
+  <url>
+    <loc>https://quizain.me/#/blog</loc>
+    <lastmod>2025-06-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <!-- Login Sayfası -->
+  <url>
+    <loc>https://quizain.me/#/login</loc>
+    <lastmod>2025-06-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Signup Sayfası -->
+  <url>
+    <loc>https://quizain.me/#/signup</loc>
+    <lastmod>2025-06-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Dashboard -->
+  <url>
+    <loc>https://quizain.me/#/dashboard</loc>
+    <lastmod>2025-06-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+</urlset>

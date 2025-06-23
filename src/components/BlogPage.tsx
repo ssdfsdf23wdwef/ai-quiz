@@ -13,26 +13,34 @@ const blogPosts: BlogPost[] = [
   {
     id: '1',
     title: 'AI Quiz Nasıl Çalışır: Yapay Zeka Destekli Quiz Platformu',
-    excerpt: 'AI Quiz platformumuzun yapay zeka teknolojisi ile nasıl kişiselleştirilmiş sınavlar oluşturduğunu öğrenin.',
-    content: 'AI Quiz, Google Gemini yapay zeka teknolojisini kullanarak kullanıcıların öğrenme ihtiyaçlarına göre kişiselleştirilmiş quizler oluşturur...',
+    excerpt: 'AI Quiz platformumuzun yapay zeka teknolojisi ile nasıl kişiselleştirilmiş sınavlar oluşturduğunu öğrenin. Google Gemini AI ile akıllı test yapma.',
+    content: 'AI Quiz, Google Gemini yapay zeka teknolojisini kullanarak kullanıcıların öğrenme ihtiyaçlarına göre kişiselleştirilmiş quizler oluşturur. Machine learning algoritmaları ile PDF belgelerinizden otomatik soru üretimi yapılır.',
     date: '2025-06-23',
-    tags: ['ai', 'yapay zeka', 'quiz', 'eğitim teknolojisi']
+    tags: ['ai quiz', 'yapay zeka', 'google gemini', 'machine learning', 'eğitim teknolojisi']
   },
   {
     id: '2',
-    title: 'Online Quiz Oluşturmanın Avantajları',
-    excerpt: 'Geleneksel sınavlara göre online quiz platformlarının sunduğu avantajları keşfedin.',
-    content: 'Online quiz platformları, eğitim sürecini daha etkili ve ölçülebilir hale getirir...',
+    title: 'Online Quiz Oluşturmanın Avantajları - Ücretsiz AI Test Maker',
+    excerpt: 'Geleneksel sınavlara göre online quiz platformlarının sunduğu avantajları keşfedin. AI destekli quiz oluşturucu ile hızlı sınav yapma.',
+    content: 'Online quiz platformları, eğitim sürecini daha etkili ve ölçülebilir hale getirir. AI quiz maker ile PDF\'den otomatik soru üretimi, kişiselleştirilmiş öğrenme deneyimi sunar.',
     date: '2025-06-22',
-    tags: ['online eğitim', 'quiz', 'dijital öğrenme']
+    tags: ['online quiz', 'quiz maker', 'ai test', 'eğitim', 'dijital öğrenme']
   },
   {
     id: '3',
-    title: 'Kişiselleştirilmiş Öğrenme ile Başarınızı Artırın',
-    excerpt: 'AI Quiz\'in kişiselleştirilmiş öğrenme algoritmaları ile nasıl daha etkili öğrenebileceğinizi öğrenin.',
-    content: 'Kişiselleştirilmiş öğrenme, her bireyin öğrenme tarzına ve hızına göre özelleştirilmiş içerik sunar...',
+    title: 'Kişiselleştirilmiş Öğrenme ile Başarınızı Artırın - Smart Quiz Platform',
+    excerpt: 'AI Quiz\'in kişiselleştirilmiş öğrenme algoritmaları ile nasıl daha etkili öğrenebileceğinizi öğrenin. Akıllı quiz platformu özellikleri.',
+    content: 'Kişiselleştirilmiş öğrenme, her bireyin öğrenme tarzına ve hızına göre özelleştirilmiş içerik sunar. AI destekli quiz platform ile performans analizi ve gelişim takibi.',
     date: '2025-06-21',
-    tags: ['kişiselleştirilmiş öğrenme', 'ai', 'eğitim']
+    tags: ['personalized learning', 'smart quiz', 'ai education', 'adaptive learning', 'performance analysis']
+  },
+  {
+    id: '4',
+    title: 'PDF\'den Quiz Oluşturma: AI ile Otomatik Soru Üretimi',
+    excerpt: 'PDF belgelerinizden yapay zeka ile otomatik quiz oluşturma. AI Quiz platformu ile PDF to quiz converter özelliklerini keşfedin.',
+    content: 'PDF belgelerinizi yükleyerek yapay zeka destekli quiz oluşturma teknolojisi ile otomatik soru üretimi yapabilirsiniz. Machine learning ile akıllı içerik analizi.',
+    date: '2025-06-20',
+    tags: ['pdf to quiz', 'ai quiz generator', 'automatic question generation', 'pdf converter', 'content analysis']
   }
 ];
 
